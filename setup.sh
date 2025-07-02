@@ -13,7 +13,7 @@ status_ok
 # Update
 CURRENT_STEP_MESSAGE="Updating packages"
 status_msg
-pacman -S --noconfirm $pkg > /dev/null 2>&1 || status_error
+pacman -Syu --noconfirm > /dev/null 2>&1 || status_error
 status_ok
 
 source ./scripts/setup_shell_utils.sh
