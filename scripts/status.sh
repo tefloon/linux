@@ -25,3 +25,14 @@ status_error() {
     fi
     exit 1
 }
+
+install_pkg() {
+    local pkg="$1"
+    CURRENT_STEP_MESSAGE="Installing $pkg"
+    status_msg
+    if pacman -S --noconfirm $pkg > /tmp/pacman.log 2>&1; then
+        status_ok
+    else
+        status_error "Failed to install $pkg."
+    fi
+}

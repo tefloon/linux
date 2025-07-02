@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-source ./status.sh
+source ./scripts/status.sh
 
 # Example usage:
-
 CURRENT_STEP_MESSAGE="Checking for root privileges"
 status_msg
 if [[ $EUID -ne 0 ]]; then
@@ -11,5 +10,11 @@ if [[ $EUID -ne 0 ]]; then
 fi
 status_ok
 
-CURRENT_STEP_MESSAGE="TADA!"
+# Update
+CURRENT_STEP_MESSAGE="Updating packages"
+status_msg
+pacman -S --noconfirm $pkg > /dev/null 2>&1 || status_error
 status_ok
+
+source ./scripts/setup_shell_utils.sh
+source ./scripts/setup_gui.sh
