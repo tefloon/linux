@@ -1,6 +1,6 @@
-# status.sh
+#!/usr/bin/env bash
 
-STATUS_COL=50
+STATUS_COL=60
 
 status_msg() {
     printf "%s" "$CURRENT_STEP_MESSAGE... "
@@ -30,7 +30,20 @@ install_pkg() {
     local pkg="$1"
     CURRENT_STEP_MESSAGE="Installing $pkg"
     status_msg
-    if pacman -S --noconfirm $pkg > /tmp/pacman.log 2>&1; then
+    if pacman -S --noconfirm "$pkg" > /tmp/pacman.log 2>&1; then
+        status_ok
+    else
+        status_error "Failed to install $pkg."
+    fi
+}
+
+INSTALL_USER="${SUDO_USER:-$USER}"
+
+install_aur_pkg() {
+    local pkg="$1"
+    CURRENT_STEP_MESSAGE="Installing AUR package $pkg"
+    status_msg
+    if sudo -u "$INSTALL_USER" yay -S --noconfirm "$pkg" > /tmp/yay.log 2>&1; then
         status_ok
     else
         status_error "Failed to install $pkg."

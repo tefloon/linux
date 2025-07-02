@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+DIR="${1:-.}"
+output=""
+
+get_lang() {
+    case "$1" in
+        *.sh) echo "bash" ;;
+        *.zsh) echo "zsh" ;;
+        *.py) echo "python" ;;
+        *.js) echo "javascript" ;;
+        *.ts) echo "typescript" ;;
+        *.rb) echo "ruby" ;;
+        *.pl) echo "perl" ;;
+        *.lua) echo "lua" ;;
+        *.vim) echo "vim" ;;
+        *.conf) echo "conf" ;;
+        *.ini) echo "ini" ;;
+        *.yml|*.yaml) echo "yaml" ;;
+        *.json) echo "json" ;;
+        *.md) echo "markdown" ;;
+        *) echo "" ;;
+    esac
+}
+
+while IFS= read -r -d '' file; do
+    relpath="${file#$DIR/}"
+    lang=$(get_lang "$file")
+    output+=$'\n'"### $relpath"$'\n'
+    output+="\`\`\`${lang}"$'\n'
+    output+="$(cat "$file")"$'\n'
+    output+="\`\`\`"$'\n'
+done < <(find "$DIR" -type d -name .git -prune -o -type f -print0 | sort -z)
+
+echo "$output" | tee >(xclip -selection clipboard)
