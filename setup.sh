@@ -1,45 +1,50 @@
 #!/usr/bin/env bash
 
-# ==== Disks ==== #
+status_msg() {
+    echo -n "$CURRENT_STEP_MESSAGE... "
+}
 
+status_ok() {
+    local GREEN='\033[0;32m'
+    local NC='\033[0m'
+    echo -e "\r$CURRENT_STEP_MESSAGE... [${GREEN}OK${NC}]"
+}
 
-###################
-# ===== SSH ===== #
-###################
-#!/bin/bash
+status_error() {
+    local RED='\033[0;31m'
+    local NC='\033[0m'
+    echo -e "\r$CURRENT_STEP_MESSAGE... [${RED}ERROR${NC}]"
+    if [[ -n "$1" ]]; then
+        echo -e "${RED}Error: $1${NC}" >&2
+    fi
+    exit 1
+}
 
-# Ensure the .ssh directory exists and has correct permissions
-mkdir -p ~/.ssh
-chmod 700 ~/.ssh
-
-# Generate a new SSH key pair if it doesn't exist
-if [ ! -f ~/.ssh/id_ed25519 ]; then
-    ssh-keygen -t ed25519 -C "tefloon@gmail.com" -f ~/.ssh/id_ed25519 -N ""
-    echo "New SSH key generated."
-    echo "Add this public key to GitHub:"
-    cat ~/.ssh/id_ed25519.pub
-else
-    echo "SSH key already exists."
+CURRENT_STEP_MESSAGE="Checking for root privileges"
+status_msg
+if [[ $EUID -ne 0 ]]; then
+    status_error "Please run as root (use sudo)"
 fi
 
-# Set up SSH config for GitHub
-cat > ~/.ssh/config << 'EOF'
-Host github.com
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/id_ed25519
-    ForwardAgent yes
+CURRENT_STEP_MESSAGE="Configuring Ethernet interfaces"
+status_msg
+interface=$(ip link | awk -F: '/enp/ {print $2; exit}' | xargs)
+if [[ -z "$interface" ]]; then
+    status_error "No wired interface found!"
+fi
+
+echo "Your interface is: $interface"
+
+cat > /etc/systemd/network/20-wired.network <<EOF
+[Match]
+Name="$interface"
+
+[Network]
+DHCP=yes
 EOF
-chmod 600 ~/.ssh/config
 
-# Start keychain and add the key for the current session
-eval $(keychain --eval id_ed25519 2>/dev/null)
-echo "Keychain has been initialized for id_ed25519."
+systemctl enable --now systemd-networkd || status_error "Failed to enable systemd-networkd"
+systemctl enable --now systemd-resolved || status_error "Failed to enable systemd-resolved"
+ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || status_error "Failed to link resolv.conf"
 
-# Add keychain initialization to ~/.zshrc if not already present
-if ! grep -q 'keychain --eval id_ed25519' ~/.zshrc; then
-    echo 'eval $(keychain --eval id_ed25519 2>/dev/null)' >> ~/.zshrc
-    echo "Added keychain initialization to ~/.zshrc"
-else
-    echo "Keychain initialization already present in ~/.zshrc"
-fi
+status_ok
