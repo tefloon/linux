@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# ==== Disks ==== #
-
-
-###################
-# ===== SSH ===== #
-###################
-#!/bin/bash
 
 # Ensure the .ssh directory exists and has correct permissions
 mkdir -p ~/.ssh
