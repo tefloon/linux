@@ -1,30 +1,15 @@
 #!/usr/bin/env bash
 
-status_msg() {
-    echo -n "$CURRENT_STEP_MESSAGE... "
-}
+source ./status.sh
 
-status_ok() {
-    local GREEN='\033[0;32m'
-    local NC='\033[0m'
-    echo -e "\r$CURRENT_STEP_MESSAGE... [${GREEN}OK${NC}]"
-}
-
-status_error() {
-    local RED='\033[0;31m'
-    local NC='\033[0m'
-    echo -e "\r$CURRENT_STEP_MESSAGE... [${RED}ERROR${NC}]"
-    if [[ -n "$1" ]]; then
-        echo -e "${RED}Error: $1${NC}" >&2
-    fi
-    exit 1
-}
+# Example usage:
 
 CURRENT_STEP_MESSAGE="Checking for root privileges"
 status_msg
 if [[ $EUID -ne 0 ]]; then
     status_error "Please run as root (use sudo)"
 fi
+status_ok
 
 CURRENT_STEP_MESSAGE="Configuring Ethernet interfaces"
 status_msg
