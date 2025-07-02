@@ -16,5 +16,5 @@ status_msg
 pacman -Syu --noconfirm > /dev/null 2>&1 || status_error
 status_ok
 
-source ./scripts/setup_shell_utils.sh
-source ./scripts/setup_gui.sh
+source ./scripts/install_shell_utils.sh
+source ./scripts/install_gui.sh
