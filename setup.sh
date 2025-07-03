@@ -19,7 +19,7 @@ status_ok
 
 CURRENT_STEP_MESSAGE="Updating system packages"
 status_msg
-sudo pacman -Syu --noconfirm > /dev/null 2>&1 || status_error
+sudo pacman -Syu --noconfirm --overwrite > /dev/null 2>&1 || status_error
 status_ok
 
 # Ensure base-devel is installed (needed for yay and AUR)

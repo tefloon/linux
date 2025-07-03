@@ -44,6 +44,8 @@ install_pkg "virtualbox"
 install_pkg "xclip"
 install_pkg "yazi"
 install_pkg "zsh-syntax-highlighting"
+install_pkg "zsh-autosuggestions"
+install_pkg "zoxide"
 install_pkg "debugedit"
 
 install_aur_pkg "qalc"
