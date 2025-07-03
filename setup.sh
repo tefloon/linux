@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
+# Parse arguments
+VM_MODE=0
+if [[ "$1" == "--vm" ]]; then
+    VM_MODE=1
+    echo "Running in VM MODE: no disk mounting will take place."
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/scripts/status.sh"
@@ -45,8 +50,6 @@ for script in "$SCRIPT_DIR/bin/"*; do
 done
 status_ok
 
-CURRENT_STEP_MESSAGE="Symlinking selected dotfiles and config folders"
-status_msg
 DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
 DOTFILES_TO_LINK=(
     ".zshrc"
@@ -54,13 +57,18 @@ DOTFILES_TO_LINK=(
     ".ssh/config"
 )
 for item in "${DOTFILES_TO_LINK[@]}"; do
+    CURRENT_STEP_MESSAGE="Symlinking $item"
+    status_msg
     src="$DOTFILES_DIR/$item"
     dest="$HOME/$item"
     mkdir -p "$(dirname "$dest")"
     rm -rf "$dest"
-    ln -s "$src" "$dest" || status_error "Failed to link $src to $dest"
+    if ln -s "$src" "$dest"; then
+        status_ok
+    else
+        status_skip "Failed to link $src to $dest"
+    fi
 done
-status_ok
 
 add_fstab_entry() {
     local line="$1"
@@ -70,9 +78,13 @@ add_fstab_entry() {
 }
 
 CURRENT_STEP_MESSAGE="Adding drives to /etc/fstab"
-add_fstab_entry "UUID=3ECEEACFCEEA7F11 /mnt/backups ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
-add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
-status_ok
+if [[ $VM_MODE -eq 1 ]]; then
+    status_skip "Script running in VM_MODE"
+else
+    add_fstab_entry "UUID=3ECEEACFCEEA7F11 /mnt/backups ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
+    add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
+    status_ok
+fi
 
 CURRENT_STEP_MESSAGE="Retrieving secrets from Bitwarden"
 bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"

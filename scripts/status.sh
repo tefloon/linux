@@ -14,6 +14,17 @@ status_ok() {
         "$CURRENT_STEP_MESSAGE" "$padlen" "" "$GREEN" "$NC"
 }
 
+status_skip() {
+    local YELLOW='\033[0;33m'
+    local NC='\033[0m'
+    local padlen=$(( STATUS_COL - ${#CURRENT_STEP_MESSAGE} - 4 ))
+    printf "\r%s... %*s[%bSKIPPED%b]\n" \
+        "$CURRENT_STEP_MESSAGE" "$padlen" "" "$YELLOW" "$NC"
+    if [[ -n "$1" ]]; then
+        echo -e "${YELLOW}Skipped: $1${NC}" >&2
+    fi
+}
+
 status_error() {
     local RED='\033[0;31m'
     local NC='\033[0m'

@@ -1,21 +1,47 @@
 #!/usr/bin/env bash
-
 set -e
 
-# Parse arguments
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/status.sh"
+
 TEST_MODE=0
 if [[ "$1" == "--test" ]]; then
     TEST_MODE=1
     echo "Running in TEST MODE: secrets will NOT be written to disk."
 fi
 
-# Ensure Bitwarden CLI is installed and jq is available
-command -v bw >/dev/null || { echo "Bitwarden CLI not found!"; exit 1; }
-command -v jq >/dev/null || { echo "jq not found!"; exit 1; }
+CURRENT_STEP_MESSAGE="Checking for Bitwarden CLI"
+status_msg
+command -v bw >/dev/null || status_error
+status_ok
 
-# Log in and unlock Bitwarden
-bw login
-BW_SESSION=$(bw unlock --raw)
+CURRENT_STEP_MESSAGE="Checking for jq CLI"
+status_msg
+command -v jq >/dev/null || status_error
+status_ok
+
+
+CURRENT_STEP_MESSAGE="Checking status of BW authentication"
+status_msg
+BW_STATUS=$(bw status | jq -r .status)
+
+if [[ "$BW_STATUS" == "unauthenticated" ]]; then
+    echo "\nLogging in to Bitwarden..."
+    bw login
+    BW_STATUS=$(bw status | jq -r .status)
+fi
+
+if [[ "$BW_STATUS" == "locked" ]]; then
+    echo "\nUnlocking Bitwarden vault..."
+    BW_SESSION=$(bw unlock --raw)
+elif [[ "$BW_STATUS" == "unlocked" ]]; then
+    # Try to get session from environment, or unlock again if not set
+    if [[ -z "$BW_SESSION" ]]; then
+        BW_SESSION=$(bw unlock --raw)
+    fi
+else
+    status_error "Unknown Bitwarden status"
+fi
 
 # Retrieve the secret from the note field
 SPOTIPY_CLIENT_SECRET=$(bw get item spotipy_secret --session "$BW_SESSION" | jq -r '.notes')
