@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+# Path to pacman.conf
+PACMAN_CONF="/etc/pacman.conf"
+
+# Uncomment [multilib] and its Include line if commented
+sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorlist/ {
+    s/^\s*#\s*\(\[multilib\]\)/\1/
+    s/^\s*#\s*\(Include = \/etc\/pacman.d\/mirrorlist\)/\1/
+}' "$PACMAN_CONF"
+
+# Update package database
+pacman -Sy
+
 install_pkg "atool"
 install_pkg "bat"
 install_pkg "btop"
