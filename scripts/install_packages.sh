@@ -12,7 +12,7 @@ sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorl
 }' "$PACMAN_CONF"
 
 # Update package database
-pacman -Sy --noconfirm > /dev/null 2>&1 || status_error
+sudo pacman -Sy --noconfirm > /dev/null 2>&1 || status_error
 status_ok
 
 install_pkg "atool"
