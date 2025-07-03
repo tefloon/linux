@@ -39,7 +39,6 @@ fi
 
 # Install all packages (system and AUR)
 source "$SCRIPT_DIR/scripts/install_packages.sh"
-# source "$SCRIPT_DIR/scripts/install_gui.sh"  # Uncomment if needed
 
 CURRENT_STEP_MESSAGE="Copying custom scripts"
 status_msg
@@ -50,26 +49,7 @@ for script in "$SCRIPT_DIR/bin/"*; do
 done
 status_ok
 
-# DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
-# DOTFILES_TO_LINK=(
-#     ".zshrc"
-#     ".config/openbox/rc.xml"
-#     ".ssh/config"
-# )
-# for item in "${DOTFILES_TO_LINK[@]}"; do
-#     CURRENT_STEP_MESSAGE="Symlinking $item"
-#     status_msg
-#     src="$DOTFILES_DIR/$item"
-#     dest="$HOME/$item"
-#     mkdir -p "$(dirname "$dest")"
-#     rm -rf "$dest"
-#     if ln -s "$src" "$dest"; then
-#         status_ok
-#     else
-#         status_skip "Failed to link $src to $dest"
-#     fi
-# done
-
+# Symlink dotfiles from the dotfiles folder
 DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
 
 find "$DOTFILES_DIR" -type f | while read -r src; do
@@ -93,6 +73,15 @@ find "$DOTFILES_DIR" -type f | while read -r src; do
         status_skip "Failed to link $src to $dest"
     fi
 done
+
+CONFIG_SCRIPTS_DIR="$SCRIPT_DIR/scripts/config_scripts"
+
+for script in "$CONFIG_SCRIPTS_DIR"/*.sh; do
+    [ -e "$script" ] || continue
+    bash "$script" &
+done
+
+wait  # Wait for all background jobs to finish
 
 add_fstab_entry() {
     local line="$1"

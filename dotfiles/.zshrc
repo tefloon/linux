@@ -163,6 +163,7 @@ export EDITOR='subl -w'
 
 export SPOTIPY_CLIENT_ID='72289e71aafc4e429fc93a96e1414fba'
 export SPOTIPY_REDIRECT_URI='http://127.0.0.1:8888/callback'
+
 # Load Spotipy secret if the file exists
 [ -f "$HOME/.zsh_secrets" ] && source "$HOME/.zsh_secrets"
 
@@ -189,3 +190,8 @@ function y() {
   [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
   rm -f -- "$tmp"
 }
+
+
+PROMPT='
+%{$fg[cyan]%}  %c%{$reset_color%} $(git_prompt_info)
+%{$fg[red]%}%{$fg[green]%}%{$fg[yellow]%}%{$reset_color%} '
