@@ -66,12 +66,10 @@ cd linux
 - **Edit package lists:**  
   Modify `scripts/install_packages.sh` to add/remove packages.
 - **Dotfiles:**  
-  Tweak files in `dotfiles/` as needed.
-- **Openbox config:**  
-  See `dotfiles/.config/openbox/rc.xml` for keybindings and appearance.
-- **Aliases & shell config:**  
-  See `dotfiles/.zshrc`.
-
+  Whatever you put into the `dotfiles/` will get symlinked in the same place in `$HOME`.
+- **Configs:**
+  Add more configuration scripts to `scripts/config_scripts/` - they will get autmatically run on install
+  
 ---
 
 ## Troubleshooting
