@@ -33,7 +33,7 @@ if ! command -v yay >/dev/null 2>&1; then
 fi
 
 source "$SCRIPT_DIR/scripts/install_packages.sh"
-# source "$SCRIPT_DIR/scripts/install_gui.sh"
+# source "$SCRIPT_DIR/scripts/install_gui.sh"  # <-- Needed only with intall on pure Arch
 
 CURRENT_STEP_MESSAGE="Copying custom scripts"
 status_msg
@@ -52,6 +52,7 @@ DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
 DOTFILES_TO_LINK=(
     ".zshrc"
     ".config/openbox/rc.xml"
+    ".ssh/config"
 )
 
 for item in "${DOTFILES_TO_LINK[@]}"; do
@@ -63,6 +64,8 @@ for item in "${DOTFILES_TO_LINK[@]}"; do
 done
 status_ok
 
+
+
 add_fstab_entry() {
     local line="$1"
     grep -qxF "$line" /etc/fstab || echo "$line" | sudo tee -a /etc/fstab > /dev/null
@@ -71,6 +74,10 @@ add_fstab_entry() {
 CURRENT_STEP_MESSAGE="Adding drives to /etc/fstab"
 add_fstab_entry "UUID=3ECEEACFCEEA7F11 /mnt/backups ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
 add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
+status_ok
+
+CURRENT_STEP_MESSAGE="Retrieving secrets from Bitwarden"
+source "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
 status_ok
 
 echo -e "\nAll done! You may want to restart your shell to use new commands."
