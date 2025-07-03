@@ -14,6 +14,10 @@ if [[ $EUID -ne 0 ]]; then
 fi
 status_ok
 
+# --- Define user variables early ---
+USERNAME="${SUDO_USER:-$USER}"
+USER_HOME="/home/$USERNAME"
+
 CURRENT_STEP_MESSAGE="Updating packages"
 status_msg
 pacman -Syu --noconfirm > /dev/null 2>&1 || status_error
@@ -22,7 +26,7 @@ status_ok
 if ! command -v yay >/dev/null 2>&1; then
     CURRENT_STEP_MESSAGE="Installing yay (AUR helper)"
     status_msg
-    sudo -u "$INSTALL_USER" bash -c '
+    sudo -u "$USERNAME" bash -c '
         cd /tmp
         git clone https://aur.archlinux.org/yay.git
         cd yay
@@ -33,38 +37,35 @@ if ! command -v yay >/dev/null 2>&1; then
 fi
 
 source "$SCRIPT_DIR/scripts/install_packages.sh"
-# source "$SCRIPT_DIR/scripts/install_gui.sh"  # <-- Needed only with intall on pure Arch
+# source "$SCRIPT_DIR/scripts/install_gui.sh"  # <-- Needed only with install on pure Arch
 
 CURRENT_STEP_MESSAGE="Copying custom scripts"
 status_msg
-mkdir -p "$HOME/.local/bin"
+sudo -u "$USERNAME" mkdir -p "$USER_HOME/.local/bin"
 for script in "$SCRIPT_DIR/bin/"*; do
     [ -e "$script" ] || continue
-    ln -sf "$script" "$HOME/.local/bin/" || status_error "Failed to link $script"
+    sudo -u "$USERNAME" ln -sf "$script" "$USER_HOME/.local/bin/"
 done
 status_ok
 
 CURRENT_STEP_MESSAGE="Symlinking selected dotfiles and config folders"
 status_msg
 
-DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
-
 DOTFILES_TO_LINK=(
     ".zshrc"
     ".config/openbox/rc.xml"
     ".ssh/config"
 )
+DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
 
 for item in "${DOTFILES_TO_LINK[@]}"; do
     src="$DOTFILES_DIR/$item"
-    dest="$HOME/$item"
-    mkdir -p "$(dirname "$dest")"
-    rm -rf "$dest"
-    ln -s "$src" "$dest" || status_error "Failed to link $src to $dest"
+    dest="$USER_HOME/$item"
+    sudo -u "$USERNAME" mkdir -p "$(dirname "$dest")"
+    sudo -u "$USERNAME" rm -rf "$dest"
+    sudo -u "$USERNAME" ln -s "$src" "$dest" || status_error "Failed to link $src to $dest"
 done
 status_ok
-
-
 
 add_fstab_entry() {
     local line="$1"
@@ -77,7 +78,7 @@ add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fma
 status_ok
 
 CURRENT_STEP_MESSAGE="Retrieving secrets from Bitwarden"
-source "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
+sudo -u "$USERNAME" env HOME="$USER_HOME" bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
 status_ok
 
 echo -e "\nAll done! You may want to restart your shell to use new commands."
