@@ -18,6 +18,7 @@ status_ok
 install_pkg "atool"
 install_pkg "bat"
 install_pkg "btop"
+install_pkg "bitwarden-cli"
 install_pkg "calibre"
 install_pkg "copyq"
 install_pkg "corectrl"
