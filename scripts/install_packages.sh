@@ -6,7 +6,7 @@ status_msg
 
 PACMAN_CONF="/etc/pacman.conf"
 # Uncomment [multilib] and its Include line if commented
-sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorlist/ {
+sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorlist/ {
     s/^\s*#\s*\(\[multilib\]\)/\1/
     s/^\s*#\s*\(Include = \/etc\/pacman.d\/mirrorlist\)/\1/
 }' "$PACMAN_CONF"
