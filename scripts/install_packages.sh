@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
-# Path to pacman.conf
-PACMAN_CONF="/etc/pacman.conf"
 
+CURRENT_STEP_MESSAGE="Enabling multilib"
+status_msg
+
+PACMAN_CONF="/etc/pacman.conf"
 # Uncomment [multilib] and its Include line if commented
 sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorlist/ {
     s/^\s*#\s*\(\[multilib\]\)/\1/
@@ -10,7 +12,8 @@ sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorlist/ 
 }' "$PACMAN_CONF"
 
 # Update package database
-pacman -Sy
+pacman -Sy --noconfirm > /dev/null 2>&1 || status_error
+status_ok
 
 install_pkg "atool"
 install_pkg "bat"
@@ -42,12 +45,12 @@ install_pkg "yazi"
 install_pkg "zsh-syntax-highlighting"
 
 install_aur_pkg "qalc"
-install_aur_pkg "brave-bin"
-install_aur_pkg "code"
-install_aur_pkg "cursor-electron"
-install_aur_pkg "dragon-drop"
-install_aur_pkg "franz-bin"
-install_aur_pkg "onlyoffice-bin"
-install_aur_pkg "spotify"
-install_aur_pkg "spotify-player"
-install_aur_pkg "sublime-text-4"
+# install_aur_pkg "brave-bin"
+# install_aur_pkg "code"
+# install_aur_pkg "cursor-electron"
+# install_aur_pkg "dragon-drop"
+# install_aur_pkg "franz-bin"
+# install_aur_pkg "onlyoffice-bin"
+# install_aur_pkg "spotify"
+# install_aur_pkg "spotify-player"
+# install_aur_pkg "sublime-text-4"
