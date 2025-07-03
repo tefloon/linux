@@ -44,7 +44,7 @@ install_pkg() {
     if sudo pacman -S --noconfirm --needed $pkg > /tmp/pacman.log 2>&1; then
         status_ok
     else
-        status_error "Failed to install $pkg."
+        status_skip "Failed to install $pkg."
     fi
 }
 
@@ -55,6 +55,6 @@ install_aur_pkg() {
     if yay -S --noconfirm --needed $pkg > /tmp/yay.log 2>&1; then
         status_ok
     else
-        status_error "Failed to install $pkg."
+        status_skip "Failed to install $pkg."
     fi
 }

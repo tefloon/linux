@@ -1,4 +1,5 @@
 ## Installation script and dotfiles
+Usage: `./setup.sh`
 
 ## TODO:
 - remove unneeded Archcraft things
