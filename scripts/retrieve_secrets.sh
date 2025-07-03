@@ -14,7 +14,7 @@ command -v bw >/dev/null || { echo "Bitwarden CLI not found!"; exit 1; }
 command -v jq >/dev/null || { echo "jq not found!"; exit 1; }
 
 # Log in and unlock Bitwarden
-# bw login
+bw login
 BW_SESSION=$(bw unlock --raw)
 
 # Retrieve the secret from the note field
