@@ -70,9 +70,11 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions)
+plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # User configuration
 
@@ -129,7 +131,7 @@ setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_REDUCE_BLANKS
 
 # omz
-alias zshconfig="geany ~/.zshrc"
+alias zshconfig="subl ~/.zshrc"
 alias ohmyzsh="thunar ~/.oh-my-zsh"
 
 # ls
@@ -160,9 +162,9 @@ export FZF_CTRL_T_COMMAND='fd --type f --max-depth 2 --exclude .config --exclude
 export EDITOR='subl -w'
 
 export SPOTIPY_CLIENT_ID='72289e71aafc4e429fc93a96e1414fba'
-export SPOTIPY_CLIENT_SECRET='7803c973ec0f4a0b9b189182b2f6680d'
 export SPOTIPY_REDIRECT_URI='http://127.0.0.1:8888/callback'
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Load Spotipy secret if the file exists
+[ -f "$HOME/.zsh_secrets" ] && source "$HOME/.zsh_secrets"
 
 export PATH="$HOME/.local/bin:$PATH"
 
