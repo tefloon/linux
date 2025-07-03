@@ -19,11 +19,6 @@ This repository contains my personal dotfiles and post-installation scripts for 
 ### 1. **Prepare Your System**
 
 - Install [Archcraft](https://archcraft.io/) (Openbox edition recommended)
-- Update your system:
-  ```sh
-  sudo pacman -Syu
-  ```
-- **Remove any conflicting files** (e.g., existing `.zshrc`, `.config/openbox/rc.xml`, etc.) if prompted.
 
 ### 2. **Clone This Repo**
 
