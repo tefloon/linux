@@ -1,75 +1,72 @@
 #!/usr/bin/env bash
 
-# Get the absolute path to the directory where this script resides
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+set -e
 
-# Helper functions to track progress/errors
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/scripts/status.sh"
 
-CURRENT_STEP_MESSAGE="Checking for root privileges"
+CURRENT_STEP_MESSAGE="Checking for sudo"
 status_msg
-if [[ $EUID -ne 0 ]]; then
-    status_error "Please run as root (use sudo)"
-    exit 1
+if ! command -v sudo >/dev/null 2>&1; then
+    status_error "sudo is required. Please install sudo and add your user to the wheel group."
 fi
 status_ok
 
-# --- Define user variables early ---
-USERNAME="${SUDO_USER:-$USER}"
-USER_HOME="/home/$USERNAME"
-
-CURRENT_STEP_MESSAGE="Updating packages"
+CURRENT_STEP_MESSAGE="Updating system packages"
 status_msg
-pacman -Syu --noconfirm > /dev/null 2>&1 || status_error
+sudo pacman -Syu --noconfirm > /dev/null 2>&1 || status_error
 status_ok
 
+# Ensure base-devel is installed (needed for yay and AUR)
+install_pkg "base-devel"
+
+# Install yay if not present
 if ! command -v yay >/dev/null 2>&1; then
     CURRENT_STEP_MESSAGE="Installing yay (AUR helper)"
     status_msg
-    sudo -u "$USERNAME" bash -c '
-        cd /tmp
-        git clone https://aur.archlinux.org/yay.git
-        cd yay
-        makepkg -si --noconfirm
-    ' || status_error "Failed to install yay."
+    git clone https://aur.archlinux.org/yay.git /tmp/yay
+    pushd /tmp/yay > /dev/null
+    makepkg -si --noconfirm
+    popd > /dev/null
     rm -rf /tmp/yay
     status_ok
 fi
 
+# Install all packages (system and AUR)
 source "$SCRIPT_DIR/scripts/install_packages.sh"
-# source "$SCRIPT_DIR/scripts/install_gui.sh"  # <-- Needed only with install on pure Arch
+# source "$SCRIPT_DIR/scripts/install_gui.sh"  # Uncomment if needed
 
 CURRENT_STEP_MESSAGE="Copying custom scripts"
 status_msg
-sudo -u "$USERNAME" mkdir -p "$USER_HOME/.local/bin"
+mkdir -p "$HOME/.local/bin"
 for script in "$SCRIPT_DIR/bin/"*; do
     [ -e "$script" ] || continue
-    sudo -u "$USERNAME" ln -sf "$script" "$USER_HOME/.local/bin/"
+    ln -sf "$script" "$HOME/.local/bin/"
 done
 status_ok
 
 CURRENT_STEP_MESSAGE="Symlinking selected dotfiles and config folders"
 status_msg
-
+DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
 DOTFILES_TO_LINK=(
     ".zshrc"
     ".config/openbox/rc.xml"
     ".ssh/config"
 )
-DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
-
 for item in "${DOTFILES_TO_LINK[@]}"; do
     src="$DOTFILES_DIR/$item"
-    dest="$USER_HOME/$item"
-    sudo -u "$USERNAME" mkdir -p "$(dirname "$dest")"
-    sudo -u "$USERNAME" rm -rf "$dest"
-    sudo -u "$USERNAME" ln -s "$src" "$dest" || status_error "Failed to link $src to $dest"
+    dest="$HOME/$item"
+    mkdir -p "$(dirname "$dest")"
+    rm -rf "$dest"
+    ln -s "$src" "$dest" || status_error "Failed to link $src to $dest"
 done
 status_ok
 
 add_fstab_entry() {
     local line="$1"
-    grep -qxF "$line" /etc/fstab || echo "$line" | sudo tee -a /etc/fstab > /dev/null
+    if ! grep -qxF "$line" /etc/fstab; then
+        echo "$line" | sudo tee -a /etc/fstab > /dev/null
+    fi
 }
 
 CURRENT_STEP_MESSAGE="Adding drives to /etc/fstab"
@@ -78,7 +75,7 @@ add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fma
 status_ok
 
 CURRENT_STEP_MESSAGE="Retrieving secrets from Bitwarden"
-sudo -u "$USERNAME" env HOME="$USER_HOME" bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
+bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
 status_ok
 
 echo -e "\nAll done! You may want to restart your shell to use new commands."
