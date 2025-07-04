@@ -74,12 +74,12 @@ find "$DOTFILES_DIR" -type f | while read -r src; do
     fi
 done
 
-CONFIG_SCRIPTS_DIR="$SCRIPT_DIR/scripts/config_scripts"
+# CONFIG_SCRIPTS_DIR="$SCRIPT_DIR/scripts/config_scripts"
 
-for script in "$CONFIG_SCRIPTS_DIR"/*.sh; do
-    [ -e "$script" ] || continue
-    bash "$script" &
-done
+# for script in "$CONFIG_SCRIPTS_DIR"/*.sh; do
+#     [ -e "$script" ] || continue
+#     bash "$script" &
+# done
 
 wait  # Wait for all background jobs to finish
 
@@ -103,4 +103,4 @@ CURRENT_STEP_MESSAGE="Retrieving secrets from Bitwarden"
 bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
 status_ok
 
-echo -e "\nAll done! You may want to restart your shell to use new commands."
+echo -e "All done! Restart your machine."

@@ -786,7 +786,7 @@
   <!-- ################################ Mouse Settings ################################ -->
   <mouse>
   <context name="Frame">
-    <mousebind button="C-W-Left" action="Press">
+    <mousebind button="C-S-Left" action="Press">
       <action name="Resize"/>
     </mousebind>
   </context>
