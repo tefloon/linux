@@ -50,9 +50,15 @@ cd linux
 - **System packages:** See [`scripts/install_packages.sh`](scripts/install_packages.sh)
 - **AUR packages:** Managed via `yay`
 - **Dotfiles:** Symlinked from `dotfiles/` to your `$HOME`
-- **Custom scripts:** Linked to `~/.local/bin/`
 - **Secrets:** Pulled from Bitwarden and written to `~/.ssh/` and `~/.zsh_secrets`
 - **Openbox:** Custom keybindings, theme, and mouse actions
+
+---
+
+## What to do after install?
+
+- Setup the theme and color scheme for Sublime
+- Import Bookmarks
 
 ---
 
@@ -62,8 +68,6 @@ cd linux
   Modify `scripts/install_packages.sh` to add/remove packages.
 - **Dotfiles:**  
   Whatever you put into the `dotfiles/` will get symlinked in the same place in `$HOME`.
-- **Configs:**
-  Add more configuration scripts to `scripts/config_scripts/` - they will get autmatically run on install
   
 ---
 
@@ -71,10 +75,6 @@ cd linux
 
 - **File exists errors:**  
   Remove conflicting files as instructed, then re-run the setup.
-- **Bitwarden issues:**  
-  Ensure you have [Bitwarden CLI](https://bitwarden.com/help/cli/) installed and are logged in.
-- **AUR helper not found:**  
-  The script will install `yay` if missing.
 - **Permissions:**  
   All scripts are made executable; dotfiles are set to correct permissions.
 
