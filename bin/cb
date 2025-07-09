@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-# Print input and copy to clipboard
-tee >(xclip -selection clipboard)
+# Print input and copy to Wayland clipboard
+tee >(wl-copy)

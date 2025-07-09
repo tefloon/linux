@@ -40,6 +40,16 @@ fi
 # Install all packages (system and AUR)
 source "$SCRIPT_DIR/scripts/install_packages.sh"
 
+CURRENT_STEP_MESSAGE="Setting script permissions"
+status_msg
+# Make all scripts in bin/ executable
+find "$SCRIPT_DIR/bin/" -type f -exec chmod +x {} \;
+# Make the crucial uwsm session script executable
+if [ -f "$SCRIPT_DIR/dotfiles/.config/uwsm/session.sh" ]; then
+    chmod +x "$SCRIPT_DIR/dotfiles/.config/uwsm/session.sh"
+fi
+status_ok
+
 CURRENT_STEP_MESSAGE="Copying custom scripts"
 status_msg
 mkdir -p "$HOME/.local/bin"
@@ -74,6 +84,10 @@ find "$DOTFILES_DIR" -type f | while read -r src; do
     fi
 done
 
+CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"
+status_msg
+sudo ln -sf "$SCRIPT_DIR/dotfiles/hosts" /etc/hosts && status_ok || status_error
+
 # CONFIG_SCRIPTS_DIR="$SCRIPT_DIR/scripts/config_scripts"
 
 # for script in "$CONFIG_SCRIPTS_DIR"/*.sh; do
@@ -81,7 +95,7 @@ done
 #     bash "$script" &
 # done
 
-wait  # Wait for all background jobs to finish
+# wait  # Wait for all background jobs to finish
 
 add_fstab_entry() {
     local line="$1"

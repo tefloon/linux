@@ -32,4 +32,4 @@ while IFS= read -r -d '' file; do
     output+="\`\`\`"$'\n'
 done < <(find "$DIR" -type d -name .git -prune -o -type f -print0 | sort -z)
 
-echo "$output" | tee >(xclip -selection clipboard)
+echo "$output" | tee >(wl-copy)

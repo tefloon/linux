@@ -179,6 +179,15 @@ alias c='clear'
 alias q=qalc
 alias tree='tree -aI ".git|node_modules|__pycache__"'
 
+
+weather() {
+  if [ $# -eq 0 ]; then
+    curl v2d.wttr.in
+  else
+    curl "v2d.wttr.in/$*"
+  fi
+}
+
 # using bat for man pages
 batman() {
     man "$@" | col -bx | bat --language=man

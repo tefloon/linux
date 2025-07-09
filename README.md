@@ -1,15 +1,17 @@
-# Archcraft Post-Install: Dotfiles & Setup Scripts
+# Arch + Hyprland: Dotfiles & Setup Scripts
 
-This repository contains my personal dotfiles and post-installation scripts for quickly configuring a fresh [Archcraft](https://archcraft.io/) (Openbox) system to my preferred environment.
+This repository contains my personal dotfiles and post-installation scripts for quickly configuring a fresh Arch Linux (or EndeavourOS) system with the Hyprland compositor.
+
+The session is managed by `uwsm` for a clean, minimal startup process.
 
 ## Features
 
 - Automated installation of essential packages (official & AUR)
-- Symlinks for dotfiles (`.zshrc`, Openbox config, SSH config, etc.)
+- Symlinks for all configs (`hypr`, `waybar`, `.zshrc`, etc.)
 - Bitwarden CLI integration for secrets (SSH keys, API tokens)
 - Custom scripts and aliases for productivity
-- Openbox keybindings and theming
-- FZF, Zoxide, and other modern CLI tools
+- Hyprland keybindings and theming
+- Wayland-native tooling: `wofi`, `swaylock`, `grim`, `slurp`
 - Easily extensible for VMs or bare metal
 
 ---
@@ -18,82 +20,40 @@ This repository contains my personal dotfiles and post-installation scripts for 
 
 ### 1. **Prepare Your System**
 
-- Install [Archcraft](https://archcraft.io/) (Openbox edition recommended)
-
-### 2. **Clone This Repo**
-
-```sh
-cd ~
-git clone https://github.com/tefloon/linux.git
-cd linux
-```
-
-### 3. **Run the Setup Script**
-
-- For **bare metal**:
+- Install a minimal Arch Linux or EndeavourOS (the "No Desktop" option).
+- Run the `bootstrap.sh` script from this repo as root:
   ```sh
-  ./setup.sh
+  curl -sL https://raw.githubusercontent.com/tefloon/linux/main/bootstrap.sh | bash
   ```
-- For **VM installs** (skips disk mounting):
-  ```sh
-  ./setup.sh --vm
-  ```
+  This will clone the repo to your user's home directory and run the main setup script.
 
-> **Note:**  
-> - You’ll be prompted for your `sudo` password.
-> - Bitwarden CLI will prompt you to log in and unlock your vault for secrets retrieval.
+2. Post-Install
 
----
-
-## What Gets Installed?
-
-- **System packages:** See [`scripts/install_packages.sh`](scripts/install_packages.sh)
-- **AUR packages:** Managed via `yay`
-- **Dotfiles:** Symlinked from `dotfiles/` to your `$HOME`
-- **Secrets:** Pulled from Bitwarden and written to `~/.ssh/` and `~/.zsh_secrets`
-- **Openbox:** Custom keybindings, theme, and mouse actions
+- Reboot your system.
+- At the login screen (SDDM), select the "uwsm" session from the menu.
+- Log in and enjoy your new Hyprland desktop!
 
 ---
 
-## What to do after install?
+What Gets Installed?
 
-- Setup the theme and color scheme for Sublime
-- Import Bookmarks
-
----
-
-## Customization
-
-- **Edit package lists:**  
-  Modify `scripts/install_packages.sh` to add/remove packages.
-- **Dotfiles:**  
-  Whatever you put into the `dotfiles/` will get symlinked in the same place in `$HOME`.
-  
----
-
-## Troubleshooting
-
-- **File exists errors:**  
-  Remove conflicting files as instructed, then re-run the setup.
-- **Permissions:**  
-  All scripts are made executable; dotfiles are set to correct permissions.
+- System packages: See scripts/install_packages.sh
+- AUR packages: Managed via yay
+- Dotfiles: Symlinked from dotfiles/ to your $HOME/.config and other locations.
+- Secrets: Pulled from Bitwarden and written to ~/.ssh/ and ~/.zsh_secrets
 
 ---
 
-## TODO
+Customization
 
-- Remove unneeded Archcraft defaults (e.g., plank)
-- Refine virtual desktop and autostart setup
-
----
-
-## Credits
-
-- Openbox config adapted from [adi1090x](https://github.com/adi1090x)
-- Inspired by various dotfiles and Arch install scripts
+- Edit package lists:
+Modify scripts/install_packages.sh to add/remove packages.
+- Dotfiles:
+Whatever you put into the dotfiles/ directory will get symlinked to the corresponding location in $HOME.
 
 ---
 
-## License
+License
+
 
 Personal use. Fork and adapt as you like!
