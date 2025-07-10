@@ -17,11 +17,6 @@ if ! command -v sudo >/dev/null 2>&1; then
 fi
 status_ok
 
-CURRENT_STEP_MESSAGE="Updating system packages"
-status_msg
-sudo pacman -Syu --noconfirm --overwrite > /dev/null 2>&1 || status_error
-status_ok
-
 # Ensure base-devel is installed (needed for yay and AUR)
 install_pkg "base-devel"
 
@@ -95,7 +90,41 @@ sudo ln -sf "$SCRIPT_DIR/dotfiles/hosts" /etc/hosts && status_ok || status_error
 #     bash "$script" &
 # done
 
-# wait  # Wait for all background jobs to finish
+ASSETS_DIR="$SCRIPT_DIR/assets"
+
+# Find only files with common archive extensions.
+# The -iname flag is for case-insensitive matching (e.g., .zip and .ZIP).
+# The parentheses \( ... \) are crucial for grouping the "-o" (OR) conditions.
+find "$ASSETS_DIR" -type f \( \
+     -iname "*.zip"    -o \
+     -iname "*.tar.gz" -o \
+     -iname "*.tgz"    -o \
+     -iname "*.tar.bz2" -o \
+     -iname "*.tbz2"   -o \
+     -iname "*.tar.xz" -o \
+     -iname "*.txz"    -o \
+     -iname "*.rar"    -o \
+     -iname "*.7z"      \
+\) -print0 | while IFS= read -r -d '' src; do
+    # Compute the path relative to the assets directory
+    relpath="${src#$ASSETS_DIR/}"
+
+    # Determine the destination directory for extraction
+    dest_dir="$HOME/.local/share/$(dirname "$relpath")"
+
+    CURRENT_STEP_MESSAGE="Extracting '$relpath'"
+    status_msg
+
+    # Ensure the destination directory exists
+    mkdir -p "$dest_dir"
+
+    # Extract the archive
+    if atool -X "$dest_dir" "$src"; then
+        status_ok
+    else
+        status_skip
+    fi
+done
 
 add_fstab_entry() {
     local line="$1"
