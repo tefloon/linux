@@ -146,4 +146,14 @@ CURRENT_STEP_MESSAGE="Retrieving secrets from Bitwarden"
 bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
 status_ok
 
+cd "$SCRIPT_DIR"
+CURRENT_STEP_MESSAGE="Ensuring git remote uses SSH"
+status_msg
+current_url=$(git remote get-url origin)
+if [[ "$current_url" != git@github.com:* ]]; then
+    git remote set-url origin "git@github.com:tefloon/linux.git" && status_ok || status_skip
+else
+    status_ok
+fi
+
 echo -e "All done! Restart your machine."

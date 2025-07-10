@@ -24,12 +24,14 @@ get_lang() {
 }
 
 while IFS= read -r -d '' file; do
-    relpath="${file#$DIR/}"
-    lang=$(get_lang "$file")
-    output+=$'\n'"### $relpath"$'\n'
-    output+="\`\`\`${lang}"$'\n'
-    output+="$(cat "$file")"$'\n'
-    output+="\`\`\`"$'\n'
+    if ! file --mime "$file" | grep -q 'charset=binary'; then
+        relpath="${file#$DIR/}"
+        lang=$(get_lang "$file")
+        output+=$'\n'"### $relpath"$'\n'
+        output+="\`\`\`${lang}"$'\n'
+        output+="$(cat "$file")"$'\n'
+        output+="\`\`\`"$'\n'
+    fi
 done < <(find "$DIR" -type d -name .git -prune -o -type f -print0 | sort -z)
 
 echo "$output" | tee >(wl-copy)

@@ -3,7 +3,7 @@ set -e
 
 # === CONFIGURATION ===
 REPO_NAME="linux"  # <-- Change to your repo name
-REPO_URL="https://github.com/tefloon/$REPO_NAME.git"  # <-- Change to your repo URL
+REPO_URL="https://github.com/tefloon/$REPO_NAME.git"
 
 # === 1. Install git if needed ===
 if ! command -v git >/dev/null 2>&1; then
