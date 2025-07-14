@@ -12,6 +12,7 @@ sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorl
 
 # --- HYPRLAND CORE ---
 install_pkg "hyprland"
+install_pkg "hyprpaper"
 install_pkg "waybar"
 install_pkg "wofi"
 install_pkg "kitty"
@@ -61,7 +62,6 @@ install_pkg "zoxide"
 install_pkg "debugedit"
 
 # --- AUR PACKAGES ---
-install_aur_pkg "uwsm-git" # Our session manager
 install_aur_pkg "qalc"
 install_aur_pkg "brave-bin"
 install_aur_pkg "code"

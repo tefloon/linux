@@ -126,6 +126,35 @@ find "$ASSETS_DIR" -type f \( \
     fi
 done
 
+find "$ASSETS_DIR" -type f \( \
+     -iname "*.png"    -o \
+     -iname "*.jpg"    -o \
+     -iname "*.jpeg"    -o \
+     -iname "*.webp"      \
+\) -print0 | while IFS= read -r -d '' src; do
+    # Compute the path relative to the assets directory
+    relpath="${src#$ASSETS_DIR/}"
+
+    # Determine the destination directory for extraction
+    dest="$HOME/.local/share/$relpath"  # Better XDG compliance
+
+    CURRENT_STEP_MESSAGE="Symlinking '$relpath'"
+    status_msg
+
+    # Ensure the destination directory exists
+    mkdir -p "$(dirname "$dest")"
+
+    # Remove any existing file/symlink/directory at the destination
+    rm -rf "$dest"
+
+    # Create the symlink
+    if ln -s "$src" "$dest"; then
+        status_ok
+    else
+        status_skip "Failed to link $src to $dest"
+    fi
+done
+
 add_fstab_entry() {
     local line="$1"
     if ! grep -qxF "$line" /etc/fstab; then
