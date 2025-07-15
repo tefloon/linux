@@ -206,3 +206,6 @@ function y() {
 PROMPT='
 %{$fg[cyan]%}  %c%{$reset_color%} $(git_prompt_info)
 %{$fg[red]%}%{$fg[green]%}%{$fg[yellow]%}%{$reset_color%} '
+
+
+RPROMPT='%{$fg[cyan]%} %{$fg[white]%}%T%{$reset_color%}'

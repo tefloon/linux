@@ -48,7 +48,7 @@ The session is managed by `uwsm` for a clean, minimal startup process.
 - Personal scripts: symlinked from `bin/` to your `$HOME/.local/bin`
   - `cb`: prints to the standard output AND copies to clipboard. Use in a pipe: `cat somefile.txt | cb`
   - `mdd`: recursively traverses the folder, finds text files, formats them in a markdown format, prints them and copies to clipboard. Designed to be used with chatbots and note-taking apps like obsidian
-  - `dim`: a screen-dimming utility for watching movies on multiple-screen setups. Based on great Marcelo Hernandez `dim` (https://github.com/marcelohdez/dim). Write `dim --help` for explanation how to use.
+  - `dim`: a screen-dimming utility for watching movies on multiple-screen setups. Based on great Marcelo Hernandez's `dim` (https://github.com/marcelohdez/dim). Write `dim --help` for explanation how to use.
 - Secrets: Pulled from Bitwarden and written to ~/.ssh/ and ~/.zsh_secrets
 
 ---
