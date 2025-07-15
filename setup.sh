@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-# Parse arguments
-VM_MODE=0
-if [[ "$1" == "--vm" ]]; then
-    VM_MODE=1
-    echo "Running in VM MODE: no disk mounting will take place."
-fi
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/scripts/status.sh"
 

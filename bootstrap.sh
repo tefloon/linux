@@ -63,12 +63,29 @@ add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fma
 cd "$REPO_NAME"
 sudo -u $USERNAME ./setup.sh
 
-# cd "$SCRIPT_DIR"
-# CURRENT_STEP_MESSAGE="Ensuring git remote uses SSH"
-# status_msg
-# current_url=$(git remote get-url origin)
-# if [[ "$current_url" != git@github.com:* ]]; then
-#     git remote set-url origin "git@github.com:tefloon/linux.git" && status_ok || status_skip
-# else
-#     status_ok
-# fi
+# === 6. Setup personal hosts file ===
+echo "Setting up personal hosts file..."
+if [[ -f hosts ]]; then
+    if sudo ln -sf "$(pwd)/hosts" /etc/hosts; then
+        echo "✓ Personal hosts file linked to /etc/hosts"
+    else
+        echo "⚠ Failed to link hosts file"
+    fi
+else
+    echo "⚠ hosts file not found in $(pwd)"
+fi
+
+# === 7. Setup git remote to use SSH (personal preference) ===
+echo "Setting up git remote to use SSH..."
+cd "$USER_HOME/$REPO_NAME"
+
+current_url=$(sudo -u $USERNAME git remote get-url origin 2>/dev/null || echo "")
+if [[ "$current_url" != git@github.com:* ]]; then
+    if sudo -u $USERNAME git remote set-url origin "git@github.com:tefloon/linux.git"; then
+        echo "✓ Git remote updated to use SSH"
+    else
+        echo "⚠ Failed to update git remote (will use HTTPS)"
+    fi
+else
+    echo "✓ Git remote already using SSH"
+fi
