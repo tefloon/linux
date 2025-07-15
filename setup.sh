@@ -39,11 +39,6 @@ CURRENT_STEP_MESSAGE="Setting script permissions"
 status_msg
 # Make all scripts in bin/ executable
 find "$SCRIPT_DIR/bin/" -type f -exec chmod +x {} \;
-# Make the crucial uwsm session script executable
-if [ -f "$SCRIPT_DIR/dotfiles/.config/uwsm/session.sh" ]; then
-    chmod +x "$SCRIPT_DIR/dotfiles/.config/uwsm/session.sh"
-fi
-status_ok
 
 CURRENT_STEP_MESSAGE="Copying custom scripts"
 status_msg
@@ -126,6 +121,8 @@ find "$ASSETS_DIR" -type f \( \
     fi
 done
 
+# Finds all image files and symlinks them to their relative folder in $HOME/.local/share/
+# so /assets/wallpaper/image.png will be symlinked to $HOME/.local/share/wallpaper/image.png
 find "$ASSETS_DIR" -type f \( \
      -iname "*.png"    -o \
      -iname "*.jpg"    -o \
@@ -155,34 +152,8 @@ find "$ASSETS_DIR" -type f \( \
     fi
 done
 
-add_fstab_entry() {
-    local line="$1"
-    if ! grep -qxF "$line" /etc/fstab; then
-        echo "$line" | sudo tee -a /etc/fstab > /dev/null
-    fi
-}
 
-CURRENT_STEP_MESSAGE="Adding drives to /etc/fstab"
-if [[ $VM_MODE -eq 1 ]]; then
-    status_skip "Script running in VM_MODE"
-else
-    add_fstab_entry "UUID=3ECEEACFCEEA7F11 /mnt/backups ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
-    add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
-    status_ok
-fi
-
-CURRENT_STEP_MESSAGE="Retrieving secrets from Bitwarden"
+echo "Starting the secrets retrieval script"
 bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
-status_ok
 
-cd "$SCRIPT_DIR"
-CURRENT_STEP_MESSAGE="Ensuring git remote uses SSH"
-status_msg
-current_url=$(git remote get-url origin)
-if [[ "$current_url" != git@github.com:* ]]; then
-    git remote set-url origin "git@github.com:tefloon/linux.git" && status_ok || status_skip
-else
-    status_ok
-fi
-
-echo -e "All done! Restart your machine."
+echo -e "All done!"

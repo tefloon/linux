@@ -47,6 +47,28 @@ if [[ -d "$REPO_NAME/configs" ]]; then
     find "$REPO_NAME/configs" -type f -exec chmod 644 {} \;
 fi
 
+add_fstab_entry() {
+    local line="$1"
+    if ! grep -qxF "$line" /etc/fstab; then
+        echo "$line" | sudo tee -a /etc/fstab > /dev/null
+    fi
+}
+
+echo "Adding drives to /etc/fstab"
+add_fstab_entry "UUID=3ECEEACFCEEA7F11 /mnt/backups ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
+add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,fmask=133,dmask=022 0 0"
+
+
 # === 5. Run the main setup as the user ===
 cd "$REPO_NAME"
 sudo -u $USERNAME ./setup.sh
+
+# cd "$SCRIPT_DIR"
+# CURRENT_STEP_MESSAGE="Ensuring git remote uses SSH"
+# status_msg
+# current_url=$(git remote get-url origin)
+# if [[ "$current_url" != git@github.com:* ]]; then
+#     git remote set-url origin "git@github.com:tefloon/linux.git" && status_ok || status_skip
+# else
+#     status_ok
+# fi
