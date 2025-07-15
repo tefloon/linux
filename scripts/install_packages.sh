@@ -10,6 +10,8 @@ sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorl
     s/^\s*#\s*\(Include = \/etc\/pacman.d\/mirrorlist\)/\1/
 }' "$PACMAN_CONF"
 
+sudo pacman -Sy --noconfirm --quiet && status_ok || status_error
+
 # --- HYPRLAND CORE ---
 install_pkg "hyprland"
 install_pkg "hyprpaper"
@@ -20,13 +22,13 @@ install_pkg "mako"
 install_pkg "swaylock"
 install_pkg "swayidle"
 install_pkg "wl-clipboard"
-install_pkg "wl-copy"
 install_pkg "grim"
 install_pkg "slurp"
 install_pkg "polkit-kde-agent"
 install_pkg "xdg-desktop-portal-hyprland"
 install_pkg "qt5-wayland"
 install_pkg "qt6-wayland"
+install_pkg "qt5ct"
 
 # --- YOUR EXISTING APPS & UTILITIES ---
 install_pkg "atool"
