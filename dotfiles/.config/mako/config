@@ -1,0 +1,27 @@
+# Mako notification daemon config
+default-timeout=5000
+ignore-timeout=1
+
+# Appearance
+font=JetBrainsMono Nerd Font 11
+background-color=#1a1b26
+text-color=#c0caf5
+border-color=#319be8
+border-size=2
+border-radius=10
+margin=10
+padding=15
+
+# Position
+anchor=top-right
+width=350
+height=150
+
+# Interaction
+on-button-left=dismiss
+on-button-middle=none
+on-button-right=dismiss-all
+
+# Grouping
+group-by=app-name
+max-visible=5
