@@ -209,3 +209,5 @@ PROMPT='
 
 
 RPROMPT='%{$fg[cyan]%} %{$fg[white]%}%T%{$reset_color%}'
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"

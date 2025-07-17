@@ -29,6 +29,7 @@ install_pkg "xdg-desktop-portal-hyprland"
 install_pkg "qt5-wayland"
 install_pkg "qt6-wayland"
 install_pkg "qt5ct"
+install_pkg "qt6ct"
 
 # --- YOUR EXISTING APPS & UTILITIES ---
 install_pkg "atool"
