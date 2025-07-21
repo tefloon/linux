@@ -54,9 +54,6 @@ export FZF_CTRL_T_COMMAND='fd --type f --max-depth 2 --exclude .config --exclude
 
 export EDITOR='subl -w'
 
-export SPOTIPY_CLIENT_ID='72289e71aafc4e429fc93a96e1414fba'
-export SPOTIPY_REDIRECT_URI='http://127.0.0.1:8888/callback'
-
 # Load Spotipy secret if the file exists
 [ -f "$HOME/.zsh_secrets" ] && source "$HOME/.zsh_secrets"
 
