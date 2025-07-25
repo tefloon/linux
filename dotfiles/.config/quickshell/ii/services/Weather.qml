@@ -67,23 +67,28 @@ Singleton {
         root.data = temp;
     }
 
-    function getData() {
-        let command = "curl -s wttr.in";
+function getData() {
+    console.log("[WeatherService] getData() called!");
+    let command = "curl -s wttr.in";
 
-        if (root.gpsActive && root.location.valid) {
-            command += `/${root.location.lat},${root.location.long}`;
-        } else {
-            command += `/${formatCityName(root.city)}`;
-        }
-
-        // format as json
-        command += "?format=j1";
-        command += " | ";
-        // only take the current weather, location, asytronmy data
-        command += "jq '{current: .current_condition[0], location: .nearest_area[0], astronomy: .weather[0].astronomy[0]}'";
-        fetcher.command[2] = command;
-        fetcher.running = true;
+    if (root.gpsActive && root.location.valid) {
+        command += `/${root.location.lat},${root.location.lon}`;
+        console.log(`[WeatherService] Using GPS: ${root.location.lat},${root.location.lon}`);
+    } else {
+        command += "/Warsaw";
+        console.log(`[WeatherService] Using city: Warsaw`);
     }
+
+    // format as json
+    command += "?format=j1";
+    command += " | ";
+    // only take the current weather, location, asytronmy data
+    command += "jq '{current: .current_condition[0], location: .nearest_area[0], astronomy: .weather[0].astronomy[0]}'";
+    
+    console.log(`[WeatherService] Full command: ${command}`);
+    fetcher.command[2] = command;
+    fetcher.running = true;
+}
 
     function formatCityName(cityName) {
         return cityName.trim().split(/\s+/).join('+');
@@ -121,11 +126,11 @@ Singleton {
             // update the location if the given location is valid
             // if it fails getting the location, use the last valid location
             if (position.latitudeValid && position.longitudeValid) {
-                root.location.lat = position.coordinate.latitude;
-                root.location.long = position.coordinate.longitude;
-                root.location.valid = true;
-                // console.info(`📍 Location: ${position.coordinate.latitude}, ${position.coordinate.longitude}`);
-                root.getData();
+                    root.location.lat = position.coordinate.latitude;
+                    root.location.lon = position.coordinate.longitude;  // Also fix this bug
+                    root.location.valid = true;
+                    // console.info(`📍 Location: ${position.coordinate.latitude}, ${position.coordinate.longitude}`);
+                    root.getData();
                 // if can't get initialized with valid location deactivate the GPS
             } else {
                 root.gpsActive = root.location.valid ? true : false;
@@ -149,6 +154,9 @@ Singleton {
         repeat: true
         interval: root.fetchInterval
         triggeredOnStart: !root.gpsActive
-        onTriggered: root.getData()
+            onTriggered: {
+        console.log("[WeatherService] Timer triggered!");
+        root.getData();
+    }
     }
 }
