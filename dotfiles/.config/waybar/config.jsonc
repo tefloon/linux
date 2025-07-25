@@ -53,15 +53,15 @@
             "magic:special": [],
         }
     },
-    "memory": {
+    "hyprland/memory": {
         "interval": 5,
         "format": "󰍛 {}%",
         "max-length": 10
     },
-    "tray": {
+    "hyprland/tray": {
         "spacing": 10
     },
-    "clock": {
+    "hyprland/clock": {
         "tooltip-format": "{calendar}",
         "format-alt": "  {:%d %B %Y, %A}",
         "format": "  {:%H:%M}",
