@@ -67,7 +67,7 @@ install_pkg "zoxide"
 install_pkg "debugedit"
 
 # --- AUR PACKAGES ---
-install_aur_pkg "qalc"
+install_aur_pkg "quickshell"
 install_aur_pkg "brave-bin"
 install_aur_pkg "code"
 install_aur_pkg "cursor-electron"

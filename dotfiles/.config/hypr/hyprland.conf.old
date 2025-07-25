@@ -1,0 +1,294 @@
+# #######################################################################################
+# Hyprland Configuration for a Clean, Functional Desktop
+# #######################################################################################
+
+# See https://wiki.hyprland.org/Configuring/Monitors/
+monitor = HDMI-A-2, 1920x1080@60, 0x0, 1
+monitor = DP-1,     1920x1080@60, 1920x0, 1
+monitor = HDMI-A-1, 1920x1080@60, 3840x0, 1
+
+# Workspaces
+# Assign workspaces to specific monitors
+workspace = 3, monitor:HDMI-A-1, default[true]
+workspace = 1, monitor:HDMI-A-2, default[true]
+workspace = 2, monitor:DP-1, default[true]
+
+workspace = 6, monitor:HDMI-A-1
+workspace = 4, monitor:HDMI-A-2
+workspace = 5, monitor:DP-1
+
+# -----------------------------------------------------
+# Environment Variables
+# -----------------------------------------------------
+# Cursor theme
+env = HYPRCURSOR_THEME,HyprBibataModernClassicSVG
+env = HYPRCURSOR_SIZE,24
+
+env = GTK_THEME,Adwaita:dark
+
+env = XCURSOR_THEME,Bibata-Modern-Classic
+env = XCURSOR_SIZE,24
+
+# Remove Kvantum override completely
+# env = QT_STYLE_OVERRIDE,kvantum
+
+env = OZONE_PLATFORM,wayland
+# -----------------------------------------------------
+# Global Settings
+# -----------------------------------------------------
+$terminal = kitty
+$notes = obsidian
+$fileManager = dolphin
+$menu = /home/tefloon/.config/wofi/wofi-toggle.sh
+$mainMod = SUPER
+$animSpeed = 2
+$editor = subl
+$browser = thorium-browser
+
+# -----------------------------------------------------
+# Autostart (Programs to launch on login)
+# -----------------------------------------------------
+exec-once = waybar # Your status bar
+exec-once = mako # Your notification daemon
+exec-once = hyprpaper # Your wallpaper daemon
+exec-once = kdeconnectd
+exec-once = kdeconnect-indicator
+exec-once = /usr/lib/polkit-kde-authentication-agent-1 # Handles privilege requests
+# exec-once = swayidle -w timeout 300 'swaylock -f' timeout 600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on' # Idle management
+exec-once = dbus-update-activation-environment --systemd --all # Helps apps find the session
+exec-once = systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
+# In your Hyprland config
+exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+
+# exec-once = [workspace 1 silent] subl
+exec-once = [workspace 2 silent] $browser
+exec-once = [workspace 4 silent] ferdium
+exec-once = [workspace 3 silent] kitty
+exec-once = [workspace special:magic silent] obsidian
+
+# -----------------------------------------------------
+# Input Devices & Keyboard Layout
+# -----------------------------------------------------
+input {
+    kb_layout = pl
+    kb_options = caps:super # <-- This makes your Caps Lock key another Super key!
+
+    # --- Faster keyboard repeat settings ---
+    repeat_rate = 50
+    repeat_delay = 250
+
+    follow_mouse = 1
+    accel_profile = flat
+    sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
+
+    touchpad {
+        natural_scroll = no
+    }
+
+}
+
+# -----------------------------------------------------
+# General Appearance & Layout
+# -----------------------------------------------------
+general {
+    gaps_in = 5
+    gaps_out = 5
+    border_size = 2
+    col.active_border = rgba(319be8ee) rgba(31e864ee) 30deg
+    col.inactive_border = rgba(595959aa)
+    layout = dwindle
+    allow_tearing = false
+    resize_on_border = true
+    hover_icon_on_border = true
+    
+ #   snap{
+ #       enabled: true
+ #   }
+
+ #   cursor_inactive_timeout = 1
+   # no_cursor_warps = true
+}
+
+dwindle {
+    pseudotile = yes
+    preserve_split = yes
+}
+
+# -----------------------------------------------------
+# Decoration (Rounding, Shadows, Blur)
+# -----------------------------------------------------
+decoration {
+    rounding = 10
+    rounding_power = 4
+
+    active_opacity = 1
+    dim_strength = 0.1
+    
+    blur {
+        enabled = true
+        size = 5        # Increased from 4
+        passes = 4      # Increased from 3
+        new_optimizations = true
+        xray = true     # This helps with layerrule xray
+    }
+}
+
+# -----------------------------------------------------
+# Animations
+# -----------------------------------------------------
+animations {
+    enabled = yes, please :)
+
+    # --- MODIFIED: A snappier bezier curve ---
+    bezier = snappy, 0.17, 0.9, 0.2, 1.0
+
+    # --- MODIFIED: Faster animation speeds (LOWER number = faster) ---
+    animation = windows, 1, $animSpeed, snappy
+    animation = windowsOut, 1, $animSpeed, default, popin 80%
+    animation = border, 1, $animSpeed, default
+    animation = borderangle, 1, $animSpeed, default
+    animation = fade, 1, $animSpeed, default
+    animation = workspaces, 1, $animSpeed, default
+
+    animation = layers, 1, $animSpeed, snappy
+}
+
+# -----------------------------------------------------
+# Window Rules
+# -----------------------------------------------------
+windowrulev2 = float, class:^(org.kde.dolphin)$
+windowrulev2 = float,class:^(com.github.hluk.copyq)$
+windowrulev2 = float,class:^(org.pulseaudio.pavucontrol)$   # make the audio control float
+windowrulev2 = float,class:^(org.kde.kdeconnect.app)$   
+windowrulev2 = float,class:^(org.kde.kdeconnect.sms)$  
+windowrulev2 = float,class:^(brave)$                        # make brave file picker floar
+windowrulev2 = float, class:^(Beyond-All-Reason)$,
+
+windowrulev2 = suppressevent maximize, class:.*             # Ignore maximize requests from apps
+
+windowrulev2 = size 800x600,class:^(org.kde.kdeconnect.app)$   
+windowrulev2 = size 800x600,class:^(org.kde.kdeconnect.sms)$ 
+
+$opacity = 0.85
+
+# per-window opacity
+windowrulev2 = opacity $opacity, class:^(Ferdium)$
+windowrulev2 = opacity $opacity, class:^(kitty)$
+windowrulev2 = opacity $opacity, class:^(sublime_text)$
+windowrulev2 = opacity $opacity, class:^(code-oss)$
+windowrulev2 = opacity $opacity, class:^(Thorium-browser)$
+windowrulev2 = fullscreen, class:^(spring)$,
+
+# YouTube app is full opaque
+windowrulev2 = opacity 1, initialTitle:^(YouTube)$
+
+
+#placement
+windowrulev2 = workspace 4, class:^(Ferdium)$
+
+# fix for blur around the menus and such
+windowrulev2 = noblur, class:^()$
+windowrulev2 = noblur, class:^(Xdg-desktop-portal-gtk)$
+windowrulev2 = noborder, class:^(Xdg-desktop-portal-gtk)$
+windowrulev2 = noblur, floating:1, class:^()$
+
+# waybar rules
+# Remove the current waybar layer rules and replace with these:
+layerrule = blur, waybar
+layerrule = ignorezero, waybar
+# Or try this combination:
+# layerrule = blur, waybar  
+# layerrule = ignorealpha 0.1, waybar
+
+windowrulev2 = noblur, title:YouTube
+
+# -----------------------------------------------------
+# Keybindings
+# -----------------------------------------------------
+
+# --- Application Launchers ---
+bind = $mainMod, T, exec, $terminal
+bind = $mainMod, D, exec, $menu
+bind = $mainMod, F, exec, $notes
+# bind = $mainMod, E, exec, $fileManager
+
+bind = $mainMod, R, exec, $editor
+bind = $mainMod, B, exec, $browser --ozone-platform=wayland
+
+# --- Window Management ---
+bind = $mainMod, Q, killactive,
+bind = $mainMod, V, togglefloating,
+bind = $mainMod, V, togglefloating,
+bind = $mainMod, P, pseudo, # Toggle pseudotiling
+bind = $mainMod, J, togglesplit, # Toggle split direction
+
+# --- Move Focus ---
+bind = $mainMod, left, movefocus, l
+bind = $mainMod, right, movefocus, r
+bind = $mainMod, up, movefocus, u
+bind = $mainMod, down, movefocus, d
+
+# --- Move Active Window ---
+bind = $mainMod SHIFT, left, movewindow, l
+bind = $mainMod SHIFT, right, movewindow, r
+bind = $mainMod SHIFT, up, movewindow, u
+bind = $mainMod SHIFT, down, movewindow, d
+
+# --- Workspace Switching ---
+bind = $mainMod, 1, workspace, 1
+bind = $mainMod, 2, workspace, 2
+bind = $mainMod, 3, workspace, 3
+bind = $mainMod, 4, workspace, 4
+bind = $mainMod, 5, workspace, 5
+bind = $mainMod, 6, workspace, 6
+bind = $mainMod, 7, workspace, 7
+bind = $mainMod, 8, workspace, 8
+bind = $mainMod, 9, workspace, 9
+bind = $mainMod, 0, workspace, 10
+
+# --- Move Window to Workspace ---
+bind = $mainMod SHIFT, 1, movetoworkspace, 1
+bind = $mainMod SHIFT, 2, movetoworkspace, 2
+bind = $mainMod SHIFT, 3, movetoworkspace, 3
+bind = $mainMod SHIFT, 4, movetoworkspace, 4
+bind = $mainMod SHIFT, 5, movetoworkspace, 5
+bind = $mainMod SHIFT, 6, movetoworkspace, 6
+bind = $mainMod SHIFT, 7, movetoworkspace, 7
+bind = $mainMod SHIFT, 8, movetoworkspace, 8
+bind = $mainMod SHIFT, 9, movetoworkspace, 9
+bind = $mainMod SHIFT, 0, movetoworkspace, 10
+
+# --- Special Workspace (Scratchpad) ---
+bind = $mainMod, S, togglespecialworkspace, magic
+bind = $mainMod SHIFT, S, movetoworkspace, special:magic
+
+
+# --- Mouse and Scrolling ---
+bind = $mainMod, mouse_down, workspace, e+1
+bind = $mainMod, mouse_up, workspace, e-1
+bindm = $mainMod, mouse:272, movewindow
+bindm = $mainMod, mouse:273, resizewindow
+
+# --- System Actions ---
+bind = $mainMod SHIFT, E, exit, # Exit Hyprland
+bind = $mainMod, L, exec, swaylock # Lock the screen
+
+# --- Screenshots (Wayland Native) ---
+bind = , Print, exec, grim -g "$(slurp)" - | wl-copy
+
+# --- Multimedia Keys ---
+bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
+bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindel = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+bindel = ,XF86MonBrightnessUp, exec, brightnessctl set 5%+
+bindel = ,XF86MonBrightnessDown, exec, brightnessctl set 5%-
+bindl = , XF86AudioNext, exec, playerctl next
+bindl = , XF86AudioPrev, exec, playerctl previous
+bindl = , XF86AudioPlay, exec, playerctl play-pause
+
+# Keybind to show a notification with the active window's class AND title.
+bind = $mainMod, I, exec, notify-send "Window Info" "$(hyprctl activewindow | awk '/class:/ {print "Class: " $2} /title:/ { $1=""; print "Title: " substr($0, 2) }')" | cb
+# bind = $mainMod, I, exec, $(hyprctl activewindow | awk '/class:/ {print $2}' | wl-copy) 
+bind = $mainMod, Y, exec, /opt/thorium-browser/thorium-browser --profile-directory=Default --app-id=agimnkijcaahngcdmfeangaknmldooml

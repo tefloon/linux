@@ -1,0 +1,10 @@
+# Disable IPC for better battery life
+# ipc = off
+
+# Preload Kath's contest-winning wallpaper
+preload = /home/tefloon/.local/share/wallpapers/kath.png
+# preload = /home/tefloon/.local/share/wallpapers/califlour.png
+
+# Set wallpaper for all monitors
+wallpaper = , /home/tefloon/.local/share/wallpapers/kath.png
+# wallpaper = , /home/tefloon/.local/share/wallpapers/califlour.png
