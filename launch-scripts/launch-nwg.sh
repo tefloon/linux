@@ -1,0 +1,1 @@
+nwg-dock-hyprland -d -o "DP-1" -p "bottom" -i 24 -mb 5 -hd 0 -nolauncher -iw "special"

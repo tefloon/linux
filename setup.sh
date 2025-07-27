@@ -67,6 +67,12 @@ find "$DOTFILES_DIR" -type f | while read -r src; do
     fi
 done
 
+CURRENT_STEP_MESSAGE="Symlinking launch scripts"
+status_msg
+mkdir -p "$HOME/.local/share"
+ln -sf "$SCRIPT_DIR/launch-scripts" "$HOME/.local/share/launch-scripts"
+status_ok
+
 CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"
 status_msg
 sudo ln -sf "$SCRIPT_DIR/dotfiles/hosts" /etc/hosts && status_ok || status_error
