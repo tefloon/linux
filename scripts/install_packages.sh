@@ -10,6 +10,7 @@ sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorl
     s/^\s*#\s*\(Include = \/etc\/pacman.d\/mirrorlist\)/\1/
 }' "$PACMAN_CONF"
 
+# the following line kept giving me errors, that's why it's commented out
 # sudo pacman -Sy --noconfirm --quiet && status_ok || status_error
 
 # --- HYPRLAND CORE ---

@@ -11,7 +11,7 @@ if [[ -f "$STATE_FILE" ]]; then
     
     # Restore settings manually instead of full reload
     hyprctl --batch "keyword animations:enabled yes; keyword decoration:shadow:enabled true; keyword decoration:blur:enabled true; keyword general:gaps_in 4; keyword general:gaps_out 5; keyword general:border_size 1; keyword decoration:rounding 18; keyword general:allow_tearing true; keyword input:kb_options caps:super; keyword input:kb_model ''"
-    /home/tefloon/.local/share/launch-scripts/launch-nwg.sh
+    $HOME/.local/share/launch-scripts/launch-nwg.sh
 
     notify-send "Game Mode" "Disabled - Full desktop restored" -t 2000
 else
