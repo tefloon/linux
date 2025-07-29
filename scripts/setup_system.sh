@@ -15,6 +15,12 @@ else
     status_skip "Already using zsh"
 fi
 
+CURRENT_STEP_MESSAGE="Setting system dark theme preference"
+status_msg
+gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+status_ok
+
 CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"
 status_msg
 sudo ln -sf "$SCRIPT_DIR/../dotfiles/hosts" /etc/hosts && status_ok || status_error
