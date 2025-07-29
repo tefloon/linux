@@ -65,6 +65,8 @@ alias dgd='dragon-drop -x'
 alias cd..='cd ..'
 alias c='clear'
 alias q=qalc
+alias wen='wiki-tui'
+alias wpl='wiki-tui -l PL'
 alias tree='tree -aI ".git|node_modules|__pycache__"'
 
 

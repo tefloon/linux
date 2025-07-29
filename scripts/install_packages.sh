@@ -10,7 +10,7 @@ sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorl
     s/^\s*#\s*\(Include = \/etc\/pacman.d\/mirrorlist\)/\1/
 }' "$PACMAN_CONF"
 
-sudo pacman -Sy --noconfirm --quiet && status_ok || status_error
+# sudo pacman -Sy --noconfirm --quiet && status_ok || status_error
 
 # --- HYPRLAND CORE ---
 install_pkg "hyprland"
@@ -52,6 +52,7 @@ install_pkg "nwg-dock-hyprland"
 install_pkg "obsidian"
 install_pkg "openssl"
 install_pkg "openssh"
+install_pkg "ollama-rocm"
 install_pkg "qbittorrent"
 install_pkg "spotifyd"
 install_pkg "steam"
@@ -61,6 +62,7 @@ install_pkg "ttf-fira-code"
 install_pkg "ugrep"
 install_pkg "unrar"
 install_pkg "virtualbox"
+install_pkg "wiki-tui"
 install_pkg "yazi"
 install_pkg "zsh-syntax-highlighting"
 install_pkg "zsh-autosuggestions"
