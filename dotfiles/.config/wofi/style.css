@@ -12,24 +12,35 @@ window {
 
 #outer-box {
     background-color: rgba(0, 0, 0, 0);
+    border-radius: 8px;
 }
 
 #scroll {
     background-color: rgba(40, 40, 40, 0.9);
-    border-radius: 8px;
+    /*background-color: red;*/
+    /*border-radius: 8px;*/
     margin-top: 4px;
+    border-radius: 8px;
+}
+
+#inner-box{
+    border-radius: 8px;
 }
 
 #entry {
-    background-color: rgba(40, 40, 40, 0.9);
+    /*background-color: rgba(40, 40, 40, 0.9);*/
     color: white;
     padding: 8px 12px;
-    margin: 2px;
-    border-radius: 4px;
+    margin: 0px;
+    border: none;
+    /*border-radius: 4px;*/
 }
 
 #entry:selected {
+    border: none !important;
     background-color: rgba(80, 80, 80, 0.9);
+    border-radius: inherit;
+    outline: none;
 }
 
 #text {
