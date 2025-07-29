@@ -220,6 +220,8 @@ cd linux
 ```bash
 # Back on your main user
 sudo userdel -r testuser
+```
+
 ---
 
 ## License
