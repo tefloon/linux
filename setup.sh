@@ -25,134 +25,26 @@ if ! command -v yay >/dev/null 2>&1; then
     status_ok
 fi
 
-# Install all packages (system and AUR)
+# Run individual setup scripts
+echo "=== Installing packages ==="
 source "$SCRIPT_DIR/scripts/install_packages.sh"
 
-CURRENT_STEP_MESSAGE="Setting script permissions"
-status_msg
-# Make all scripts in bin/ executable
-find "$SCRIPT_DIR/bin/" -type f -exec chmod +x {} \;
+echo "=== Setting up custom scripts ==="
+bash "$SCRIPT_DIR/scripts/setup_scripts.sh"
 
-CURRENT_STEP_MESSAGE="Copying custom scripts"
-status_msg
-mkdir -p "$HOME/.local/bin"
-for script in "$SCRIPT_DIR/bin/"*; do
-    [ -e "$script" ] || continue
-    ln -sf "$script" "$HOME/.local/bin/"
-done
-status_ok
+echo "=== Setting up dotfiles ==="
+bash "$SCRIPT_DIR/scripts/setup_dotfiles.sh"
 
-# Symlink dotfiles from the dotfiles folder
-DOTFILES_DIR="$SCRIPT_DIR/dotfiles"
+echo "=== Setting up launch scripts ==="
+bash "$SCRIPT_DIR/scripts/setup_launch_scripts.sh"
 
-find "$DOTFILES_DIR" -type f | while read -r src; do
-    # Compute the relative path from $DOTFILES_DIR
-    relpath="${src#$DOTFILES_DIR/}"
-    dest="$HOME/$relpath"
+echo "=== Setting up assets ==="
+bash "$SCRIPT_DIR/scripts/setup_assets.sh"
 
-    CURRENT_STEP_MESSAGE="Symlinking $relpath"
-    status_msg
+echo "=== Setting up system configurations ==="
+bash "$SCRIPT_DIR/scripts/setup_system.sh"
 
-    # Ensure the parent directory exists
-    mkdir -p "$(dirname "$dest")"
-
-    # Remove any existing file/symlink/directory at the destination
-    rm -rf "$dest"
-
-    # Create the symlink
-    if ln -s "$src" "$dest"; then
-        status_ok
-    else
-        status_skip "Failed to link $src to $dest"
-    fi
-done
-
-CURRENT_STEP_MESSAGE="Symlinking launch scripts"
-status_msg
-mkdir -p "$HOME/.local/share"
-ln -sf "$SCRIPT_DIR/launch-scripts" "$HOME/.local/share/launch-scripts"
-status_ok
-
-CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"
-status_msg
-sudo ln -sf "$SCRIPT_DIR/dotfiles/hosts" /etc/hosts && status_ok || status_error
-
-# CONFIG_SCRIPTS_DIR="$SCRIPT_DIR/scripts/config_scripts"
-
-# for script in "$CONFIG_SCRIPTS_DIR"/*.sh; do
-#     [ -e "$script" ] || continue
-#     bash "$script" &
-# done
-
-ASSETS_DIR="$SCRIPT_DIR/assets"
-
-# Find only files with common archive extensions.
-# The -iname flag is for case-insensitive matching (e.g., .zip and .ZIP).
-# The parentheses \( ... \) are crucial for grouping the "-o" (OR) conditions.
-find "$ASSETS_DIR" -type f \( \
-     -iname "*.zip"    -o \
-     -iname "*.tar.gz" -o \
-     -iname "*.tgz"    -o \
-     -iname "*.tar.bz2" -o \
-     -iname "*.tbz2"   -o \
-     -iname "*.tar.xz" -o \
-     -iname "*.txz"    -o \
-     -iname "*.rar"    -o \
-     -iname "*.7z"      \
-\) -print0 | while IFS= read -r -d '' src; do
-    # Compute the path relative to the assets directory
-    relpath="${src#$ASSETS_DIR/}"
-
-    # Determine the destination directory for extraction
-    dest_dir="$HOME/.local/share/$(dirname "$relpath")"
-
-    CURRENT_STEP_MESSAGE="Extracting '$relpath'"
-    status_msg
-
-    # Ensure the destination directory exists
-    mkdir -p "$dest_dir"
-
-    # Extract the archive
-    if atool -X "$dest_dir" "$src"; then
-        status_ok
-    else
-        status_skip
-    fi
-done
-
-# Finds all image files and symlinks them to their relative folder in $HOME/.local/share/
-# so /assets/wallpaper/image.png will be symlinked to $HOME/.local/share/wallpaper/image.png
-find "$ASSETS_DIR" -type f \( \
-     -iname "*.png"    -o \
-     -iname "*.jpg"    -o \
-     -iname "*.jpeg"    -o \
-     -iname "*.webp"      \
-\) -print0 | while IFS= read -r -d '' src; do
-    # Compute the path relative to the assets directory
-    relpath="${src#$ASSETS_DIR/}"
-
-    # Determine the destination directory for extraction
-    dest="$HOME/.local/share/$relpath"  # Better XDG compliance
-
-    CURRENT_STEP_MESSAGE="Symlinking '$relpath'"
-    status_msg
-
-    # Ensure the destination directory exists
-    mkdir -p "$(dirname "$dest")"
-
-    # Remove any existing file/symlink/directory at the destination
-    rm -rf "$dest"
-
-    # Create the symlink
-    if ln -s "$src" "$dest"; then
-        status_ok
-    else
-        status_skip "Failed to link $src to $dest"
-    fi
-done
-
-
-echo "Starting the secrets retrieval script"
+echo "=== Retrieving secrets ==="
 bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
 
 echo -e "All done!"
