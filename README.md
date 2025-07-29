@@ -192,6 +192,34 @@ Waybar includes a game mode toggle (🎮) that:
 - Removes gaps and rounding
 - Enables tearing for better gaming performance
 
+### Testing
+#### 1. Create a new user with
+```bash
+sudo useradd -m testuser -G wheel
+sudo passwd testuser
+# Set a simple password you'll remember
+```
+
+#### 2. Reboot
+```bash
+bashsudo reboot
+```
+
+#### 3. Once logged in as testuser
+Open a terminal and run:
+```bash
+bashwhoami          # Verify you're testuser
+echo $HOME      # Should be /home/testuser
+cd ~
+git clone https://github.com/tefloon/linux.git
+cd linux
+./setup.sh
+```
+
+#### 4. Clean up
+```bash
+# Back on your main user
+sudo userdel -r testuser
 ---
 
 ## License
