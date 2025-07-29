@@ -202,13 +202,13 @@ sudo passwd testuser
 
 #### 2. Reboot
 ```bash
-bashsudo reboot
+reboot
 ```
 
 #### 3. Once logged in as testuser
 Open a terminal and run:
 ```bash
-bashwhoami          # Verify you're testuser
+whoami          # Verify you're testuser
 echo $HOME      # Should be /home/testuser
 cd ~
 git clone https://github.com/tefloon/linux.git
