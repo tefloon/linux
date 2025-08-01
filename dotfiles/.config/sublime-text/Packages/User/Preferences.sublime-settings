@@ -1,0 +1,13 @@
+{
+	"ignored_packages":
+	[
+		"Formatter",
+		"JsFormat",
+		"QML",
+		"Vintage",
+	],
+	"theme": "Enki-Theme.sublime-theme",
+	"color_scheme": "Packages/Enki Theme/scheme/Enki-Tokyo-Night.tmTheme",
+	"font_size": 12,
+	"index_files": true,
+}
