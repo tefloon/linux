@@ -1,0 +1,189 @@
+[ColorEffects:Disabled]
+ChangeSelectionColor=
+Color=#1d1d23
+ColorAmount=0.5
+ColorEffect=3
+ContrastAmount=0
+ContrastEffect=0
+Enable=
+IntensityAmount=0
+IntensityEffect=0
+
+[ColorEffects:Inactive]
+ChangeSelectionColor=true
+Color=#0d0e13
+ColorAmount=0.025
+ColorEffect=0
+ContrastAmount=0.1
+ContrastEffect=0
+Enable=true
+IntensityAmount=0
+IntensityEffect=0
+
+[Colors:Button]
+BackgroundAlternate=#46464f
+BackgroundNormal=#292a2f
+DecorationFocus=#b6c0fc
+DecorationHover=#b6c0fc
+ForegroundActive=#e3e1e9
+ForegroundInactive=#90909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#e3e1e9
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Complementary]
+BackgroundAlternate=#101116
+BackgroundNormal=#1d1d23
+DecorationFocus=#b6c0fc
+DecorationHover=#b6c0fc
+ForegroundActive=#e3e1e9
+ForegroundInactive=#90909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c6c5d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Header]
+BackgroundAlternate=#1d1d23
+BackgroundNormal=#1d1d23
+DecorationFocus=#b6c0fc
+DecorationHover=#b6c0fc
+ForegroundActive=#e3e1e9
+ForegroundInactive=#90909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c6c5d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Header][Inactive]
+BackgroundAlternate=#1d1d23
+BackgroundNormal=#1d1d23
+DecorationFocus=#b6c0fc
+DecorationHover=#b6c0fc
+ForegroundActive=#e3e1e9
+ForegroundInactive=#90909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c6c5d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Selection]
+BackgroundAlternate=#b6c0fc
+BackgroundNormal=#b6c0fc
+DecorationFocus=#b6c0fc
+DecorationHover=#c3c5dd
+ForegroundActive=#212c61
+ForegroundInactive=#212c61
+ForegroundLink=#004b73
+ForegroundNegative=#920023
+ForegroundNeutral=#753400
+ForegroundNormal=#212c61
+ForegroundPositive=#005228
+ForegroundVisited=#74009f
+
+[Colors:Tooltip]
+BackgroundAlternate=#46464f
+BackgroundNormal=#1d1d23
+DecorationFocus=#b6c0fc
+DecorationHover=#b6c0fc
+ForegroundActive=#e3e1e9
+ForegroundInactive=#90909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#e3e1e9
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:View]
+BackgroundAlternate=#1d1d23
+BackgroundNormal=#101116
+DecorationFocus=#b6c0fc
+DecorationHover=#505b92
+ForegroundActive=#e3e1e9
+ForegroundInactive=#90909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#e3e1e9
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[Colors:Window]
+BackgroundAlternate=#46464f
+BackgroundNormal=#1d1d23
+DecorationFocus=#b6c0fc
+DecorationHover=#b6c0fc
+ForegroundActive=#8fc9fc
+ForegroundInactive=#90909a
+ForegroundLink=#8fc9fc
+ForegroundNegative=#ffb3b4
+ForegroundNeutral=#fcb38a
+ForegroundNormal=#c6c5d0
+ForegroundPositive=#00e479
+ForegroundVisited=#ebb2ff
+
+[DirSelect Dialog]
+DirSelectDialog Size=869,593
+History Items[$e]=file:$HOME/projects/engai
+Splitter State=\x00\x00\x00\xff\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\xbd\x00\x00\x02\xa8\x00\xff\xff\xff\xff\x01\x00\x00\x00\x01\x00
+
+[General]
+ColorScheme=MaterialYouDark
+ColorSchemeHash=744630363596c101b8c29cbc66f996bb7948b004
+LastUsedCustomAccentColor=184,117,220
+TerminalApplication=kitty -1
+XftHintStyle=hintslight
+XftSubPixel=none
+fixed=JetBrainsMono Nerd Font,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+font=Rubik,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+menuFont=Rubik,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+smallestReadableFont=Rubik,9,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+toolBarFont=Rubik,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+
+[Icons]
+Theme=breeze-plus-dark
+
+[KDE]
+widgetStyle=Darkly
+
+[KFileDialog Settings]
+Allow Expansion=false
+Automatically select filename extension=true
+Breadcrumb Navigation=true
+Decoration position=0
+LocationCombo Completionmode=5
+PathCombo Completionmode=5
+Show Bookmarks=false
+Show Full Path=false
+Show Inline Previews=true
+Show Preview=false
+Show Speedbar=true
+Show hidden files=false
+Sort by=Name
+Sort directories first=true
+Sort hidden files last=false
+Sort reversed=false
+Speedbar Width=168
+View Style=Detail
+
+[Sounds]
+Theme=freedesktop
+
+[WM]
+activeBackground=50,50,56
+activeBlend=252,252,252
+activeFont=Rubik,10,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+activeForeground=227,225,233
+inactiveBackground=69,72,92
+inactiveBlend=161,169,177
+inactiveForeground=223,225,249
