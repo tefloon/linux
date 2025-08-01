@@ -1,0 +1,15 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+		"Formatter",
+		"JsFormat",
+		"QML",
+	],
+	"installed_packages":
+	[
+		"Formatter",
+		"JsFormat",
+		"QML",
+	],
+}
