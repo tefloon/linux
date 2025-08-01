@@ -44,7 +44,7 @@ This will:
 ### 3. **Cursor Setup**
 
 - Install a hyprcursor theme and set it in `hyprland.conf`: `env = HYPRCURSOR_THEME,ThemeName`
-- For X11 fallback: `sudo ln -sf /usr/share/icons/CursorTheme /usr/share/icons/default`
+- For X11 fallback: `sudo ln -sf /home/antek/.local/share/icons/Bibata-Modern-Classic /home/antek/.local/share/icons/default `
 - Update GTK settings: `gsettings set org.gnome.desktop.interface cursor-theme 'CursorTheme'`
 
 ---
