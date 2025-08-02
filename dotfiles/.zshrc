@@ -69,6 +69,9 @@ alias wen='wiki-tui'
 alias wpl='wiki-tui -l PL'
 alias tree='tree -aI ".git|node_modules|__pycache__"'
 
+s() {
+    xdg-open "$@" & disown
+}
 
 weather() {
   if [ $# -eq 0 ]; then
@@ -90,4 +93,12 @@ function y() {
   IFS= read -r -d '' cwd < "$tmp"
   [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
   rm -f -- "$tmp"
+}
+
+ytdl-music() {
+    yt-dlp -f "bestaudio" --extract-audio --audio-format mp3 -o "~/Music/%(uploader)s - %(title)s.%(ext)s" "$1"
+}
+
+ytdl-video() {
+    yt-dlp -f "best[height<=1080]" -o "~/Videos/%(uploader)s - %(title)s.%(ext)s" "$1"
 }
