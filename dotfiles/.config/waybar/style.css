@@ -1,14 +1,24 @@
 /* Waybar styling - minimal and clean */
 * {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 13px;
+    font-family: "JetBrains Mono";
+    font-size: 14px;
     min-height: 0;
 }
 
 window#waybar {
     background: rgba(30, 30, 30, 0.8);
-    border-bottom: 1px solid rgba(100, 100, 100, 0.3);
-    color: #ffffff;
+    border: 1px solid rgba(100, 100, 100, 0.3);
+    border-radius: 8px; /* Add rounded corners */
+    color: #bed1e2;
+}
+
+#custom-left-spacer,
+#custom-right-spacer {
+    background-color: transparent;
+    color: transparent;
+    min-width: 20px; /* Adjust this for gap size */
+    padding: 0;
+    margin: 0;
 }
 
 /*
@@ -33,7 +43,6 @@ window#waybar {
 #wireplumber:hover,
 #network:hover,
 #clock:hover,
-/*#tray:hover,*/
 #workspaces button:hover,
 #custom-weather:hover,
 #custom-gamemode:hover,
@@ -61,13 +70,23 @@ window#waybar {
   border-radius: 4px;
   margin: 6px 3px;
   padding: 6px 12px;
-  /* Make module backgrounds more transparent */
   background-color: rgba(26,27,38,0.6);
 }
 
+#clock{
+    font-weight: 800;
+}
+
 #custom-power{
-    margin-right: 20px;
-    padding-right: 16px;
+/*    margin-right: 20px;
+    padding-right: 16px;*/
+    padding-right: 20px;
+    padding-left: 16px;
+    margin-right: 6px;
+}
+#workspaces{
+    /*margin-left: 20px;*/
+    padding-left: 4px;
 }
 
 #custom-power button{

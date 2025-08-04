@@ -3,16 +3,26 @@
     "position": "top",
     "height": 32,
     "spacing": 4,
+    "margin-left": 10,
+    "margin-top": 5,
+    "margin-right": 10,
 
 
     
-    "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["clock"],
-    "modules-right": ["tray", "wireplumber", "custom/gamemode", "custom/power"],
-    
+    "modules-left": ["hyprland/workspaces",],
+    "modules-center": [ "clock"],
+    "modules-right": ["custom/weather", "tray", "wireplumber", "custom/gamemode", "custom/power"],
+
+    // "custom/weather": {
+    //     "format": "{} °C",
+    //     "exec": "curl -s 'wttr.in/Warsaw?format=1' | cut -d' ' -f3",
+    //     "interval": 1800,
+    //     "return-type": "json"
+    // },
+
     "clock": {
         "format": "{:%H:%M}",
-        "format": "{:%d-%m %H:%M}",
+        "format-alt": "{:%d / %m}",
         "tooltip-format": "<big>{:%B}</big>\n<tt><small>{calendar}</small></tt>",
         "calendar": {
             "mode": "year",
@@ -29,56 +39,61 @@
             }
         }
     },
-        "hyprland/workspaces": {
-        "on-click": "activate",
-        "format": "{icon}",
-        "format-icons": {
-            "default": "",
-            "1": "1",
-            "2": "2",
-            "3": "3",
-            "4": "4",
-            "5": "5",
-            "6": "6",
-            "7": "7",
-            "8": "8",
-            "9": "9",
-            // "active": "󱓻",
-            "urgent": "󱓻"
-        },
-        "persistent_workspaces": {
-            "1": [],
-            "2": [],
-            "3": [],
-            "4": [],
-            "5": [],
-            "6": [],
-            "magic:special": [],
-        }
+
+    "hyprland/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+        "default": "",
+        "1": "1",
+        "2": "2",
+        "3": "3",
+        "4": "4",
+        "5": "5",
+        "6": "6",
+        "7": "7",
+        "8": "8",
+        "9": "9",
+        // "active": "󱓻",
+        "urgent": "󱓻"
     },
+    "persistent_workspaces": {
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+        "6": [],
+        "magic:special": [],
+    }
+},
     "custom/weather": {
         "format": "{}",
         "tooltip": true,
         "interval": 1800,
         "exec": "$HOME/.config/waybar/scripts/weather.sh",
         "return-type": "json",
-        "on-click": "xdg-open 'https://wttr.in'"
+        "on-click": ""
     },
     
     "tray": {
         "icon-size": 21,
-        "spacing": 10
+        "spacing": 10,
+        "on-click": ""
     },
     
     "custom/gamemode": {
         "format": "🎮",
         "tooltip": false,
-        "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh"
+        "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh",
     },
     
     "custom/power": {
         "format": "⏻",
         "tooltip": false,
         "on-click": "wlogout"
-    }
+    },
+    "wireplumber":{
+        "on-click": "",
+    },
 }
