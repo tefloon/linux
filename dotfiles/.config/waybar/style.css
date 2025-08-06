@@ -21,20 +21,6 @@ window#waybar {
     margin: 0;
 }
 
-/*
-#custom-gamemode.active {
-    background: rgba(255, 107, 107, 0.3);
-    color: #ffffff;
-}*/
-
-/*#custom-power {
-    color: red;
-    background: rgba(50, 50, 50, 0.6);
-    padding: 0 10px;
-    margin: 5px 5px 5px 10px;
-    border-radius: 8px;
-}*/
-
 /* Hover effects */
 #memory:hover,
 #custom-power:hover,

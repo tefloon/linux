@@ -68,6 +68,7 @@ alias q=qalc
 alias wen='wiki-tui'
 alias wpl='wiki-tui -l PL'
 alias tree='tree -aI ".git|node_modules|__pycache__"'
+alias ncdu='ncdu --color dark'
 
 s() {
     xdg-open "$@" & disown
