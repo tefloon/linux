@@ -82,6 +82,47 @@ else
     status_ok
 fi
 
+# Import PGP private keys from Bitwarden
+CURRENT_STEP_MESSAGE="Looking for PGP private keys in secure notes"
+echo "$CURRENT_STEP_MESSAGE"
+
+# Find items with "pgp" or "gpg" in the name that have notes
+PGP_NOTES=$(bw list items --session "$BW_SESSION" | jq -r '.[] | select(.name | test("(pgp|gpg)"; "i")) | select(.notes != null and .notes != "") | .id + ":" + .name')
+
+if [[ -z "$PGP_NOTES" ]]; then
+    status_skip "No PGP keys found in notes"
+else
+    echo "$PGP_NOTES" | while IFS=':' read -r item_id item_name; do
+        ITEM_JSON=$(bw get item "$item_id" --session "$BW_SESSION")
+        NOTES=$(echo "$ITEM_JSON" | jq -r '.notes')
+        
+        # Check if notes contain PGP private key blocks
+        if echo "$NOTES" | grep -q "BEGIN PGP PRIVATE KEY"; then
+            if [[ $TEST_MODE -eq 1 ]]; then
+                echo "  $item_name → would import PGP private key"
+            else
+                # Create temporary file for this specific key
+                KEY_FILE=$(mktemp)
+                trap "rm -f '$KEY_FILE'" EXIT
+                
+                echo "$NOTES" > "$KEY_FILE"
+                
+                echo -n "  $item_name → "
+                if gpg --batch --import "$KEY_FILE" 2>/dev/null; then
+                    echo "imported to GPG keyring"
+                else
+                    echo "FAILED (invalid key format)"
+                fi
+                
+                # Clean up immediately (trap is backup)
+                rm -f "$KEY_FILE"
+            fi
+        else
+            echo "  $item_name → SKIPPED (no private key block found)"
+        fi
+    done
+fi
+
 # Optional: Look for other secrets (like API tokens) in secure notes
 CURRENT_STEP_MESSAGE="Looking for additional secrets in secure notes"
 echo "$CURRENT_STEP_MESSAGE"

@@ -70,6 +70,10 @@ alias wpl='wiki-tui -l PL'
 alias tree='tree -aI ".git|node_modules|__pycache__"'
 alias ncdu='ncdu --color dark'
 
+pdf() {
+    zathura "$@" & disown
+}
+
 s() {
     xdg-open "$@" & disown
 }
