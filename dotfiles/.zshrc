@@ -67,8 +67,9 @@ alias c='clear'
 alias q=qalc
 alias wen='wiki-tui'
 alias wpl='wiki-tui -l PL'
-alias tree='tree -aI ".git|node_modules|__pycache__"'
+alias tree='tree -aI ".git|node_modules|.npm|__pycache__"'
 alias ncdu='ncdu --color dark'
+alias speed='librespeed-cli'
 
 pdf() {
     zathura "$@" & disown
@@ -107,3 +108,5 @@ ytdl-music() {
 ytdl-video() {
     yt-dlp -f "best[height<=1080]" -o "~/Videos/%(uploader)s - %(title)s.%(ext)s" "$1"
 }
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"

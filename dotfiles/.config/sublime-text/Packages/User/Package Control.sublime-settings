@@ -5,6 +5,7 @@
 	],
 	"installed_packages":
 	[
+		"ayu",
 		"Formatter",
 		"JsFormat",
 		"QML",

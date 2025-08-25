@@ -1,0 +1,10 @@
+#!/bin/bash
+# OCR text selection script for Wayland/Hyprland
+
+# Take screenshot of selected area and pipe to tesseract
+grim -g "$(slurp)" - | tesseract stdin stdout | wl-copy
+
+# Optional: Show notification of captured text
+if command -v notify-send &> /dev/null; then
+    notify-send "OCR" "Text copied to clipboard"
+fi
