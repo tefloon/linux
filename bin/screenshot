@@ -1,0 +1,9 @@
+#!/bin/bash
+# Screenshot text selection script for Wayland/Hyprland
+
+grim -g "$(slurp)" - | wl-copy
+
+# Optional: Show notification of captured text
+if command -v notify-send &> /dev/null; then
+    notify-send "Screenshiot" "Image copied to clipboard"
+fi
