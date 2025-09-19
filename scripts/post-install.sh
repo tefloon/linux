@@ -19,9 +19,9 @@ xdg-mime default org.gnome.Loupe.desktop image/tiff
 xdg-mime default org.gnome.Loupe.desktop image/svg+xml
 
 # Web browsers
-xdg-mime default thorium-browser.desktop x-scheme-handler/http
-xdg-mime default thorium-browser.desktop x-scheme-handler/https
-xdg-mime default thorium-browser.desktop text/html
+xdg-mime default brave-browser-nightly.desktop x-scheme-handler/http
+xdg-mime default brave-browser-nightly.desktop x-scheme-handler/https
+xdg-mime default brave-browser-nightly.desktop text/html
 
 # Text files and code
 xdg-mime default sublime_text.desktop text/plain
@@ -63,12 +63,12 @@ xdg-mime default mpv.desktop video/ogg              # .ogv
 # Note: These would only apply to local audio files, not streaming
 
 # Archives (file manager or archive manager)
-xdg-mime default org.kde.dolphin.desktop application/zip
-xdg-mime default org.kde.dolphin.desktop application/x-tar
-xdg-mime default org.kde.dolphin.desktop application/x-compressed-tar
-xdg-mime default org.kde.dolphin.desktop application/x-bzip-compressed-tar
-xdg-mime default org.kde.dolphin.desktop application/x-xz-compressed-tar
-xdg-mime default org.kde.dolphin.desktop application/x-rar-compressed
+xdg-mime default org.gnome.Nautilus.desktop application/zip
+xdg-mime default org.gnome.Nautilus.desktop application/x-tar
+xdg-mime default org.gnome.Nautilus.desktop application/x-compressed-tar
+xdg-mime default org.gnome.Nautilus.desktop application/x-bzip-compressed-tar
+xdg-mime default org.gnome.Nautilus.desktop application/x-xz-compressed-tar
+xdg-mime default org.gnome.Nautilus.desktop application/x-rar-compressed
 
 # E-books (Calibre)
 xdg-mime default calibre-ebook-viewer.desktop application/epub+zip
