@@ -110,3 +110,5 @@ ytdl-video() {
 }
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+ 
+ true # to have the first prompt be "green"
