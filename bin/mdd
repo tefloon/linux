@@ -19,6 +19,9 @@ get_lang() {
         *.yml|*.yaml) echo "yaml" ;;
         *.json) echo "json" ;;
         *.md) echo "markdown" ;;
+        *.jsonc) echo "jsonc" ;;
+        *.css) echo "css" ;;
+        *.md) echo "markdown" ;;
         *) echo "" ;;
     esac
 }
