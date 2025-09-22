@@ -102,6 +102,22 @@ window#waybar {
     margin-right: 6px;
 }
 
+#custom-gamemode {
+    padding-top: 8px;
+    padding-bottom: 4px;
+}
+
+/* Gamemode active/inactive states */
+#custom-gamemode.active {
+    color: #a6e3a1; /* Green when active */
+    background-color: rgba(166, 227, 161, 0.1);
+}
+
+#custom-gamemode.inactive {
+    color: #bed1e2; /* Normal color when inactive */
+    background-color: rgba(26,27,38,0.6);
+}
+
 #workspaces {
     padding-left: 4px;
 }

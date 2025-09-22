@@ -93,9 +93,13 @@
     },
     
     "custom/gamemode": {
-        "format": "🎮",
+        "format": "🕹",
         "tooltip": false,
-        "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh"
+        "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh; pkill -x -RTMIN+12 waybar",
+        "exec": "if [[ -f /tmp/waybar_gamemode ]]; then echo '{\"class\": \"active\"}'; else echo '{\"class\": \"inactive\"}'; fi",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 12
     },
     
     "custom/power": {
@@ -105,6 +109,10 @@
     },
 
     "wireplumber": {
-        "on-click": ""
+        "format": "󰕾   {volume}%",  // Choose your preferred icon from above
+        "format-muted": "󰖁   {volume}%",
+        "on-click": "$HOME/.config/waybar/scripts/audio-toggle.sh",
+        "tooltip": true,
+        "tooltip-format": "Volume: {volume}%\nClick to toggle mute"
     }
 }

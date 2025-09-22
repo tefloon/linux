@@ -3,6 +3,9 @@
 # Game mode toggle script for Waybar
 # This replicates your QuickShell game mode functionality
 
+# Test script
+echo "Current state: $(if [[ -f /tmp/waybar_gamemode ]]; then echo 'ACTIVE'; else echo 'INACTIVE'; fi)"
+
 STATE_FILE="/tmp/waybar_gamemode"
 
 if [[ -f "$STATE_FILE" ]]; then
@@ -15,7 +18,7 @@ if [[ -f "$STATE_FILE" ]]; then
     # Re-enable the clipboard history keybind
     hyprctl keyword bind "CONTROL, grave, exec, \$HOME/.local/share/launch-scripts/wofi-clip-history.sh"
     
-    $HOME/.local/share/launch-scripts/launch-nwg.sh
+    $HOME/.local/share/launch-scripts/launch-nwg.sh &
 
     notify-send "Game Mode" "Disabled - Full desktop restored" -t 2000
 else
@@ -29,6 +32,6 @@ else
     hyprctl keyword unbind "CONTROL, grave"
     
     pkill nwg-dock
-    
-    notify-send "Game Mode" "Enabled - Performance optimized" -t 2000
+
+    notify-send "Game Mode" "Enabled - Performance optimized" -t 2000    
 fi
