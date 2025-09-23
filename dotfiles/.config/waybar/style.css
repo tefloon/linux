@@ -32,6 +32,7 @@ window#waybar {
 #clock:hover,
 #workspaces button:hover,
 #custom-weather:hover,
+#custom-moon:hover,
 #custom-gamemode:hover,
 #custom-power:hover {
     background: rgba(70, 70, 70, 0.8);
@@ -50,10 +51,10 @@ window#waybar {
 #wireplumber,
 #network,
 #clock,
-#tray,
 #workspaces button,
 #custom-power,
 #custom-weather,
+#custom-moon,
 #custom-gamemode {
     border-radius: 4px;
     margin: 6px 3px;
@@ -118,6 +119,24 @@ window#waybar {
     background-color: rgba(26,27,38,0.6);
 }
 
+#custom-moon{
+    padding-right: 16px;
+}
+
+#tray {
+    border-radius: 4px;
+    margin: 6px 3px;
+    margin-right: 150px;
+    padding: 6px 12px;
+}
+
+#tray > *{
+    opacity: 0.04;
+
+}#tray > *:hover{
+    opacity: 1;
+}
+
 #workspaces {
     padding-left: 4px;
 }
@@ -159,19 +178,4 @@ tooltip {
 
 tooltip label {
     color: #ffffff;
-}
-
-/* Tray icons - monochrome effect using supported properties */
-#tray > .passive {
-    opacity: 0.7;
-}
-
-#tray > .active {
-    opacity: 1;
-}
-
-#tray > .item:hover {
-    opacity: 1;
-    background: rgba(70, 70, 70, 0.4);
-    border-radius: 4px;
 }

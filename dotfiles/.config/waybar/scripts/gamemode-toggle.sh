@@ -20,6 +20,7 @@ if [[ -f "$STATE_FILE" ]]; then
     
     $HOME/.local/share/launch-scripts/launch-nwg.sh &
 
+    pkill -x -RTMIN+12 waybar
     notify-send "Game Mode" "Disabled - Full desktop restored" -t 2000
 else
     # Game mode is OFF, turn it ON
@@ -32,6 +33,7 @@ else
     hyprctl keyword unbind "CONTROL, grave"
     
     pkill nwg-dock
-
+    
+    pkill -x -RTMIN+12 waybar
     notify-send "Game Mode" "Enabled - Performance optimized" -t 2000    
 fi

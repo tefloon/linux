@@ -1,7 +1,7 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 32,
+    "height": 48,
     "spacing": 4,
     "margin-left": 10,
     "margin-top": 5,
@@ -9,7 +9,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["memory", "disk", "custom/weather", "tray", "wireplumber", "custom/gamemode", "custom/power"],
+    "modules-right": ["tray", "custom/weather", "custom/moon", "memory", "disk", "wireplumber", "custom/gamemode", "custom/power"],
 
     "clock": {
         "format": "{:%H:%M}",
@@ -77,6 +77,12 @@
         "critical": 90,
     },
 
+    "tray": {
+        "icon-size": 21,
+        "spacing": 15,
+        "reverse-direction": true,
+    },
+
     "custom/weather": {
         "format": "{}",
         "tooltip": true,
@@ -85,17 +91,19 @@
         "return-type": "json",
         "on-click": ""
     },
-    
-    "tray": {
-        "icon-size": 21,
-        "spacing": 10,
-        "on-click": ""
+    "custom/moon": {
+        "format": "{}",
+        "tooltip": true,
+        "interval": 86400,
+        "exec": "$HOME/.config/waybar/scripts/moon_phases.sh",
+        "return-type": "json",
+        "on-click": "xdg-open https://www.timeanddate.com/moon/phases/poland/warsaw",
     },
     
     "custom/gamemode": {
         "format": "🕹",
         "tooltip": false,
-        "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh; pkill -x -RTMIN+12 waybar",
+        "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh",
         "exec": "if [[ -f /tmp/waybar_gamemode ]]; then echo '{\"class\": \"active\"}'; else echo '{\"class\": \"inactive\"}'; fi",
         "return-type": "json",
         "interval": "once",
