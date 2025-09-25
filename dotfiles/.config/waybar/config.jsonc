@@ -1,4 +1,5 @@
 {
+    // "output": "DP-1",
     "layer": "top",
     "position": "top",
     "height": 48,
@@ -9,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "custom/weather", "custom/moon", "memory", "disk", "wireplumber", "custom/gamemode", "custom/power"],
+    "modules-right": ["tray", "custom/weather", "memory", "disk", "wireplumber", "custom/gamemode", "custom/power"],
 
     "clock": {
         "format": "{:%H:%M}",
@@ -94,7 +95,7 @@
     "custom/moon": {
         "format": "{}",
         "tooltip": true,
-        "interval": 86400,
+        "interval": 86410,
         "exec": "$HOME/.config/waybar/scripts/moon_phases.sh",
         "return-type": "json",
         "on-click": "xdg-open https://www.timeanddate.com/moon/phases/poland/warsaw",
