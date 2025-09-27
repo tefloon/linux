@@ -104,27 +104,65 @@ def get_moon_phase_today():
     
     return age_days, phase_name, icon
 
+def get_days_to_next_phase(age_days):
+    """
+    Calculate days to next significant moon phase or show current phase if we're in it.
+    
+    Returns:
+        tuple: (is_special, days_remaining_or_message, target_icon)
+    """
+    # New moon window: days 0, 1, and 29 (wrapping around)
+    if age_days == 0 or age_days == 1 or age_days >= 28:
+        return True, "New Moon!", "󰽤"
+    
+    # Full moon window: days 13, 14, 15
+    elif 13 <= age_days <= 15:
+        return True, "Full Moon!", ""
+    
+    # First half of cycle (after new moon window, before full moon)
+    elif age_days <= 12:
+        days_to_full = 14 - age_days
+        return False, f"  {days_to_full} days to", ""
+    
+    # Second half of cycle (after full moon window, before new moon)
+    else:  # age_days is 16-27
+        days_to_new = 29 - age_days
+        return False, f"  {days_to_new} days to", "󰽤"
+
 def main():
     """Main function for command line usage."""
     try:
         age_days, phase_name, icon = get_moon_phase_today()
         sun_rise, sun_set, moon_rise, moon_set = get_sun_moon_times()
+        is_special, days_info, target_icon = get_days_to_next_phase(age_days)
+
+        # Set CSS class based on special status
+        css_class = "moon-phase-special" if is_special else "moon-phase"
 
         moon_line = f"  {moon_rise}             {moon_set}"
         sun_line  = f"󰖜  {sun_rise}           󰖛  {sun_set}"
 
-        line_length = max(len(moon_line), len(sun_line))-1
+        line_length = max(len(moon_line), len(sun_line)) - 4
+
+        # Combine the message parts
+        if not is_special:
+            centered_days = f"{days_info:^{line_length - 4}}"  # Reduce width to account for spaces
+            phase_message = f"  {centered_days.rstrip()}  {target_icon}"
+        else:
+            phase_message = days_info  # Just "New Moon!" or "Full Moon!"
+            phase_name = ""
+
 
         # Create waybar JSON output
         output = {
             "text": icon,
-            "tooltip": f"{phase_name:^{line_length}}\n{f'{age_days} days since 󰽤':^{line_length}}\n\n{moon_line}\n{sun_line}",
-            "class": "moon-phase"
+            "tooltip": f"{phase_name:^{line_length}}\n{phase_message:^{line_length}}\n\n{moon_line}\n{sun_line}",
+            "class": css_class
         }
 
         # Output as compact JSON
         print(json.dumps(output, ensure_ascii=False))
-        print(output["tooltip"])
+        # print(output["tooltip"])
         
     except Exception as e:
         # Fallback JSON in case of any errors

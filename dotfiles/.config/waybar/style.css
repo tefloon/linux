@@ -123,6 +123,18 @@ window#waybar {
     padding-right: 16px;
 }
 
+#custom-moon.moon-phase-special {
+  color: #ddd;
+  text-shadow: 
+    0 0 2px rgba(255, 255, 255, 0.1),
+    0 0 4px rgba(255, 234, 167, 0.8),
+    0 0 8px rgba(255, 234, 167, 0.6);
+}
+
+/*@keyframes subtle-glow {
+    from { color: rgba(223, 248, 39, 1.0); }
+    to { color: rgba(223, 248, 39, 0.6); }
+}*/
 #tray {
     border-radius: 4px;
     margin: 6px 3px;
