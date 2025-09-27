@@ -5,7 +5,7 @@
 	],
 	"theme": "ayu-mirage.sublime-theme",
 	"color_scheme": "ayu-mirage.sublime-color-scheme",
-	"font_size": 14,
+	"font_size": 12,
 	"index_files": true,
 	"color_highlight_file_extensions": [".conf", ".config"],
 }

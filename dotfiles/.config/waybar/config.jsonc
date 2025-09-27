@@ -10,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "custom/weather", "memory", "disk", "wireplumber", "custom/gamemode", "custom/power"],
+    "modules-right": ["tray", "custom/weather", "custom/moon", "memory", "disk", "wireplumber", "custom/gamemode", "custom/power"],
 
     "clock": {
         "format": "{:%H:%M}",

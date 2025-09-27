@@ -8,11 +8,6 @@ DOTFILES_DIR="$SCRIPT_DIR/../dotfiles"
 
 find "$DOTFILES_DIR" -type f | while read -r src; do
 
-    # if [[ "$relpath" == "Packages/User" ]]; then
-    #     ln -s "$src" "$dest"
-    #     continue
-    # fi
-
     # Compute the relative path from $DOTFILES_DIR
     relpath="${src#$DOTFILES_DIR/}"
     dest="$HOME/$relpath"

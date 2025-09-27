@@ -1,6 +1,6 @@
 #!/bin/bash
 
-LOCATION="Ursynow"  # Change to your location
+LOCATION="ursynow"  # Change to your location
 CACHE_PATH="$HOME/.config/waybar/tmp"
 CACHE_FILE="$CACHE_PATH/weather_cache"
 CACHE_DURATION=1800  # 30 minutes
@@ -37,7 +37,7 @@ trap 'rmdir "$LOCK_FILE" 2>/dev/null' EXIT
 
 # Fetch weather data
 echo "Fetching weather for $LOCATION..." >&2
-weather_data=$(curl -s "wttr.in/${LOCATION}?format=%C+%t&m" 2>&1)
+weather_data=$(curl -s "wttr.in/${LOCATION}?format=%C+%t" 2>&1)
 curl_exit=$?
 
 echo "Curl exit code: $curl_exit" >&2
@@ -126,7 +126,7 @@ if [[ -n "$weather_data" ]]; then
     output=$(cat <<EOF
 {
     "text": "$main_text",
-    "tooltip": "Weather: $condition $temp\\nLocation: $LOCATION",
+    "tooltip": "$condition $temp\\n$LOCATION",
     "class": "weather"
 }
 EOF
