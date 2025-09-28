@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HOSTS_FILE="$(readlink -f "$SCRIPT_DIR/../dotfiles/hosts")"
 source "$SCRIPT_DIR/status.sh"
 
 CURRENT_STEP_MESSAGE="Setting zsh as default shell"
@@ -23,4 +24,4 @@ status_ok
 
 CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"
 status_msg
-sudo ln -sf "$SCRIPT_DIR/../dotfiles/hosts" /etc/hosts && status_ok || status_error
+sudo ln -sf "$HOSTS_FILE" /etc/hosts && status_ok || status_error

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(readlink -f "$SCRIPT_DIR/../dotfiles")"
 source "$SCRIPT_DIR/status.sh"
 
 # Symlink dotfiles from the dotfiles folder
-DOTFILES_DIR="$SCRIPT_DIR/../dotfiles"
 
 find "$DOTFILES_DIR" -type f | while read -r src; do
 

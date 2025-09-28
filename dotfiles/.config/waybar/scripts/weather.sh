@@ -8,9 +8,10 @@ LOCK_FILE="/tmp/waybar_weather.lock"
 
 mkdir -p "$CACHE_PATH"
 
+cat "$CACHE_FILE"
+
 # Check if cache exists and is recent
 if [[ -f "$CACHE_FILE" ]] && [[ $(($(date +%s) - $(stat -c %Y "$CACHE_FILE" 2>/dev/null || echo 99999))) -lt $CACHE_DURATION ]]; then
-    cat "$CACHE_FILE"
     exit 0
 fi
 

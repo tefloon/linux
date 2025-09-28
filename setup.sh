@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/scripts/status.sh"
+source "$SCRIPT_DIR/setup-scripts/status.sh"
 
 CURRENT_STEP_MESSAGE="Checking for sudo"
 status_msg

@@ -116,7 +116,6 @@ window#waybar {
 
 #custom-gamemode.inactive {
     color: #bed1e2; /* Normal color when inactive */
-    background-color: rgba(26,27,38,0.6);
 }
 
 #custom-moon{
