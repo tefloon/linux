@@ -113,6 +113,7 @@ install_pkg "zoxide"                      # Smart directory jumper (cd replaceme
 
 # --- APPLICATIONS (EDITORS, BROWSERS, ETC.) ---
 install_pkg "obsidian"                    # Note-taking application
+install_pkg "gnome-calendar"              # Calendar application
 
 # --- AUR PACKAGES (Third-party/Community) ---
 install_aur_pkg "code"                    # Visual Studio Code

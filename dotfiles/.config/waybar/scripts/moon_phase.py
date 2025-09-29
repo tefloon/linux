@@ -142,11 +142,11 @@ def main():
         moon_line = f"  {moon_rise}             {moon_set}"
         sun_line  = f"󰖜  {sun_rise}           󰖛  {sun_set}"
 
-        line_length = max(len(moon_line), len(sun_line)) - 4
+        line_length = max(len(moon_line), len(sun_line))
 
         # Combine the message parts
         if not is_special:
-            centered_days = f"{days_info:^{line_length - 4}}"  # Reduce width to account for spaces
+            centered_days = f"{days_info:^{line_length - 22}}"  # Reduce width to account for spaces
             phase_message = f"  {centered_days.rstrip()}  {target_icon}"
         else:
             phase_message = days_info  # Just "New Moon!" or "Full Moon!"
