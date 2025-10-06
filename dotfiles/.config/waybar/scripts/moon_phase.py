@@ -60,7 +60,7 @@ def get_sun_moon_times():
 
     return sun_rise, sun_set, moon_rise, moon_set
 
-def get_moon_phase_today():
+def get_moon_phase_today(date = datetime.datetime.today()):
     """
     Get moon phase information for today.
     
@@ -68,39 +68,50 @@ def get_moon_phase_today():
         tuple: (age_days, phase_name, icon)
     """
     # Get moon age in days since new moon
-    age = moon.phase(datetime.datetime.today())
-    age_days = int(age)
+    age = moon.phase(date)
+    age_days = round(age) 
     
-    # Define phase names, icons, and their day ranges
-    # Lunar cycle is ~29.5 days
-    phase_data = [
-        ("New Moon", "󰽤"),         # 0-1 days
-        ("Waxing Crescent", ""),  # 2-6 days  
-        ("First Quarter", ""),    # 7-8 days
-        ("Waxing Gibbous", ""),   # 9-13 days
-        ("Full Moon", ""),        # 14-15 days
-        ("Waning Gibbous", "󰽦"),  # 16-21 days
-        ("Last Quarter", ""),     # 22-23 days
-        ("Waning Crescent", "")   # 24-28+ days
-    ]
+    # Define phase names and icons
+    phase_data = {
+        "New Moon": "󰽤",         # 0-1 days 0
+        "Waxing Crescent": "",  # 2-6 days  1
+        "First Quarter": "",    # 7-8 days 2
+        "Waxing Gibbous": "",   # 9-13 days 3
+        "Full Moon": "",        # 14-15 days 4
+        "Waning Gibbous": "󰽦",   # 16-21 days 5
+        "Last Quarter": "",     # 22-23 days 6
+        "Waning Crescent": ""   # 24-28+ days 7
+    }
 
     # Map age to phase
-    if age_days <= 1:
-        phase_name, icon = phase_data[0]
+    # Note: astral's moon.phase() returns 0-~28, wrapping before reaching 29
+    
+    # 27, 0, 1 - New Moon (3 days, centered on 0)
+    if age_days >= 27 or age_days <= 1:
+        phase_name = "New Moon"
+    # 2-6 - Waxing Crescent (5 days)
     elif age_days <= 6:
-        phase_name, icon = phase_data[1]
-    elif age_days <= 8:
-        phase_name, icon = phase_data[2]
+        phase_name = "Waxing Crescent"
+    # 7-9 - First Quarter (3 days)
+    elif age_days <= 9:
+        phase_name = "First Quarter"
+    # 10-13 - Waxing Gibbous (4 days)
     elif age_days <= 13:
-        phase_name, icon = phase_data[3]
-    elif age_days <= 15:
-        phase_name, icon = phase_data[4]
-    elif age_days <= 21:
-        phase_name, icon = phase_data[5]
+        phase_name = "Waxing Gibbous"
+    # 14-16 - Full Moon (3 days, centered on 15)
+    elif age_days <= 16:
+        phase_name = "Full Moon"
+    # 17-20 - Waning Gibbous (4 days)
+    elif age_days <= 20:
+        phase_name = "Waning Gibbous"
+    # 21-23 - Last Quarter (3 days)
     elif age_days <= 23:
-        phase_name, icon = phase_data[6]
-    else:
-        phase_name, icon = phase_data[7]
+        phase_name = "Last Quarter"
+    # 24-26 - Waning Crescent
+    else:  # 24-26
+        phase_name = "Waning Crescent"
+    
+    icon = phase_data[phase_name]
     
     return age_days, phase_name, icon
 
@@ -131,6 +142,18 @@ def get_days_to_next_phase(age_days):
 
 def main():
     """Main function for command line usage."""
+
+    # Get today's date
+    today = datetime.datetime.now()
+
+    # Generate next 30 dates
+    # for i in range(30):
+    #     next_date = today + datetime.timedelta(days=i)
+    #     age = moon.phase(next_date)  # Get the raw float
+    #     age_days = int(age)
+    #     phase_name, icon = get_moon_phase_today(next_date)[1:]
+    #     print(f"{age:.2f} -> {age_days}, {phase_name}, {icon}")
+
     try:
         age_days, phase_name, icon = get_moon_phase_today()
         sun_rise, sun_set, moon_rise, moon_set = get_sun_moon_times()
