@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ -p /dev/stdin ]]; then
+    # Handle piped input
+    python -c "import sys, tiktoken; enc = tiktoken.get_encoding('cl100k_base'); print(f'Tokens: {len(enc.encode(sys.stdin.read()))}')"
+elif [[ -n "$1" ]] && [[ -f "$1" ]]; then
+    # Handle file input
+    python -c "import tiktoken; enc = tiktoken.get_encoding('cl100k_base'); print(f'Tokens in $1: {len(enc.encode(open(\"$1\").read()))}')"
+else
+    echo "Usage: tokens <filename>"
+    echo "   or: echo 'text' | tokens"
+    exit 1
+fi
