@@ -137,12 +137,12 @@ window#waybar {
 #tray {
     border-radius: 4px;
     margin: 6px 3px;
-    margin-right: 150px;
+    /*margin-right: 150px;*/
     padding: 6px 12px;
 }
 
 #tray > *{
-    opacity: 0.04;
+    opacity: 0.1;
 
 }#tray > *:hover{
     opacity: 1;

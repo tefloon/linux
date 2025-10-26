@@ -19,19 +19,8 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 # --- Auto rehash after pacman installs ---
 zshcache_time="$(date +%s%N)"
 
-autoload -Uz add-zsh-hook
-
-rehash_precmd() {
-  if [[ -a /var/cache/zsh/pacman ]]; then
-    local paccache_time="$(date -r /var/cache/zsh/pacman +%s%N)"
-    if (( zshcache_time < paccache_time )); then
-      rehash
-      zshcache_time="$paccache_time"
-    fi
-  fi
-}
-
-add-zsh-hook -Uz precmd rehash_precmd
+autoload -Uz zmv
+autoload -Uz zln
 
 # history
 HISTSIZE=10000
@@ -90,6 +79,14 @@ weather() {
 # using bat for man pages
 batman() {
     man "$@" | col -bx | bat --language=man
+}
+
+pacman() {
+  command pacman "$@" && rehash
+}
+
+yay() {
+  command yay "$@" && rehash
 }
 
 # yazi working dir workaround

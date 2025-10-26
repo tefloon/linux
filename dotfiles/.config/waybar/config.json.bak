@@ -1,5 +1,5 @@
 {
-    "output": "DP-1",
+    // "output": "DP-1",
     "layer": "top",
     "position": "top",
     "height": 48,
@@ -10,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/weather", "custom/moon", "memory", "disk", "wireplumber",],
+    "modules-right": ["tray", "custom/weather", "custom/moon", "memory", "disk", "wireplumber", "custom/gamemode", "custom/power"],
 
     "clock": {
         "format": "{:%H:%M}",
@@ -67,6 +67,7 @@
         "warning": 80,
         "critical": 90,
     },
+
     "disk": {
         "interval": 30,
         "format": "󰋊  {percentage_used}%",
@@ -76,6 +77,13 @@
         "warning": 80,
         "critical": 90,
     },
+
+    "tray": {
+        "icon-size": 21,
+        "spacing": 15,
+        "reverse-direction": true,
+    },
+
     "custom/weather": {
         "format": "{}",
         "tooltip": true,
@@ -92,6 +100,23 @@
         "return-type": "json",
         "on-click": "xdg-open https://www.timeanddate.com/moon/phases/poland/warsaw",
     },
+    
+    "custom/gamemode": {
+        "format": "🕹",
+        "tooltip": false,
+        "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh",
+        "exec": "if [[ -f /tmp/waybar_gamemode ]]; then echo '{\"class\": \"active\"}'; else echo '{\"class\": \"inactive\"}'; fi",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 12
+    },
+    
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "wlogout"
+    },
+
     "wireplumber": {
         "format": "󰕾   {volume}%",  // Choose your preferred icon from above
         "format-muted": "󰖁   {volume}%",

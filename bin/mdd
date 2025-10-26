@@ -29,6 +29,7 @@ get_lang() {
 while IFS= read -r -d '' file; do
     if ! file --mime "$file" | grep -q 'charset=binary'; then
         relpath="${file#$DIR/}"
+        echo $relpath
         lang=$(get_lang "$file")
         output+=$'\n'"### $relpath"$'\n'
         output+="\`\`\`${lang}"$'\n'
