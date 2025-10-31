@@ -13,8 +13,9 @@
     "modules-right": ["tray"],
 
     "clock": {
-        "format": "{:%d / %m}",
-        "format-alt": "{:%H:%M}",
+        "format": "{:%H:%M}",
+        "format-alt": "{:%d / %m}",
+        "tooltip": false,
     },
 
     "hyprland/workspaces": {

@@ -93,9 +93,10 @@
         "on-click": "xdg-open https://www.timeanddate.com/moon/phases/poland/warsaw",
     },
     "wireplumber": {
-        "format": "󰕾   {volume}%",  // Choose your preferred icon from above
+        "format": "󰕾   {volume}%",
         "format-muted": "󰖁   {volume}%",
-        "on-click": "$HOME/.config/waybar/scripts/audio-toggle.sh",
+        "on-click": "pavucontrol-qt",
+        // "on-click": "$HOME/.config/waybar/scripts/audio-toggle.sh",
         "tooltip": true,
         "tooltip-format": "Volume: {volume}%\nClick to toggle mute"
     }

@@ -96,7 +96,7 @@ install_pkg "vulkan-tools"                # Vulkan utilities and diagnostics
 install_pkg "virtualbox"                  # Virtual machine manager
 
 # --- AI/ML ---
-install_pkg "ollama-rocm"                 # Local AI model runner (AMD GPU optimized)
+# install_pkg "ollama-rocm"                 # Local AI model runner (AMD GPU optimized)
 
 # --- DOCUMENT MANAGEMENT ---
 install_pkg "calibre"                     # E-book management
@@ -124,5 +124,5 @@ install_aur_pkg "onlyoffice-bin"          # Office suite
 install_aur_pkg "spotify"                 # Music streaming
 install_aur_pkg "spotify-player"          # Terminal Spotify client
 install_aur_pkg "sublime-text-4"          # Text editor
-install_aur_pkg "brave-nightly-bin"       # Privacy-focused web browser (nightly build)
+install_aur_pkg "helium-browser-bin"      # Privacy-focused web browser (my main)
 install_aur_pkg "adw-gtk-theme-git"       # Adwaita GTK theme (development version)
