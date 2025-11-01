@@ -10,8 +10,28 @@ sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorl
     s/^\s*#\s*\(Include = \/etc\/pacman.d\/mirrorlist\)/\1/
 }' "$PACMAN_CONF"
 
-# the following line kept giving me errors, that's why it's commented out
-# sudo pacman -Sy --noconfirm --quiet && status_ok || status_error
+
+install_pkg() {
+    local pkg="$1"
+    CURRENT_STEP_MESSAGE="Installing $pkg"
+    status_msg
+    if sudo pacman -S --noconfirm --needed $pkg > /tmp/pacman.log 2>&1; then
+        status_ok
+    else
+        status_skip "Failed to install $pkg."
+    fi
+}
+
+install_aur_pkg() {
+    local pkg="$1"
+    CURRENT_STEP_MESSAGE="Installing AUR package $pkg"
+    status_msg
+    if yay -S --noconfirm --needed $pkg > /tmp/yay.log 2>&1; then
+        status_ok
+    else
+        status_skip "Failed to install $pkg."
+    fi
+}
 
 # --- HYPRLAND CORE ---
 install_pkg "hyprland"                    # Wayland compositor (window manager)
@@ -93,7 +113,11 @@ install_pkg "lib32-vulkan-radeon"         # 32-bit AMD Vulkan drivers for games
 install_pkg "vulkan-tools"                # Vulkan utilities and diagnostics
 
 # --- VIRTUALIZATION ---
-install_pkg "virtualbox"                  # Virtual machine manager
+install_pkg "virt-manager"          # GUI for managing VMs
+install_pkg "qemu-full"             # Full QEMU virtualization
+install_pkg "dnsmasq"               # Lightweight DNS/DHCP for VM networking
+install_pkg "ebtables"              # Ethernet bridge filtering (for VM networking)
+install_pkg "iptables-nft"          # Network packet filtering
 
 # --- AI/ML ---
 # install_pkg "ollama-rocm"                 # Local AI model runner (AMD GPU optimized)

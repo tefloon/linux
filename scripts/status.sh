@@ -36,25 +36,3 @@ status_error() {
     fi
     exit 1
 }
-
-install_pkg() {
-    local pkg="$1"
-    CURRENT_STEP_MESSAGE="Installing $pkg"
-    status_msg
-    if sudo pacman -S --noconfirm --needed $pkg > /tmp/pacman.log 2>&1; then
-        status_ok
-    else
-        status_skip "Failed to install $pkg."
-    fi
-}
-
-install_aur_pkg() {
-    local pkg="$1"
-    CURRENT_STEP_MESSAGE="Installing AUR package $pkg"
-    status_msg
-    if yay -S --noconfirm --needed $pkg > /tmp/yay.log 2>&1; then
-        status_ok
-    else
-        status_skip "Failed to install $pkg."
-    fi
-}

@@ -1,5 +1,3 @@
-# Add this to your scripts/install_packages.sh or create a separate script
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/status.sh"
 

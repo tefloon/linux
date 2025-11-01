@@ -19,9 +19,9 @@ xdg-mime default org.gnome.Loupe.desktop image/tiff
 xdg-mime default org.gnome.Loupe.desktop image/svg+xml
 
 # Web browsers
-xdg-mime default brave-browser-nightly.desktop x-scheme-handler/http
-xdg-mime default brave-browser-nightly.desktop x-scheme-handler/https
-xdg-mime default brave-browser-nightly.desktop text/html
+xdg-mime default helium-browser.desktop x-scheme-handler/http
+xdg-mime default helium-browser.desktop x-scheme-handler/https
+xdg-mime default helium-browser.desktop text/html
 
 # Text files and code
 xdg-mime default sublime_text.desktop text/plain
@@ -37,16 +37,21 @@ xdg-mime default sublime_text.desktop text/xml
 xdg-mime default sublime_text.desktop text/x-log
 xdg-mime default sublime_text.desktop application/x-yaml
 
-# Office documents (OnlyOffice)
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.openxmlformats-officedocument.wordprocessingml.document  # .docx
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.openxmlformats-officedocument.spreadsheetml.sheet        # .xlsx
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.openxmlformats-officedocument.presentationml.presentation # .pptx
-xdg-mime default onlyoffice-desktopeditors.desktop application/msword                    # .doc
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.ms-excel             # .xls
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.ms-powerpoint        # .ppt
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.oasis.opendocument.text           # .odt
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.oasis.opendocument.spreadsheet    # .ods
-xdg-mime default onlyoffice-desktopeditors.desktop application/vnd.oasis.opendocument.presentation   # .odp
+# Office documents (FreeOffice)
+# Word processing (TextMaker)
+xdg-mime default freeoffice-textmaker.desktop application/vnd.openxmlformats-officedocument.wordprocessingml.document  # .docx
+xdg-mime default freeoffice-textmaker.desktop application/msword                    # .doc
+xdg-mime default freeoffice-textmaker.desktop application/vnd.oasis.opendocument.text           # .odt
+
+# Spreadsheets (PlanMaker)
+xdg-mime default freeoffice-planmaker.desktop application/vnd.openxmlformats-officedocument.spreadsheetml.sheet        # .xlsx
+xdg-mime default freeoffice-planmaker.desktop application/vnd.ms-excel             # .xls
+xdg-mime default freeoffice-planmaker.desktop application/vnd.oasis.opendocument.spreadsheet    # .ods
+
+# Presentations (Presentations)
+xdg-mime default freeoffice-presentations.desktop application/vnd.openxmlformats-officedocument.presentationml.presentation # .pptx
+xdg-mime default freeoffice-presentations.desktop application/vnd.ms-powerpoint        # .ppt
+xdg-mime default freeoffice-presentations.desktop application/vnd.oasis.opendocument.presentation   # .odp
 
 # Video files (uosc/mpv)
 xdg-mime default mpv.desktop video/mp4
@@ -79,7 +84,7 @@ xdg-mime default calibre-ebook-viewer.desktop application/vnd.amazon.ebook
 xdg-mime default kitty.desktop application/x-terminal-emulator
 
 # File manager
-xdg-mime default org.kde.dolphin.desktop inode/directory
+xdg-mime default org.gnome.Nautilus.desktop inode/directory
 
 # Email (if you handle email files)
 # xdg-mime default thunderbird.desktop x-scheme-handler/mailto
