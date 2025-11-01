@@ -18,10 +18,17 @@ fi
 
 CURRENT_STEP_MESSAGE="Setting system dark theme preference"
 status_msg
-gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'
-gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+    gsettings set org.gnome.desktop.interface gtk-theme 'adw-gtk3-dark'
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+status_ok
+
+CURRENT_STEP_MESSAGE="Setting cursor fallback for X11"
+status_msg
+    sudo ln -sf /home/antek/.local/share/icons/Bibata-Modern-Classic /home/antek/.local/share/icons/default
+    sudo ln -sf /usr/share/icons/Bibata-Modern-Classic /usr/share/icons/default
+    gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
 status_ok
 
 CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"
 status_msg
-sudo ln -sf "$HOSTS_FILE" /etc/hosts && status_ok || status_error
+sudo ln -sf "$HOSTS_FILE" /etc/hosts && status_ok || status_skip

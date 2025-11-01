@@ -2,22 +2,23 @@
 
 This repository contains my personal dotfiles and automated setup scripts for quickly configuring a fresh Arch Linux (or EndeavourOS) system with the Hyprland compositor.
 
-The session is managed by `uwsm` for a clean, minimal startup process.
-
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Features](#features)
 - [Quick Start](#quick-start)
 - [What Gets Installed](#what-gets-installed)
-- [Configuration Structure](#configuration-structure)
+- [Repository Structure](#repository-structure)
+- [Setup Scripts](#setup-scripts)
 - [Custom Scripts](#custom-scripts)
 - [Secrets Management](#secrets-management)
 - [Asset Management](#asset-management)
+- [Configuration](#configuration)
 - [Key Bindings](#key-bindings)
 - [Customization](#customization)
 - [Troubleshooting](#troubleshooting)
 - [Testing](#testing)
+- [Maintenance](#maintenance)
 - [License](#license)
 
 ## Prerequisites
@@ -38,12 +39,13 @@ The session is managed by `uwsm` for a clean, minimal startup process.
 - **Multi-monitor support** with workspace assignments
 - **Asset management** with automatic extraction and symlinking
 - **Personal host configuration** and SSH key management
+- **Status indicators** for all setup steps with clear success/failure feedback
 
 ---
 
 ## Quick Start
 
-### 1. **Bootstrap Installation**
+### 1. Bootstrap Installation
 
 After installing a minimal Arch Linux or EndeavourOS (use the "No Desktop" option), run the bootstrap script as root:
 
@@ -53,9 +55,9 @@ curl -sL https://raw.githubusercontent.com/tefloon/linux/main/bootstrap.sh | sud
 
 **What the bootstrap script does:**
 - Installs git if not present
-- Clones this repository to your user's home directory
+- Clones this repository to your user's home directory (`~/linux`)
 - Runs the main setup script (`setup.sh`) as your user
-- Configures `/etc/fstab` with personal drive mounts (customize in bootstrap.sh)
+- Configures `/etc/fstab` with personal drive mounts (customize in bootstrap.sh before running)
 - Links personal hosts file to `/etc/hosts`
 - Switches git remote to SSH for easier future updates
 
@@ -68,220 +70,231 @@ cd linux
 ./setup.sh
 ```
 
-### 2. **Post-Install Setup**
+### 2. Post-Install Setup
 
 1. **Reboot your system** to ensure all services start properly
 2. **Log in** and you should see your Hyprland desktop with:
-   - Waybar at the top
-   - Auto-started applications (browser, terminal, messaging)
-   - Custom wallpaper and cursor theme
+   - Multiple Waybar instances (one per monitor)
+   - Auto-started applications (Ferdium, Obsidian, terminal)
+   - Custom wallpaper and cursor theme (Bibata Modern Classic)
 
-### 3. **Initial Configuration**
+### 3. Secrets Setup
 
-**Cursor Theme:**
-- The setup installs Bibata Modern Classic automatically
-- For X11 app compatibility: `sudo ln -sf /home/antek/.local/share/icons/Bibata-Modern-Classic /home/antek/.local/share/icons/default`
-- Update GTK settings: `gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'`
+The setup will pull secrets from Bitwarden. Those include SSH keys, PGP/GPG private keys and environment variables.
 
-**Secrets Setup (Optional):**
-If you use Bitwarden for managing SSH keys and environment variables:
-```bash
-bw login  # Enter your credentials
-bw unlock  # Enter your master password
-./scripts/retrieve_secrets.sh  # Pull SSH keys and env vars
-```
+#### SSH Keys
+Bitwarden supports SSH keys as an asset type so the script will pull them (both private and public) and put them in `~/.ssh/`.
+
+#### PGP/GPG keys
+There is no way to store PGP/GPG keys in Bitwarden natively, so the script will look for notes with "pgp" or "gpg" in the name,
+extract them and import them to the keyring.
+
+#### Environment variables
+The script will look for notes with "secret" in the name, extract the contents parse it as environment variables and add them to the file `~/.zsh_secrets` 
+
 
 ---
 
 ## What Gets Installed?
 
 ### Core Hyprland Stack
-- **Compositor**: `hyprland`, `hyprpaper`, `waybar`, `wofi`, `kitty`
-- **System**: `mako`, `swaylock`, `swayidle`, `wl-clipboard`
-- **Screenshots**: `grim`, `slurp`
+- **Compositor & Session**: `hyprland`, `uwsm`
+- **Wallpaper & Bar**: `hyprpaper`, `waybar`
+- **Launcher & Terminal**: `wofi`, `kitty`
+- **Notifications & Lock**: `mako`, `swaylock`
+- **Clipboard & Screenshots**: `wl-clipboard`, `cliphist`, `grim`, `slurp`
 - **Portals**: `polkit-kde-agent`, `xdg-desktop-portal-hyprland`
 - **Qt/Wayland**: `qt5-wayland`, `qt6-wayland`, `qt5ct`, `qt6ct`
-- **Session Management**: `uwsm` (Universal Wayland Session Manager)
 
 ### Development & Productivity
 - **Text Editors**: Sublime Text 4, VS Code, Cursor
 - **File Management**: `yazi` (terminal file manager), `fd`, `bat`, `tree`
 - **Shells**: `zsh` with `zsh-syntax-highlighting`, `zsh-autosuggestions`, `zoxide`
 - **Tools**: `jq`, `bitwarden-cli`, `keychain`, `tealdeer` (tldr client)
-- **Version Control**: Git with SSH key management
+- **Version Control**: Git with comprehensive SSH configuration
 
 ### Applications
 - **Browsers**: Thorium Browser (default), Brave
 - **Communication**: Ferdium (multi-platform messaging), KDE Connect
 - **Media**: Kodi, Spotify, `spotifyd`, `spotify-player`
 - **Office**: OnlyOffice, Obsidian (note-taking), Calibre (ebook management)
-- **Gaming**: Steam, Lutris
-- **Utilities**: `copyq` (clipboard manager), `corectrl` (AMD GPU control), `qbittorrent`
+- **Utilities**: 
+  - `copyq` (clipboard manager with history)
+  - `cliphist` (Wayland clipboard history)
+  - `corectrl` (AMD GPU control)
+  - `qbittorrent`
+  - `gnome-calendar`
 
 ### System Enhancements
-- **Audio**: PipeWire with WirePlumber
-- **Themes**: Bibata cursor theme, custom Waybar styling
+- **Audio**: PipeWire with WirePlumber, EasyEffects
+- **Themes**: Bibata cursor theme, adw-gtk3-dark GTK theme
 - **Fonts**: Development and UI font packages
-- **Performance**: Custom kernel parameters and optimizations
-
-## Custom Scripts
-
-Located in `bin/` and symlinked to `~/.local/bin`:
-
-- **`cb`**: Print to stdout AND copy to Wayland clipboard simultaneously (perfect for piping command output)
-- **`mdd`**: Recursively converts directory contents to markdown format with syntax highlighting for AI tools and documentation
+- **System**: `ntfs-3g` for NTFS support
 
 ---
 
-## Configuration Structure
+## Repository Structure
 
-### Repository Layout
 ```
 linux/
-├── README.md              # This file
-├── setup.sh              # Main setup script
-├── bootstrap.sh          # Root installation script
-├── bin/                  # Custom utility scripts
-│   ├── cb               # Clipboard copy tool
-│   └── mdd              # Markdown directory formatter
-├── scripts/             # Setup automation scripts
+├── README.md                   # This file
+├── setup.sh                    # Main setup orchestrator
+├── bootstrap.sh                # Root installation script
+│
+├── bin/                        # Custom utility scripts
+│   ├── cb                      # Clipboard copy tool (stdout + clipboard)
+│   └── mdd                     # Markdown directory formatter
+│
+├── scripts/                    # Modular setup scripts
+│   ├── status.sh              # Status message helpers (used by all scripts)
 │   ├── install_packages.sh    # Package installation
-│   ├── setup_dotfiles.sh      # Dotfile symlinking
-│   ├── setup_shell.sh         # Shell configuration
-│   ├── retrieve_secrets.sh    # Bitwarden integration
-│   └── [other setup scripts]
-├── dotfiles/            # Configuration files
-│   └── hosts           # Custom hosts file
-├── assets/             # Themes, wallpapers, archives
-│   ├── icons/         # Cursor themes
-│   └── wallpapers/    # Desktop backgrounds
-└── launch-scripts/     # Application launchers
+│   ├── setup_shell.sh         # Shell configuration (zsh)
+│   ├── setup_scripts.sh       # Links bin/ scripts to ~/.local/bin
+│   ├── setup_dotfiles.sh      # Symlinks all dotfiles
+│   ├── setup_launch_scripts.sh # Sets up application launchers
+│   ├── setup_assets.sh        # Extracts themes, wallpapers
+│   ├── setup_system.sh        # System-level configurations
+│   ├── setup_services.sh      # Enable services, add user to groups
+│   ├── post-install.sh        # Post-installation tasks
+│   └── retrieve_secrets.sh    # Bitwarden integration
+│
+├── dotfiles/                   # Configuration files (symlinked to ~/)
+│   ├── .gitconfig             # Git configuration
+│   ├── .ssh/config            # SSH configuration
+│   ├── .zshrc                 # Zsh configuration
+│   ├── hosts                  # Custom hosts file
+│   └── .config/               # Application configs
+│       ├── hypr/              # Hyprland configuration
+│       ├── waybar/            # Waybar configuration
+│       ├── kitty/             # Kitty terminal config
+│       └── ...                # Other app configs
+│
+├── assets/                     # Themes, wallpapers, archives
+│   ├── icons/                 # Cursor themes
+│   └── wallpapers/            # Desktop backgrounds
+│
+└── launch-scripts/             # Application launchers
+    └── launch-nwg.sh          # NWG panel launcher
 ```
 
 ### Hyprland Config Organization
+
+The Hyprland configuration is modular and organized:
+
 ```
 ~/.config/hypr/
-├── hyprland.conf          # Main config (sources others)
+├── hyprland.conf               # Main config (sources all others)
 └── hyprland/
-    ├── env.conf           # Environment variables
-    ├── execs.conf         # Autostart applications
-    ├── general.conf       # Window manager settings
-    ├── keybinds.conf      # Key bindings
-    ├── rules.conf         # Window rules
-    └── colors.conf        # Color scheme
+    ├── env.conf                # Environment variables
+    ├── execs.conf              # Autostart applications
+    ├── general.conf            # Window manager settings
+    ├── keybinds.conf           # Key bindings
+    ├── rules.conf              # Window rules & workspace assignments
+    └── colors.conf             # Color scheme
 ```
-
-### Setup Script Dependencies
-```
-setup.sh
-├── scripts/install_packages.sh    # Installs all packages
-├── scripts/setup_shell.sh          # Configures zsh
-├── scripts/setup_scripts.sh        # Links bin/ scripts
-├── scripts/setup_dotfiles.sh       # Links config files
-├── scripts/setup_launch_scripts.sh # Sets up launchers
-├── scripts/setup_assets.sh         # Extracts themes/assets
-├── scripts/setup_system.sh         # System configurations
-└── scripts/retrieve_secrets.sh     # Bitwarden secrets
-```
-
-### Multi-Monitor Setup
-- **HDMI-A-2** (Left): Workspaces 1, 4
-- **DP-1** (Center): Workspaces 2, 5  
-- **HDMI-A-1** (Right): Workspaces 3, 6
-- **Special workspace**: `magic` for scratchpad (Obsidian)
-
-### Key Applications & Workspaces
-- **Workspace 2**: Thorium Browser (auto-start)
-- **Workspace 3**: Kitty terminal (auto-start)
-- **Workspace 4**: Ferdium messaging (auto-start)
-- **Special workspace**: Obsidian notes (auto-start)
 
 ---
 
-## Secrets Management
+## Setup Scripts
 
-The setup integrates with Bitwarden CLI for secure credential management:
+The `setup.sh` script orchestrates the entire installation by calling modular scripts in sequence:
 
-```bash
-# Retrieve SSH keys and environment secrets
-./scripts/retrieve_secrets.sh
-
-# Test mode (dry run)
-./scripts/retrieve_secrets.sh --test
+```
+setup.sh
+├── scripts/install_packages.sh     # Install all packages (pacman + AUR)
+├── scripts/setup_shell.sh          # Configure zsh with plugins
+├── scripts/setup_scripts.sh        # Link custom bin/ scripts
+├── scripts/setup_dotfiles.sh       # Symlink all dotfiles
+├── scripts/setup_launch_scripts.sh # Setup application launchers
+├── scripts/setup_assets.sh         # Extract and setup themes/wallpapers
+├── scripts/setup_system.sh         # System configs (theme, shell, hosts)
+├── scripts/setup_services.sh       # Enable services, add to groups
+├── scripts/post-install.sh         # Post-installation tasks
+└── scripts/retrieve_secrets.sh     # Fetch secrets from Bitwarden
 ```
 
-This automatically:
-- Extracts SSH keys from Bitwarden to `~/.ssh/`
-- Creates environment variables in `~/.zsh_secrets`
-- Sets proper permissions (600 for private keys, 644 for public)
+Each script includes status indicators for every step, making it easy to see what succeeded, failed, or was skipped.
+
+---
+
+## Custom Scripts
+
+Located in `bin/` and automatically symlinked to `~/.local/bin`:
+
+### `cb` - Clipboard Copy Tool
+Prints to stdout AND copies to Wayland clipboard simultaneously. Perfect for piping command output:
+
+```bash
+echo "Hello World" | cb
+cat file.txt | cb
+```
+
+### `mdd` - Markdown Directory Formatter
+Recursively converts directory contents to markdown format with syntax highlighting. Great for sharing code context with AI tools:
+
+```bash
+mdd /path/to/project
+mdd .  # Current directory
+```
+
+---
+
+### SSH Configuration
+
+The repository includes a comprehensive SSH config (`.ssh/config`) with:
+- GitHub SSH key configuration
+- Personal server connections (Pi, server, Hostinger)
+- ControlMaster for connection multiplexing
+- Automatic ForwardAgent for GitHub
 
 ---
 
 ## Asset Management
 
-The setup automatically handles assets in the `assets/` directory:
+The `setup_assets.sh` script automatically handles assets in the `assets/` directory:
 
-- **Archives** (`.zip`, `.tar.gz`, etc.): Extracted to `~/.local/share/`
-- **Images** (`.png`, `.jpg`, etc.): Symlinked to `~/.local/share/`
-- **Launch scripts**: Available at `~/.local/share/launch-scripts/`
+- **Archives** (`.zip`, `.tar.gz`, `.tar.xz`, etc.): Automatically extracted to `~/.local/share/`
+- **Images** (`.png`, `.jpg`, `.svg`, etc.): Symlinked to `~/.local/share/`
+- **Cursor Themes**: Extracted and installed system-wide
+- **Wallpapers**: Made available for hyprpaper
+
+All assets maintain proper permissions and ownership.
 
 ---
 
-## Quick Reference
+## Configuration
 
-### Common Commands
-```bash
-# Reload Hyprland config
-hyprctl reload
+### Multi-Monitor Setup
 
-# Check running processes
-hyprctl clients
+Configured for 3 monitors with workspace assignments:
 
-# Monitor information
-hyprctl monitors
+- **HDMI-A-2** (Left): Workspaces 1, 4
+- **DP-1** (Center): Workspaces 2, 5
+- **HDMI-A-1** (Right): Workspaces 3, 6
+- **Special workspace `magic`**: Scratchpad for Obsidian
 
-# Take screenshot
-grim -g "$(slurp)" ~/screenshot.png
+### Auto-Started Applications
 
-# Restart Waybar
-killall waybar && waybar &
-
-# Update system
-yay -Syu
+```
+Workspace 2: Ferdium (messaging)
+Workspace 5: GNOME Calendar
+Workspace 6: Kitty terminal
+Special magic: Obsidian (notes)
 ```
 
-### Directory Quick Access
-- **Configs**: `~/.config/hypr/`
-- **Scripts**: `~/linux/scripts/`
-- **Custom bins**: `~/.local/bin/`
-- **Wallpapers**: `~/.local/share/wallpapers/`
-- **Assets**: `~/.local/share/`
+Additional auto-starts:
+- KDE Connect (phone integration)
+- EasyEffects (audio processing)
+- Clipboard history (cliphist)
+- Polkit authentication agent
 
-## Customization
+### System Configuration
 
-### Adding Packages
-Edit `scripts/install_packages.sh` to add/remove packages:
-```bash
-# Official packages
-install_pkg "package-name"
-
-# AUR packages  
-install_aur_pkg "aur-package-name"
-```
-
-### Adding Dotfiles
-1. Place config files in `dotfiles/` directory
-2. Run `bash scripts/setup_dotfiles.sh` to create symlinks
-3. Files maintain the same relative path structure
-
-### Custom Hosts
-Edit `dotfiles/hosts` to add custom host entries (automatically linked to `/etc/hosts` by bootstrap.sh).
-
-### Personalizing the Setup
-- **Monitor setup**: Edit `hyprland/rules.conf` for your monitor layout
-- **Keybindings**: Modify `hyprland/keybinds.conf`
-- **Autostart apps**: Update `hyprland/execs.conf`
-- **Colors/theme**: Adjust `hyprland/colors.conf` and Waybar configs
+- **Shell**: Zsh with syntax highlighting, autosuggestions, and zoxide
+- **Theme**: adw-gtk3-dark (dark mode enabled)
+- **Cursor**: Bibata Modern Classic (24px)
+- **Clipboard**: cliphist for text and image history
+- **Audio**: PipeWire + WirePlumber + EasyEffects
 
 ---
 
@@ -295,11 +308,54 @@ Edit `dotfiles/hosts` to add custom host entries (automatically linked to `/etc/
 | `Super + R` | Text editor (Sublime) |
 | `Super + B` | Browser (Thorium) |
 | `Super + S` | Toggle scratchpad |
-| `Super + 1-6` | Switch workspaces |
+| `Super + 1-6` | Switch to workspace 1-6 |
+| `Super + Shift + 1-6` | Move window to workspace 1-6 |
 | `Super + Q` | Close window |
 | `Super + V` | Toggle floating |
-| `Print` | Screenshot selection |
 | `Super + I` | Window info (class/title) |
+| `Print` | Screenshot selection |
+| `Super + Print` | Screenshot full screen |
+
+*Note: Full keybindings are defined in `~/.config/hypr/hyprland/keybinds.conf`*
+
+---
+
+## Customization
+
+### Adding Packages
+
+Edit `scripts/install_packages.sh` and add your packages:
+
+```bash
+# Official repository packages
+install_pkg "package-name"
+
+# AUR packages
+install_aur_pkg "aur-package-name"
+```
+
+Then re-run: `source scripts/install_packages.sh`
+
+### Adding Dotfiles
+
+1. Place your config file in the `dotfiles/` directory, maintaining the same path structure as it would be in `~/`
+2. Run `bash scripts/setup_dotfiles.sh` to create symlinks
+3. Files automatically maintain the correct relative paths
+
+Example:
+```
+dotfiles/.config/foo/config.yml → ~/.config/foo/config.yml
+dotfiles/.zshrc → ~/.zshrc
+```
+
+### Personalizing the Setup
+
+- **Monitor layout**: Edit `~/.config/hypr/hyprland/rules.conf`
+- **Keybindings**: Modify `~/.config/hypr/hyprland/keybinds.conf`
+- **Autostart apps**: Update `~/.config/hypr/hyprland/execs.conf`
+- **Colors/theme**: Adjust `~/.config/hypr/hyprland/colors.conf` and Waybar configs
+- **Custom hosts**: Edit `dotfiles/hosts` (automatically linked to `/etc/hosts`)
+- **Drive mounts**: Edit `bootstrap.sh` to customize `/etc/fstab` entries
 
 ---
 
@@ -309,10 +365,10 @@ Edit `dotfiles/hosts` to add custom host entries (automatically linked to `/etc/
 
 **Installation Failed/Stopped:**
 ```bash
-# Check what failed
+# Check system logs
 journalctl -xe
 
-# If the problem was a package, check the logs in /tmp/pacman.log and /tmp/yay.log
+# Check package installation logs
 cat /tmp/pacman.log
 cat /tmp/yay.log
 
@@ -337,47 +393,66 @@ bash scripts/setup_dotfiles.sh
 
 ### Specific Problems
 
-**Electron Apps & Cursors:**
+**Electron Apps & Cursor Theme:**
+
 If Electron apps don't respect cursor themes:
 ```bash
-sudo ln -sf /home/<username>/.local/share/icons/Bibata-Modern-Classic /home/<username>/.local/share/icons/default
-# and/or
+# Create default cursor symlink
+sudo ln -sf ~/.local/share/icons/Bibata-Modern-Classic ~/.local/share/icons/default
+# Or system-wide
 sudo ln -sf /usr/share/icons/Bibata-Modern-Classic /usr/share/icons/default
 ```
 
-**Bitwarden Authentication:**
-If secrets retrieval fails:
+**Multi-Monitor Issues:**
+
 ```bash
-bw login     # Use your email
-bw unlock    # Enter master password
-bw sync      # Ensure latest data
+# Check monitor names
+hyprctl monitors
+
+# Update hyprland/rules.conf with correct names
+nano ~/.config/hypr/hyprland/rules.conf
+
+# Reload Hyprland
+hyprctl reload
 ```
 
-**Multi-Monitor Issues:**
-- Check monitor names: `hyprctl monitors`
-- Update `hyprland/rules.conf` with correct monitor names
-- Restart Hyprland: `hyprctl reload`
-
-**Performance Issues:**
-- Use game mode toggle in Waybar (🎮) for gaming
-- Disable animations in `hyprland/general.conf`
-- Check GPU drivers: `lspci -k | grep -A 2 -E "(VGA|3D)"`
-
 **Network Issues:**
-- Check network manager: `systemctl status NetworkManager`
-- WiFi problems: `nmcli device wifi list`
-- DNS issues: Check `/etc/resolv.conf`
+
+```bash
+# Check network manager
+systemctl status NetworkManager
+
+# WiFi problems
+nmcli device wifi list
+
+# DNS issues
+cat /etc/resolv.conf
+```
 
 **Audio Problems:**
-- Restart PipeWire: `systemctl --user restart pipewire`
-- Check audio devices: `pactl list sinks`
-- Volume control: `pavucontrol`
+
+```bash
+# Restart PipeWire
+systemctl --user restart pipewire
+
+# Check audio devices
+pactl list sinks
+
+# Volume control GUI
+pavucontrol
+```
+
+**Performance Issues:**
+
+- Use game mode toggle in Waybar (🎮) for gaming
+- Disable animations in `~/.config/hypr/hyprland/general.conf`
+- Check GPU drivers: `lspci -k | grep -A 2 -E "(VGA|3D)"`
+
+---
 
 ## Testing
 
 ### Validation Steps
-
-After installation, verify everything works:
 
 ```bash
 # Check key applications
@@ -388,8 +463,8 @@ ls -la ~/.config/hypr/
 ls -la ~/.zshrc
 
 # Test custom scripts
-cb --help     # Should show usage or work silently
-mdd --help    # Should work with directory
+cb --help          # Should work or show usage
+echo "test" | cb   # Should copy to clipboard
 
 # Check secrets (if using Bitwarden)
 ls -la ~/.ssh/
@@ -402,11 +477,12 @@ wofi --show drun --allow-images &  # Test app launcher
 ```
 
 ### Performance Verification
+
 ```bash
 # Check system resources
-htop
+htop  # or btop
 
-# GPU information (if applicable)
+# GPU information
 lspci | grep -i vga
 glxinfo | grep "OpenGL renderer"
 
@@ -415,30 +491,31 @@ pactl info
 ```
 
 ### Full System Test
-#### 1. Create a new user with
+
+Test the setup in a clean environment:
+
+#### 1. Create a Test User
 ```bash
 sudo useradd -m testuser -G wheel
 sudo passwd testuser
 # Set a simple password you'll remember
 ```
 
-#### 2. Reboot
+#### 2. Reboot and Login as Test User
 ```bash
 reboot
 ```
 
-#### 3. Once logged in as testuser
-Open a terminal and run:
+#### 3. Run Setup
 ```bash
 whoami          # Verify you're testuser
-echo $HOME      # Should be /home/testuser
 cd ~
 git clone https://github.com/tefloon/linux.git
 cd linux
 ./setup.sh
 ```
 
-#### 4. Clean up
+#### 4. Clean Up
 ```bash
 # Back on your main user
 sudo userdel -r testuser
@@ -446,25 +523,66 @@ sudo userdel -r testuser
 
 ---
 
-## Maintenance & Updates
+## Maintenance
 
 ### Keeping the System Updated
+
 ```bash
 # Update all packages
 yay -Syu
 
-# Update this dotfiles repo
+# Update dotfiles repo
 cd ~/linux
 git pull
 
-# Re-run setup if needed
+# Re-run setup if needed (safe to run multiple times)
 ./setup.sh
 ```
 
 ### Performance Monitoring
+
 - Use `htop` or `btop` for system monitoring
-- Check GPU usage with `corectrl` (AMD) or `nvidia-smi` (NVIDIA)
+- Check GPU usage: `corectrl` (AMD) or `nvidia-smi` (NVIDIA)
 - Monitor disk usage: `df -h` and `du -sh ~/.local/share/`
+
+
+---
+
+## Quick Reference
+
+### Common Commands
+
+```bash
+# Reload Hyprland config
+hyprctl reload
+
+# Check running windows
+hyprctl clients
+
+# Monitor information
+hyprctl monitors
+
+# Take screenshot
+grim -g "$(slurp)" ~/screenshot.png
+
+# Restart Waybar
+killall waybar && waybar &
+
+# Update system
+yay -Syu
+
+# Clear clipboard history
+cliphist wipe
+```
+
+### Directory Quick Access
+
+- **Hyprland configs**: `~/.config/hypr/`
+- **Scripts**: `~/linux/scripts/`
+- **Custom bins**: `~/.local/bin/`
+- **Wallpapers**: `~/.local/share/wallpapers/`
+- **Assets**: `~/.local/share/`
+- **Launch scripts**: `~/.local/share/launch-scripts/`
 
 ---
 
@@ -477,3 +595,14 @@ Personal use. Fork and adapt as you like!
 - EndeavourOS 2024+
 - AMD/Intel/NVIDIA GPUs supported
 - 8GB+ RAM recommended
+
+---
+
+## Contributing
+
+This is a personal dotfiles repository, but feel free to:
+- Fork and adapt for your own use
+- Submit issues if you find bugs
+- Suggest improvements via pull requests
+
+**Note**: This setup includes personal configurations (SSH hosts, drive mounts, etc.). Remember to customize these for your own system before using!
