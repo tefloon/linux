@@ -10,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/gamemode", "custom/power"],
+    "modules-right": ["custom/moviemode", "custom/gamemode", "custom/power"],
 
     "clock": {
         "format": "{:%d / %m}",
@@ -61,6 +61,16 @@
         "return-type": "json",
         "interval": "once",
         "signal": 12
+    },
+
+    "custom/moviemode": {
+        "format": "🎞",
+        "tooltip": false,
+        "on-click": "$HOME/.config/waybar/scripts/movie-toggle.sh",
+        "exec": "if [[ -f /tmp/waybar_cinemamode ]]; then echo '{\"class\": \"active\"}'; else echo '{\"class\": \"inactive\"}'; fi",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 13
     },
     
     "custom/power": {
