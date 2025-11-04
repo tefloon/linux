@@ -91,12 +91,11 @@ install_pkg "mpv"                         # Media player
 install_pkg "kodi"                        # Media center application
 install_pkg "helvum"                      # PipeWire patchbay/mixer
 install_pkg "yt-dlp"                      # YouTube/video downloader
-install_pkg "zathura"                     # Lightweight PDF viewer
+install_pkg "zathura"                      # Lightweight PDF viewer
 install_pkg "zathura-pdf-mupdf"           # PDF backend for Zathura
 
 # --- CLIPBOARD & PRODUCTIVITY ---
 install_pkg "cliphist"                    # Clipboard history for Wayland
-install_pkg "copyq"                       # Advanced clipboard manager
 
 # --- NETWORKING & COMMUNICATION ---
 install_pkg "kdeconnect"                  # Device integration (phone/computer sync)
@@ -144,9 +143,9 @@ install_aur_pkg "code"                    # Visual Studio Code
 install_aur_pkg "cursor-electron"         # AI-powered code editor
 install_aur_pkg "dragon-drop"             # Simple drag-and-drop utility
 install_aur_pkg "ferdium-nightly-bin"     # Multi-platform messaging app
-install_aur_pkg "onlyoffice-bin"          # Office suite
 install_aur_pkg "spotify"                 # Music streaming
 install_aur_pkg "spotify-player"          # Terminal Spotify client
 install_aur_pkg "sublime-text-4"          # Text editor
 install_aur_pkg "helium-browser-bin"      # Privacy-focused web browser (my main)
 install_aur_pkg "adw-gtk-theme-git"       # Adwaita GTK theme (development version)
+install_aur_pkg "freeoffice"              # Office suite

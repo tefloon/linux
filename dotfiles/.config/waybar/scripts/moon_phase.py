@@ -73,42 +73,42 @@ def get_moon_phase_today(date = datetime.datetime.today()):
     
     # Define phase names and icons
     phase_data = {
-        "New Moon": "󰽤",         # 0-1 days 0
-        "Waxing Crescent": "",  # 2-6 days  1
-        "First Quarter": "",    # 7-8 days 2
-        "Waxing Gibbous": "",   # 9-13 days 3
-        "Full Moon": "",        # 14-15 days 4
-        "Waning Gibbous": "󰽦",   # 16-21 days 5
-        "Last Quarter": "",     # 22-23 days 6
-        "Waning Crescent": ""   # 24-28+ days 7
+        "New Moon": "󰽤",         # 27-28-0-1-2 (wrapping around 0)
+        "Waxing Crescent": "",  # 3-6 days
+        "First Quarter": "",    # 7-9 days
+        "Waxing Gibbous": "",   # 10-12 days
+        "Full Moon": "",        # 13-14-15 days (3 days centered on 14)
+        "Waning Gibbous": "󰽦",   # 16-20 days
+        "Last Quarter": "",     # 21-23 days
+        "Waning Crescent": ""   # 24-26 days
     }
 
-    # Map age to phase
-    # Note: astral's moon.phase() returns 0-~28, wrapping before reaching 29
+    # Map age to phase - with 3-day windows for New and Full Moon
     
-    # 27, 0, 1 - New Moon (3 days, centered on 0)
-    if age_days >= 27 or age_days <= 1:
+    # New Moon window: 27, 28, 0, 1, 2 (5 days total, but wraps around)
+    # We want days 28, 0, 1 (3 days centered on 0)
+    if age_days >= 28 or age_days <= 1:
         phase_name = "New Moon"
-    # 2-6 - Waxing Crescent (5 days)
+    # Waxing Crescent: 2-6
     elif age_days <= 6:
         phase_name = "Waxing Crescent"
-    # 7-9 - First Quarter (3 days)
+    # First Quarter: 7-9
     elif age_days <= 9:
         phase_name = "First Quarter"
-    # 10-13 - Waxing Gibbous (4 days)
-    elif age_days <= 13:
+    # Waxing Gibbous: 10-12
+    elif age_days <= 12:
         phase_name = "Waxing Gibbous"
-    # 14-16 - Full Moon (3 days, centered on 15)
-    elif age_days <= 16:
+    # Full Moon window: 13-14-15 (3 days centered on 14)
+    elif age_days <= 15:
         phase_name = "Full Moon"
-    # 17-20 - Waning Gibbous (4 days)
+    # Waning Gibbous: 16-20
     elif age_days <= 20:
         phase_name = "Waning Gibbous"
-    # 21-23 - Last Quarter (3 days)
+    # Last Quarter: 21-23
     elif age_days <= 23:
         phase_name = "Last Quarter"
-    # 24-26 - Waning Crescent
-    else:  # 24-26
+    # Waning Crescent: 24-27
+    else:  # 24-27
         phase_name = "Waning Crescent"
     
     icon = phase_data[phase_name]
@@ -122,21 +122,22 @@ def get_days_to_next_phase(age_days):
     Returns:
         tuple: (is_special, days_remaining_or_message, target_icon)
     """
-    # New moon window: days 0, 1, and 29 (wrapping around)
-    if age_days == 0 or age_days == 1 or age_days >= 28:
+    # New moon celebration window: days 28, 0, 1 (3 days)
+    if age_days >= 28 or age_days <= 1:
         return True, "New Moon!", "󰽤"
     
-    # Full moon window: days 13, 14, 15
+    # Full moon celebration window: days 13, 14, 15 (3 days)
     elif 13 <= age_days <= 15:
-        return True, "Full Moon!", ""
+        return True, "Full Moon!", ""
     
     # First half of cycle (after new moon window, before full moon)
     elif age_days <= 12:
         days_to_full = 14 - age_days
-        return False, f"  {days_to_full} days to", ""
+        return False, f"  {days_to_full} days to", ""
     
     # Second half of cycle (after full moon window, before new moon)
     else:  # age_days is 16-27
+        # Calculate days until we reach day 29 (which wraps to day 0)
         days_to_new = 29 - age_days
         return False, f"  {days_to_new} days to", "󰽤"
 
