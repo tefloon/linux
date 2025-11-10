@@ -3,6 +3,9 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/status.sh"
 
+# Prompt for sudo password upfront (silent, no output mess)
+sudo -v
+
 # Enable and start system services
 enable_service() {
     local service="$1"
@@ -21,7 +24,7 @@ enable_service "systemd-timesyncd"     # Time synchronization
 enable_service "tailscaled"            # Tailscale VPN
 
 # Hardware support
-enable_service "bluetooth"             # Bluetooth
+# enable_service "bluetooth"             # Bluetooth
 
 # Remote access
 # enable_service "sshd"                  # SSH server

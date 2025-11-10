@@ -2,6 +2,8 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/status.sh"
+source "$SCRIPT_DIR/setup_services.sh"
+source "$SCRIPT_DIR/setup_default_browser.sh"
 
 CURRENT_STEP_MESSAGE="Setting up default programs"
 status_msg
@@ -19,9 +21,9 @@ xdg-mime default org.gnome.Loupe.desktop image/tiff
 xdg-mime default org.gnome.Loupe.desktop image/svg+xml
 
 # Web browsers
-xdg-mime default helium-browser.desktop x-scheme-handler/http
-xdg-mime default helium-browser.desktop x-scheme-handler/https
-xdg-mime default helium-browser.desktop text/html
+# xdg-mime default helium-browser.desktop x-scheme-handler/http
+# xdg-mime default helium-browser.desktop x-scheme-handler/https
+# xdg-mime default helium-browser.desktop text/html
 
 # Text files and code
 xdg-mime default sublime_text.desktop text/plain
