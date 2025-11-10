@@ -53,9 +53,6 @@ bash "$SCRIPT_DIR/scripts/setup_assets.sh"
 echo "=== Setting up system configurations ==="
 bash "$SCRIPT_DIR/scripts/setup_system.sh"
 
-echo "=== Starting services and adding to groups ==="
-bash "$SCRIPT_DIR/scripts/setup_services.sh"
-
 echo "=== Running post-install configuration ==="
 bash "$SCRIPT_DIR/scripts/post-install.sh"
 
