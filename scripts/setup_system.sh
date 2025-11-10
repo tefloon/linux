@@ -24,7 +24,7 @@ status_ok
 
 CURRENT_STEP_MESSAGE="Setting cursor fallback for X11"
 status_msg
-    sudo ln -sf /home/antek/.local/share/icons/Bibata-Modern-Classic /home/antek/.local/share/icons/default
+    sudo ln -sf $HOME/.local/share/icons/Bibata-Modern-Classic $HOME/.local/share/icons/default
     sudo ln -sf /usr/share/icons/Bibata-Modern-Classic /usr/share/icons/default
     gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
 status_ok

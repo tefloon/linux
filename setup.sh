@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/setup-scripts/status.sh"
+source "$SCRIPT_DIR/scripts/status.sh"
 
 CURRENT_STEP_MESSAGE="Checking for sudo"
 status_msg
@@ -11,7 +11,13 @@ fi
 status_ok
 
 # Ensure base-devel is installed (needed for yay and AUR)
-install_pkg "base-devel"
+CURRENT_STEP_MESSAGE="Installing base-devel"
+status_msg
+if sudo pacman -S --noconfirm --needed base-devel > /tmp/pacman.log 2>&1; then
+    status_ok
+else
+    status_skip "Failed to install base-devel."
+fi
 
 # Install yay if not present
 if ! command -v yay >/dev/null 2>&1; then

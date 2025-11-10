@@ -46,6 +46,8 @@ install_pkg "grim"                        # Screenshot utility for Wayland
 install_pkg "slurp"                       # Screen area selection for screenshots
 install_pkg "polkit-kde-agent"            # Authentication agent for privilege escalation
 install_pkg "xdg-desktop-portal-hyprland" # Desktop portal for Hyprland (file dialogs, etc.)
+install_pkg "xdg-desktop-portal-gtk"      # Desktop portal for Hyprland (file dialogs, etc.)
+install_pkg "xdg-desktop-portal"          # Desktop portal for Hyprland (file dialogs, etc.)
 install_pkg "qt5-wayland"                 # Qt5 Wayland support
 install_pkg "qt6-wayland"                 # Qt6 Wayland support
 install_pkg "qt5ct"                       # Qt5 configuration tool
