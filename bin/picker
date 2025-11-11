@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Pick color and copy to clipboard
+color=$(hyprpicker -f hex)
+
+if [ -n "$color" ]; then
+    # Copy to clipboard (hyprpicker does this with -a, but explicit here)
+    echo -n "$color" | wl-copy
+    
+    # Optional: show notification with the color
+    notify-send "Color Picked" "$color" -t 2000
+    
+    # Optional: also copy RGB format
+    # rgb=$(hyprpicker -f rgb)
+fi

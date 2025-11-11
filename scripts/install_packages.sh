@@ -151,3 +151,4 @@ install_aur_pkg "sublime-text-4"          # Text editor
 install_aur_pkg "helium-browser-bin"      # Privacy-focused web browser (my main)
 install_aur_pkg "adw-gtk-theme-git"       # Adwaita GTK theme (development version)
 install_aur_pkg "freeoffice"              # Office suite
+install_aur_pkg "hyprpicker"              # Wayland color picker utility
