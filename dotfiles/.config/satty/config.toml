@@ -1,0 +1,12 @@
+[general]
+# Exit directly after copy/save action
+early-exit = true
+
+# Copy command
+copy-command = "wl-copy"
+
+# Hide toolbars by default (since you're using -d flag)
+default-hide-toolbars = true
+
+# Actions to trigger on Enter key
+actions-on-enter = ["save-to-clipboard", "exit"]

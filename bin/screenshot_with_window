@@ -1,0 +1,6 @@
+#!/bin/bash
+# Screenshot script with satty for Wayland/Hyprland
+
+# Take screenshot
+TEMP_FILE="/tmp/screenshot_$(date +%s).png"
+grim -g "$(slurp)" -t ppm - | satty --filename - -d --copy-command wl-copy
