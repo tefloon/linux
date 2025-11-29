@@ -21,6 +21,10 @@ window#waybar {
     margin: 0;
 }
 
+#custom-power{
+    font-size: 26px;
+}
+
 /* Hover effects */
 #memory:hover,
 #disk:hover,
