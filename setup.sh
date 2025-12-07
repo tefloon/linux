@@ -57,6 +57,6 @@ echo "=== Running post-install configuration ==="
 bash "$SCRIPT_DIR/scripts/post-install.sh"
 
 echo "=== Retrieving secrets ==="
-bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
+bash "$SCRIPT_DIR/scripts/setupo_services.sh"
 
 echo -e "All done!"

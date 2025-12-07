@@ -66,6 +66,7 @@ install_pkg "fd"                          # Fast file finder (rust alternative t
 install_pkg "tree"                        # Directory tree visualization
 install_pkg "yazi"                        # Terminal file manager
 install_pkg "nautilus"                    # GNOME file manager
+install_pkg "age"                         # A simple, modern and secure file encryption tool
 
 # --- SYSTEM MONITORING & INFO ---
 install_pkg "bat"                         # Enhanced cat with syntax highlighting
@@ -93,7 +94,7 @@ install_pkg "mpv"                         # Media player
 install_pkg "kodi"                        # Media center application
 install_pkg "helvum"                      # PipeWire patchbay/mixer
 install_pkg "yt-dlp"                      # YouTube/video downloader
-install_pkg "zathura"                      # Lightweight PDF viewer
+install_pkg "zathura"                     # Lightweight PDF viewer
 install_pkg "zathura-pdf-mupdf"           # PDF backend for Zathura
 
 # --- CLIPBOARD & PRODUCTIVITY ---
@@ -152,4 +153,5 @@ install_aur_pkg "helium-browser-bin"      # Privacy-focused web browser (my main
 install_aur_pkg "adw-gtk-theme-git"       # Adwaita GTK theme (development version)
 install_aur_pkg "freeoffice"              # Office suite
 install_aur_pkg "hyprpicker"              # Wayland color picker utility
-install_aur_pkg "pinta"              # Wayland color picker utility
+install_aur_pkg "pinta"                   # Simple raster image editor
+install_aur_pkg "wlogout"                 # Wayland logout utility

@@ -10,6 +10,33 @@ if [[ "$1" == "--test" ]]; then
     echo "Running in TEST MODE: secrets will NOT be written to disk."
 fi
 
+# Check Tailscale connection
+CURRENT_STEP_MESSAGE="Checking Tailscale connection"
+status_msg
+if ! tailscale status >/dev/null 2>&1; then
+    status_error "Tailscale is not running. Start it with: sudo systemctl start tailscaled"
+fi
+status_ok
+
+# Configure Vaultwarden server if not set
+CURRENT_STEP_MESSAGE="Configuring Vaultwarden server"
+status_msg
+BW_SERVER=$(bw config server 2>/dev/null || echo "")
+if [[ "$BW_SERVER" != *"vault.craftit.work"* ]]; then
+    bw config server https://vault.craftit.work >/dev/null
+    status_ok
+else
+    status_skip "Already configured"
+fi
+
+# Check Vaultwarden connectivity
+CURRENT_STEP_MESSAGE="Checking Vaultwarden connectivity"
+status_msg
+if ! curl -s --max-time 5 "https://vault.craftit.work/alive" >/dev/null 2>&1; then
+    status_error "Cannot reach Vaultwarden at vault.craftit.work. Is Tailscale connected?"
+fi
+status_ok
+
 CURRENT_STEP_MESSAGE="Checking for Bitwarden CLI"
 status_msg
 command -v bw >/dev/null || status_error

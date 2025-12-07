@@ -3,8 +3,6 @@
 ::1        localhost ip6-localhost ip6-loopback
 ff02::1    ip6-allnodes
 ff02::2    ip6-allrouters
-# This host address
-127.0.1.1  archcraft
-100.117.200.53 DietPi
-100.118.233.57 server
+
+# My hosts
 69.62.127.104 hostinger
