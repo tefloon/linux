@@ -72,12 +72,12 @@ filekinds:
 file_type:
   # Archives in magenta (matches Alacritty's magenta)
   compressed:
-    foreground: "#9580c8"
+    foreground: Yellow
     is_bold: false
   
   # Images in magenta
   image:
-    foreground: "#9580c8"
+    foreground: Yellow
     is_bold: false
   
   # Videos in cyan
@@ -92,7 +92,7 @@ file_type:
   
   # Documents in yellow
   document:
-    foreground: Yellow
+    foreground: White
     is_bold: false
   
   # Source code in green

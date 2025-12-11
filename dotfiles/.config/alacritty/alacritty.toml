@@ -16,7 +16,7 @@ decorations = "full"
 
 [font]
 # Font configuration
-# normal.family = "JetBrainsMono Nerd Font Propo"
+normal.family = "JetBrainsMono Nerd Font Propo"
 # normal.family = "Fira Code"
 # normal.family = "Hack Nerd Font Propo"
 size = 12.0
@@ -27,7 +27,7 @@ builtin_box_drawing = true
 
 [colors.primary]
 # Slightly lighter background for better contrast through transparency
-background = "#0a0e14"
+background = "#1a1b26"
 foreground = "#d4d4d4"  # Slightly less bright white for easier reading
 
 [colors.cursor]
@@ -40,7 +40,7 @@ red     = "#e06c75"      # Muted coral red
 green   = "#98c379"      # Softer green
 yellow  = "#e5c07b"      # Warmer, muted yellow
 blue    = "#61afef"      # Softer blue (still distinct)
-magenta = "#c678dd"      # Muted purple-magenta
+magenta = "#bb9af7"      # Muted purple-magenta
 cyan    = "#56b6c2"      # Muted cyan
 white   = "#abb2bf"      # Softer white
 
