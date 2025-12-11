@@ -11,14 +11,12 @@ skip_global_compinit=1
 autoload -Uz zmv zln
 
 # History Configuration
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=5000
+SAVEHIST=5000
 HISTFILE=~/.zsh_history
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_REDUCE_BLANKS
-setopt SHARE_HISTORY              # Share history between sessions
 setopt APPEND_HISTORY             # Append rather than overwrite
-setopt INC_APPEND_HISTORY         # Write immediately, not on exit
 
 # --- Keybindings ---
 # Word jumping with Ctrl+Arrow keys
@@ -81,23 +79,21 @@ if (( $+commands[eza] )); then
   alias ll='eza -lh --color=always --group-directories-first --icons'
   alias la='eza -lah --sort=size --color=always --group-directories-first --icons'
   alias l='eza -lah --color=always --group-directories-first --icons'
-  alias lt='eza -T --color=always --group-directories-first --icons --level=2'
+  alias lt='eza -T --color=always --group-directories-first --icons --level=2 --git-ignore -I "node_modules|.npm|__pycache__"'
   alias l.='eza -lah --color=always --group-directories-first --icons | grep "^\."'
   alias lg='eza -lah --git --color=always --group-directories-first --icons'
   alias lm='eza -lah --sort=modified --color=always --group-directories-first --icons'
 
 else
-  # Fallback to standard ls with colors
+  # Fallback to standard ls/tree with colors
   alias ls='ls --color=auto'
   alias ll='ls -lh --color=auto'
   alias la='ls -lAh --color=auto'
   alias l='ls -CF --color=auto'
+  alias tree='tree -aI ".git|node_modules|.npm|__pycache__" -L 3'
 fi
 
 # Colored command output
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
 alias diff='diff --color=auto'
 alias ip='ip --color=auto'
 
@@ -135,18 +131,9 @@ fi
 alias sdn='shutdown now'
 alias dgd='dragon-drop -x'
 alias cd..='cd ..'
-alias c='clear'
 alias q='qalc'
-alias wen='wiki-tui'
-alias wpl='wiki-tui -l PL'
-alias tree='tree -aI ".git|node_modules|.npm|__pycache__" -L 3'
 alias ncdu='ncdu --color dark'
 alias speed='librespeed-cli'
-
-# --- Functions ---
-pdf() {
-  zathura "$@" &!
-}
 
 s() {
   xdg-open "$@" &!
@@ -160,8 +147,8 @@ weather() {
   fi
 }
 
-batman() {
-  man "$@" | col -bx | bat --language=man --plain
+man() {
+  command man "$@" | col -bx | bat --language=man --plain
 }
 
 # Rehash after package installation
