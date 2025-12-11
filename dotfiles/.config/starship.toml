@@ -9,7 +9,7 @@ $git_status
 $character"""
 
 [directory]
-style = "bold blue"  # Changed from cyan to blue to match directory colors in ls
+style = "bold blue" 
 read_only = " 󰍁"
 read_only_style = "dimmed bold blue"
 truncation_length = 3
