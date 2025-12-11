@@ -1,74 +1,155 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# ~/.zshrc - Optimized version
+
+# --- Early Performance Optimizations ---
+# Skip global compinit (we'll do it ourselves later)
+skip_global_compinit=1
 
 # Source default browser configuration (auto-generated)
 [ -f "$HOME/.config/default-apps/generated-env.sh" ] && source "$HOME/.config/default-apps/generated-env.sh"
 
-# POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
-ZSH_THEME="powerlevel10k/powerlevel10k"
-source $HOME/.oh-my-zsh/oh-my-zsh.sh
+# --- ZSH Configuration ---
+autoload -Uz zmv zln
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# --- plugins
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# --- Auto rehash after pacman installs ---
-zshcache_time="$(date +%s%N)"
-
-autoload -Uz zmv
-autoload -Uz zln
-
-# history
+# History Configuration
 HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.zsh_history
-
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_REDUCE_BLANKS
+setopt SHARE_HISTORY              # Share history between sessions
+setopt APPEND_HISTORY             # Append rather than overwrite
+setopt INC_APPEND_HISTORY         # Write immediately, not on exit
 
+# --- Keybindings ---
+# Word jumping with Ctrl+Arrow keys
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+bindkey "^[OC" forward-word
+bindkey "^[OD" backward-word
+bindkey "\e[1;5C" forward-word
+bindkey "\e[1;5D" backward-word
 
-eval "$(keychain --eval id_ed25519 id_ed25519_pi 2>/dev/null)"
-eval "$(zoxide init zsh)"
+# Home and End keys
+bindkey "^[[H" beginning-of-line
+bindkey "^[[F" end-of-line
+bindkey "^[[1~" beginning-of-line
+bindkey "^[[4~" end-of-line
+bindkey "\e[H" beginning-of-line
+bindkey "\e[F" end-of-line
 
-[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
-[ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
+# Delete key
+bindkey "^[[3~" delete-char
+bindkey "^[3;5~" delete-char
 
-export FZF_ALT_C_COMMAND='ls -1d */'
-export FZF_DEFAULT_COMMAND='fd --type f'  # if you have fd installed
-export FZF_CTRL_T_COMMAND='fd --type f --max-depth 2 --exclude .config --exclude Chmury --exclude Backups --no-follow'
+# --- Completion System (OPTIMIZED for speed) ---
+autoload -Uz compinit
 
+# Only regenerate compdump once per day
+typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
+if [ $(date +'%j') != $updated_at ]; then
+  compinit -u
+else
+  compinit -C -u
+fi
+
+# Case-insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+
+# Enable menu selection
+zstyle ':completion:*' menu select
+
+# Simple completion colors - no bold
+zstyle ':completion:*:default' list-colors 'di=34:ln=36:ex=33:fi=90'
+
+# Remove group names/descriptions entirely
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format ''
+
+# Cache completion results
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
+
+# --- Environment Variables (set early) ---
 export EDITOR='subl -w'
-
-# Load Spotipy secret if the file exists
-[ -f "$HOME/.zsh_secrets" ] && source "$HOME/.zsh_secrets"
-
 export PATH="$HOME/.local/bin:$PATH"
 
-# my aliases
+# --- Colors & LS Configuration ---
+# Conditional eza setup (only if installed)
+if (( $+commands[eza] )); then
+  # eza (modern ls replacement)
+  alias ls='eza --color=always --group-directories-first --icons'
+  alias ll='eza -lh --color=always --group-directories-first --icons'
+  alias la='eza -lah --sort=size --color=always --group-directories-first --icons'
+  alias l='eza -lah --color=always --group-directories-first --icons'
+  alias lt='eza -T --color=always --group-directories-first --icons --level=2'
+  alias l.='eza -lah --color=always --group-directories-first --icons | grep "^\."'
+  alias lg='eza -lah --git --color=always --group-directories-first --icons'
+  alias lm='eza -lah --sort=modified --color=always --group-directories-first --icons'
+
+else
+  # Fallback to standard ls with colors
+  alias ls='ls --color=auto'
+  alias ll='ls -lh --color=auto'
+  alias la='ls -lAh --color=auto'
+  alias l='ls -CF --color=auto'
+fi
+
+# Colored command output
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip --color=auto'
+
+# --- Plugins (lazy load for performance) ---
+# Load syntax highlighting last (as recommended)
+if [ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+fi
+
+if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# --- Tool Initializations (lazy where possible) ---
+# Zoxide
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
+
+# FZF
+if [ -f /usr/share/fzf/key-bindings.zsh ]; then
+  source /usr/share/fzf/key-bindings.zsh
+  source /usr/share/fzf/completion.zsh 2>/dev/null
+  
+  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+  export FZF_ALT_C_COMMAND='ls -1d */'
+  export FZF_DEFAULT_COMMAND='fd --type f'
+  export FZF_CTRL_T_COMMAND='fd --type f --max-depth 2 --exclude .config --exclude Chmury --exclude Backups --no-follow'
+fi
+
+# Load secrets (if exists)
+[ -f "$HOME/.zsh_secrets" ] && source "$HOME/.zsh_secrets"
+
+# --- Aliases ---
 alias sdn='shutdown now'
 alias dgd='dragon-drop -x'
 alias cd..='cd ..'
 alias c='clear'
-alias q=qalc
+alias q='qalc'
 alias wen='wiki-tui'
 alias wpl='wiki-tui -l PL'
 alias tree='tree -aI ".git|node_modules|.npm|__pycache__" -L 3'
 alias ncdu='ncdu --color dark'
 alias speed='librespeed-cli'
 
+# --- Functions ---
 pdf() {
-    zathura "$@" & disown
+  zathura "$@" &!
 }
 
 s() {
-    xdg-open "$@" & disown
+  xdg-open "$@" &!
 }
 
 weather() {
@@ -79,11 +160,11 @@ weather() {
   fi
 }
 
-# using bat for man pages
 batman() {
-    man "$@" | col -bx | bat --language=man
+  man "$@" | col -bx | bat --language=man --plain
 }
 
+# Rehash after package installation
 pacman() {
   command pacman "$@" && rehash
 }
@@ -92,23 +173,18 @@ yay() {
   command yay "$@" && rehash
 }
 
-# yazi working dir workaround
-function y() {
+# Yazi with directory changing
+y() {
   local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
   yazi "$@" --cwd-file="$tmp"
-  IFS= read -r -d '' cwd < "$tmp"
-  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    builtin cd -- "$cwd"
+  fi
   rm -f -- "$tmp"
 }
 
-ytdl-music() {
-    yt-dlp -f "bestaudio" --extract-audio --audio-format mp3 -o "~/Music/%(uploader)s - %(title)s.%(ext)s" "$1"
-}
+# --- Starship Prompt (must be at the end) ---
+(( $+commands[starship] )) && eval "$(starship init zsh)"
 
-ytdl-video() {
-    yt-dlp -f "best[height<=1080]" -o "~/Videos/%(uploader)s - %(title)s.%(ext)s" "$1"
-}
-
-[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
- 
- true # to have the first prompt be "green"
+# Ensure clean exit status for first prompt
+true

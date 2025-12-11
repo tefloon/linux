@@ -67,6 +67,7 @@ install_pkg "tree"                        # Directory tree visualization
 install_pkg "yazi"                        # Terminal file manager
 install_pkg "nautilus"                    # GNOME file manager
 install_pkg "age"                         # A simple, modern and secure file encryption tool
+install_pkg "croc"                        # Encrypted, modern large file transfer tool
 
 # --- SYSTEM MONITORING & INFO ---
 install_pkg "bat"                         # Enhanced cat with syntax highlighting

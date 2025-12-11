@@ -1,0 +1,101 @@
+# ~/.config/eza/theme.yml
+# Color theme optimized for visibility through transparency
+
+# Timestamp colors
+date:
+  foreground: "#666666"
+  is_dimmed: false
+
+filenames:
+  "Videos":
+    icon:
+      glyph: "󰿎"  
+  "Games":
+    icon:
+      glyph: "󰊗"
+
+# Custom icons for specific file types
+extensions:
+  gitignore:
+    icon:
+      glyph: ""
+  toml:
+    icon:
+      glyph: ""  
+  yml:
+    icon:
+      glyph: ""
+  mp4:
+    icon:
+      glyph: "󰿎"
+  mkv:
+    icon:
+      glyph: "󰿎"
+  avi:
+    icon:
+      glyph: "󰿎"
+  mov:
+    icon:
+      glyph: "󰿎"
+  webm:
+    icon:
+      glyph: "󰿎"  
+  csv:
+    icon:
+      glyph: ""  
+  xls:
+    icon:
+      glyph: "" 
+  xlsx:
+    icon:
+      glyph: ""  
+  doc:
+    icon:
+      glyph: ""
+  docx:
+    icon:
+      glyph: ""
+
+filekinds:
+  executable:
+    foreground: Green
+    is_bold: false
+  
+  directory:
+    foreground: Blue  # Matches Alacritty's blue (#0099FF)
+    is_bold: true
+  
+  symlink:
+    foreground: Cyan
+    is_bold: true
+
+file_type:
+  # Archives in magenta (matches Alacritty's magenta)
+  compressed:
+    foreground: "#9580c8"
+    is_bold: false
+  
+  # Images in magenta
+  image:
+    foreground: "#9580c8"
+    is_bold: false
+  
+  # Videos in cyan
+  video:
+    foreground: Magenta
+    is_bold: false
+
+  # Audio in green
+  music:
+    foreground: Green
+    is_bold: false
+  
+  # Documents in yellow
+  document:
+    foreground: Yellow
+    is_bold: false
+  
+  # Source code in green
+  source:
+    foreground: Green
+    is_bold: false

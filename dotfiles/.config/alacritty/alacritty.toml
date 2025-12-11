@@ -1,0 +1,86 @@
+# Alacritty Configuration
+# Fast, minimal, beautiful
+# Optimized for 85% opacity with blur
+# Muted color scheme for better readability
+
+[window]
+# Padding for aesthetics
+padding.x = 20
+padding.y = 20
+
+# Window decorations
+decorations = "full"
+
+# Startup mode
+#startup_mode = "Maximized"
+
+[font]
+# Font configuration
+# normal.family = "JetBrainsMono Nerd Font Propo"
+# normal.family = "Fira Code"
+# normal.family = "Hack Nerd Font Propo"
+size = 12.0
+# offset = { x = 0, y = 1 }  # Adds pixels between lines
+
+# Enable font features
+builtin_box_drawing = true
+
+[colors.primary]
+# Slightly lighter background for better contrast through transparency
+background = "#0a0e14"
+foreground = "#d4d4d4"  # Slightly less bright white for easier reading
+
+[colors.cursor]
+text = "#0a0e14"
+cursor = "#d4d4d4"
+
+[colors.normal]
+black   = "#1e1e1e"
+red     = "#e06c75"      # Muted coral red
+green   = "#98c379"      # Softer green
+yellow  = "#e5c07b"      # Warmer, muted yellow
+blue    = "#61afef"      # Softer blue (still distinct)
+magenta = "#c678dd"      # Muted purple-magenta
+cyan    = "#56b6c2"      # Muted cyan
+white   = "#abb2bf"      # Softer white
+
+[colors.bright]
+black   = "#5c6370"
+red     = "#e06c75"      # Keep same as normal for consistency
+green   = "#98c379"
+yellow  = "#e5c07b"
+blue    = "#61afef"
+magenta = "#c678dd"      # Muted purple (for archives/media)
+cyan    = "#56b6c2"
+white   = "#d4d4d4"
+
+[cursor]
+# Cursor style
+style.shape = "Block"
+style.blinking = "Off"
+unfocused_hollow = true
+
+[scrolling]
+# Scrollback buffer
+history = 10000
+multiplier = 3
+
+[mouse]
+# Hide mouse when typing
+hide_when_typing = true
+
+[selection]
+# Save selections to clipboard
+save_to_clipboard = true
+
+[keyboard]
+# Add any custom keybindings here
+bindings = [
+  { key = "V", mods = "Control|Shift", action = "Paste" },
+  { key = "C", mods = "Control|Shift", action = "Copy" },
+]
+
+# Performance settings
+[env]
+# Set TERM for best compatibility
+TERM = "xterm-256color"

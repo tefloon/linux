@@ -1,0 +1,27 @@
+# Faster startup
+command_timeout = 500
+
+# Format
+format = """
+$directory\
+$git_branch\
+$git_status\
+$character"""
+
+[directory]
+style = "bold blue"  # Changed from cyan to blue to match directory colors in ls
+read_only = " 󰍁"
+read_only_style = "dimmed bold blue"
+truncation_length = 3
+truncate_to_repo = true
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+
+[git_branch]
+symbol = ""
+style = "bold #ff6fef"  # Changed from purple to magenta for consistency
+
+[git_status]
+style = "bold yellow"
