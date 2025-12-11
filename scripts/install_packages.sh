@@ -38,7 +38,6 @@ install_pkg "hyprland"                    # Wayland compositor (window manager)
 install_pkg "hyprpaper"                   # Wallpaper daemon for Hyprland
 install_pkg "waybar"                      # Status bar for Wayland
 install_pkg "wofi"                        # Application launcher (like rofi for Wayland)
-install_pkg "kitty"                       # GPU-accelerated terminal emulator
 install_pkg "mako"                        # Notification daemon for Wayland
 install_pkg "swaylock"                    # Screen locker for Wayland
 install_pkg "wl-clipboard"                # Clipboard utilities for Wayland
@@ -54,6 +53,8 @@ install_pkg "qt5ct"                       # Qt5 configuration tool
 install_pkg "qt6ct"                       # Qt6 configuration tool
 
 # --- SYSTEM ESSENTIALS ---
+install_pkg "alacritty"                   # GPU-accelerated terminal emulator
+install_pkg "starship"                   # GPU-accelerated terminal emulator
 install_pkg "xorg-xwayland"               # X11 compatibility layer for Wayland
 install_pkg "brightnessctl"               # Screen brightness control
 install_pkg "upower"                      # Battery/power management info
@@ -78,7 +79,6 @@ install_pkg "wiki-tui"                    # Wikipedia terminal interface
 
 # --- PASSWORD & SECURITY ---
 install_pkg "bitwarden-cli"               # Password manager CLI
-install_pkg "keychain"                    # SSH key management
 install_pkg "openssl"                     # Cryptography toolkit
 install_pkg "openssh"                     # SSH client/server
 
