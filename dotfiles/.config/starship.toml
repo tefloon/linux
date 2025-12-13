@@ -1,9 +1,11 @@
 # Faster startup
 command_timeout = 500
+scan_timeout = 10  # default is 30ms
+"$schema" = 'https://starship.rs/config-schema.json'
+add_newline = false
 
 # Format
-format = """
-$directory\
+format = """$directory\
 $git_branch\
 $git_status
 $character"""
@@ -25,3 +27,12 @@ style = "bold #ff6fef"  # Changed from purple to magenta for consistency
 
 [git_status]
 style = "bold yellow"
+format = '([\[$ahead_behind\]]($style) )'
+# ahead = "⇡${count}"
+# behind = "⇣${count}"
+# diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+# untracked = "?"
+# ignore_submodules = true
+
+[package]
+disabled = true  # Often slow, rarely useful

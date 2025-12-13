@@ -1,4 +1,5 @@
-# ~/.zshrc - Optimized version
+# ~/.zshrc 
+# zmodload zsh/zprof
 
 # --- Early Performance Optimizations ---
 # Skip global compinit (we'll do it ourselves later)
@@ -11,8 +12,8 @@ skip_global_compinit=1
 autoload -Uz zmv zln
 
 # History Configuration
-HISTSIZE=5000
-SAVEHIST=5000
+HISTSIZE=10000
+SAVEHIST=10000
 HISTFILE=~/.zsh_history
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_REDUCE_BLANKS
@@ -40,15 +41,9 @@ bindkey "^[[3~" delete-char
 bindkey "^[3;5~" delete-char
 
 # --- Completion System (OPTIMIZED for speed) ---
-autoload -Uz compinit
-
 # Only regenerate compdump once per day
-typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
-if [ $(date +'%j') != $updated_at ]; then
-  compinit -u
-else
-  compinit -C -u
-fi
+autoload -Uz compinit
+compinit -C -u  # Always skip security checks
 
 # Case-insensitive completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
@@ -114,9 +109,12 @@ fi
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
 # FZF
+# Load keybindings immediately (they're fast)
 if [ -f /usr/share/fzf/key-bindings.zsh ]; then
   source /usr/share/fzf/key-bindings.zsh
-  source /usr/share/fzf/completion.zsh 2>/dev/null
+  
+  # Defer completion loading in background
+  [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh &!
   
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
   export FZF_ALT_C_COMMAND='ls -1d */'
@@ -170,8 +168,21 @@ y() {
   rm -f -- "$tmp"
 }
 
+# Track if this is the first prompt
+typeset -g FIRST_PROMPT=1
+
+# Custom precmd to add newline before prompt (except first)
+precmd() {
+  if [[ $FIRST_PROMPT -eq 1 ]]; then
+    FIRST_PROMPT=0
+  else
+    print ""  # Add blank line before subsequent prompts
+  fi
+}
 # --- Starship Prompt (must be at the end) ---
 (( $+commands[starship] )) && eval "$(starship init zsh)"
 
 # Ensure clean exit status for first prompt
 true
+
+# zprof
