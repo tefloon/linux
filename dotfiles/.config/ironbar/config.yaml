@@ -1,0 +1,58 @@
+monitors:
+  HDMI-A-2:
+    position: top
+    height: 24
+    start:
+    - type: workspaces
+    center:
+    - type: focused
+      icon_size: 16
+    end:
+    - type: battery
+      show_if: '[ -f /sys/class/power_supply/BAT0 ]'
+    - type: sys_info
+      format:
+      - '{cpu_percent}% '
+      - '{memory_percent}% '
+      interval:
+        cpu: 1
+    - type: tray
+    - type: clock
+  DP-1:
+    position: top
+    height: 24
+    start:
+    - type: workspaces
+    center:
+    - type: focused
+      icon_size: 16
+    end:
+    - type: battery
+      show_if: '[ -f /sys/class/power_supply/BAT0 ]'
+    - type: sys_info
+      format:
+      - '{cpu_percent}% '
+      - '{memory_percent}% '
+      interval:
+        cpu: 1
+    - type: tray
+    - type: clock  
+  HDMI-A-1:
+    position: top
+    height: 24
+    start:
+    - type: workspaces
+    center:
+    - type: focused
+      icon_size: 16
+    end:
+    - type: battery
+      show_if: '[ -f /sys/class/power_supply/BAT0 ]'
+    - type: sys_info
+      format:
+      - '{cpu_percent}% '
+      - '{memory_percent}% '
+      interval:
+        cpu: 1
+    - type: tray
+    - type: clock

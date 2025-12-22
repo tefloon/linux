@@ -11,6 +11,9 @@ skip_global_compinit=1
 # --- ZSH Configuration ---
 autoload -Uz zmv zln
 
+# Remove forward slash and maybe dot
+WORDCHARS=${WORDCHARS//[\/,.]}
+
 # History Configuration
 HISTSIZE=10000
 SAVEHIST=10000
@@ -18,6 +21,8 @@ HISTFILE=~/.zsh_history
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt APPEND_HISTORY             # Append rather than overwrite
+setopt HIST_IGNORE_SPACE          # Don't save commands starting with space
+setopt HIST_VERIFY                # Show command before executing from history
 
 # --- Keybindings ---
 # Word jumping with Ctrl+Arrow keys
@@ -98,10 +103,15 @@ if [ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; th
   source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
   ZSH_AUTOSUGGEST_STRATEGY=(history completion)
   ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+  ZSH_AUTOSUGGEST_MANUAL_REBIND=1  # Faster rebinding
 fi
 
 if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
   source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+  # Defer highlighting, reduce work
+  ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+  ZSH_HIGHLIGHT_MAXLENGTH=300  # Don't highlight very long commands
 fi
 
 # --- Tool Initializations (lazy where possible) ---
@@ -133,6 +143,7 @@ alias q='qalc'
 alias ncdu='ncdu --color dark'
 alias speed='librespeed-cli'
 
+
 s() {
   xdg-open "$@" &!
 }
@@ -149,13 +160,13 @@ man() {
   command man "$@" | col -bx | bat --language=man --plain
 }
 
-# Rehash after package installation
-pacman() {
-  command pacman "$@" && rehash
+# Rehash and compinit after package installation
+yay() {
+  command yay "$@" && { rehash; compinit -u }
 }
 
-yay() {
-  command yay "$@" && rehash
+pacman() {
+  command pacman "$@" && { rehash; compinit -u }
 }
 
 # Yazi with directory changing
@@ -172,13 +183,15 @@ y() {
 typeset -g FIRST_PROMPT=1
 
 # Custom precmd to add newline before prompt (except first)
-precmd() {
+add_newline_before_prompt() {
   if [[ $FIRST_PROMPT -eq 1 ]]; then
     FIRST_PROMPT=0
   else
     print ""  # Add blank line before subsequent prompts
   fi
 }
+precmd_functions+=(add_newline_before_prompt)
+
 # --- Starship Prompt (must be at the end) ---
 (( $+commands[starship] )) && eval "$(starship init zsh)"
 
