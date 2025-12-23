@@ -3,3 +3,6 @@
     email = tefloon@gmail.com
 [alias]
 	lg = log --graph --abbrev-commit --decorate --date=short   --format=format:'%C(yellow)%h%Creset - %C(green)%ad%Creset %C(blue)%d%Creset %s %C(red)<%an>%Creset'
+
+[core]
+	pager = bat --style=plain --paging=always

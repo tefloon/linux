@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/status.sh"
+SUBSCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SUBSCRIPT_DIR/../status.sh"
 
 CURRENT_STEP_MESSAGE="Setting up default browser"
 status_msg

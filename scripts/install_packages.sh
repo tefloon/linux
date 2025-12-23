@@ -69,6 +69,7 @@ install_pkg "yazi"                        # Terminal file manager
 install_pkg "nautilus"                    # GNOME file manager
 install_pkg "age"                         # A simple, modern and secure file encryption tool
 install_pkg "croc"                        # Encrypted, modern large file transfer tool
+install_pkg "stow"                        # Manage installation of multiple softwares in the same directory tree
 
 # --- SYSTEM MONITORING & INFO ---
 install_pkg "bat"                         # Enhanced cat with syntax highlighting

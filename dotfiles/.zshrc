@@ -12,7 +12,7 @@ skip_global_compinit=1
 autoload -Uz zmv zln
 
 # Remove forward slash and maybe dot
-WORDCHARS=${WORDCHARS//[\/,.]}
+WORDCHARS=${WORDCHARS//[\/]}
 
 # History Configuration
 HISTSIZE=10000
@@ -68,8 +68,10 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # --- Environment Variables (set early) ---
-export EDITOR='subl -w'
 export PATH="$HOME/.local/bin:$PATH"
+export EDITOR='subl -w'
+export PAGER="bat"
+export BAT_PAGER="less -RF"
 
 # --- Colors & LS Configuration ---
 # Conditional eza setup (only if installed)
@@ -141,19 +143,9 @@ alias dgd='dragon-drop -x'
 alias cd..='cd ..'
 alias q='qalc'
 alias ncdu='ncdu --color dark'
-alias speed='librespeed-cli'
-
 
 s() {
   xdg-open "$@" &!
-}
-
-weather() {
-  if [ $# -eq 0 ]; then
-    curl v2d.wttr.in
-  else
-    curl "v2d.wttr.in/$*"
-  fi
 }
 
 man() {
@@ -162,21 +154,19 @@ man() {
 
 # Rehash and compinit after package installation
 yay() {
-  command yay "$@" && { rehash; compinit -u }
+  command yay "$@" && rehash
 }
 
 pacman() {
-  command pacman "$@" && { rehash; compinit -u }
+  command pacman "$@" && rehash
 }
 
-# Yazi with directory changing
-y() {
-  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-  yazi "$@" --cwd-file="$tmp"
-  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-    builtin cd -- "$cwd"
-  fi
-  rm -f -- "$tmp"
+git() {
+    if [[ $1 == "log" ]]; then
+        command git log "${@:2}" | bat --style=plain --paging=always
+    else
+        command git "$@"
+    fi
 }
 
 # Track if this is the first prompt
