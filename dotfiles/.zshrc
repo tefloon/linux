@@ -143,6 +143,7 @@ alias dgd='dragon-drop -x'
 alias cd..='cd ..'
 alias q='qalc'
 alias ncdu='ncdu --color dark'
+alias bm='bat -l man --plain'
 
 s() {
   xdg-open "$@" &!
