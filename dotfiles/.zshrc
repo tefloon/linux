@@ -50,6 +50,8 @@ bindkey "^[3;5~" delete-char
 autoload -Uz compinit
 compinit -C -u  # Always skip security checks
 
+source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh
+
 # Case-insensitive completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 
@@ -78,9 +80,9 @@ export BAT_PAGER="less -RF"
 if (( $+commands[eza] )); then
   # eza (modern ls replacement)
   alias ls='eza --color=always --group-directories-first --icons'
-  alias ll='eza -lh --color=always --group-directories-first --icons'
+  alias l='eza -lh --color=always --group-directories-first --icons'
   alias la='eza -lah --sort=size --color=always --group-directories-first --icons'
-  alias l='eza -lah --color=always --group-directories-first --icons'
+  alias ll='eza -lah --color=always --group-directories-first --icons'
   alias lt='eza -T --color=always --group-directories-first --icons --level=2 --git-ignore -I "node_modules|.npm|__pycache__"'
   alias l.='eza -lah --color=always --group-directories-first --icons | grep "^\."'
   alias lg='eza -lah --git --color=always --group-directories-first --icons'
@@ -89,9 +91,9 @@ if (( $+commands[eza] )); then
 else
   # Fallback to standard ls/tree with colors
   alias ls='ls --color=auto'
-  alias ll='ls -lh --color=auto'
+  alias l='ls -lh --color=auto'
   alias la='ls -lAh --color=auto'
-  alias l='ls -CF --color=auto'
+  alias ll='ls -CF --color=auto'
   alias tree='tree -aI ".git|node_modules|.npm|__pycache__" -L 3'
 fi
 
@@ -143,7 +145,8 @@ alias dgd='dragon-drop -x'
 alias cd..='cd ..'
 alias q='qalc'
 alias ncdu='ncdu --color dark'
-alias bm='bat -l man --plain'
+alias bm='bat --plain'
+alias vim='nvim'
 
 s() {
   xdg-open "$@" &!

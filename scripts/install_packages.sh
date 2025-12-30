@@ -43,7 +43,7 @@ install_pkg "swaylock"                    # Screen locker for Wayland
 install_pkg "wl-clipboard"                # Clipboard utilities for Wayland
 install_pkg "grim"                        # Screenshot utility for Wayland
 install_pkg "slurp"                       # Screen area selection for screenshots
-install_pkg "polkit-kde-agent"            # Authentication agent for privilege escalation
+install_pkg "polkit-gnome"                # Authentication agent for privilege escalation
 install_pkg "xdg-desktop-portal-hyprland" # Desktop portal for Hyprland (file dialogs, etc.)
 install_pkg "xdg-desktop-portal-gtk"      # Desktop portal for Hyprland (file dialogs, etc.)
 install_pkg "xdg-desktop-portal"          # Desktop portal for Hyprland (file dialogs, etc.)
@@ -54,11 +54,12 @@ install_pkg "qt6ct"                       # Qt6 configuration tool
 
 # --- SYSTEM ESSENTIALS ---
 install_pkg "alacritty"                   # GPU-accelerated terminal emulator
-install_pkg "starship"                   # GPU-accelerated terminal emulator
+install_pkg "starship"                    # GPU-accelerated terminal emulator
 install_pkg "xorg-xwayland"               # X11 compatibility layer for Wayland
 install_pkg "brightnessctl"               # Screen brightness control
 install_pkg "upower"                      # Battery/power management info
 install_pkg "nm-connection-editor"        # GUI network connection editor
+install_pkg "nushell"                     # A data-oriented shell
 
 # --- FILE & ARCHIVE MANAGEMENT ---
 install_pkg "atool"                       # Archive extraction/creation wrapper
