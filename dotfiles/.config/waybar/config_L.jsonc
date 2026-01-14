@@ -34,14 +34,9 @@
             "9": "9",
             "urgent": "󱓻"
         },
-        "persistent_workspaces": {
+        "persistent-workspaces": {
             "1": [],
-            "2": [],
-            "3": [],
-            "4": [],
-            "5": [],
-            "6": [],
-            "magic:special": []
+            "2": []
         }
     },
 

@@ -72,8 +72,10 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 # --- Environment Variables (set early) ---
 export PATH="$HOME/.local/bin:$PATH"
 export EDITOR='subl -w'
+export SUDO_EDITOR=micro
 export PAGER="bat"
 export BAT_PAGER="less -RF"
+export LESS='-RFX'
 
 # --- Colors & LS Configuration ---
 # Conditional eza setup (only if installed)
