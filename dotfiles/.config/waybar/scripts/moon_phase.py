@@ -133,7 +133,7 @@ def get_days_to_next_phase(age_days):
     # First half of cycle (after new moon window, before full moon)
     elif age_days <= 12:
         days_to_full = 14 - age_days
-        return False, f"  {days_to_full} days to", ""
+        return False, f"  {days_to_full} days to", ""
     
     # Second half of cycle (after full moon window, before new moon)
     else:  # age_days is 16-27
