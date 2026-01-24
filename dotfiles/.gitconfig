@@ -1,8 +1,25 @@
 [user]
     name = Antoni Gawlikowski
     email = tefloon@gmail.com
+
 [alias]
-	lg = log --graph --abbrev-commit --decorate --date=short   --format=format:'%C(yellow)%h%Creset - %C(green)%ad%Creset %C(blue)%d%Creset %s %C(red)<%an>%Creset'
+    lg = log --graph --abbrev-commit --decorate --date=short   --format=format:'%C(yellow)%h%Creset - %C(green)%ad%Creset %C(blue)%d%Creset %s %C(red)<%an>%Creset'
 
 [core]
-	pager = bat --style=plain --paging=always
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true     	# use n and N to move between diff sections
+    light = false       	# set to true if you use a light terminal theme
+    side-by-side = true	   	# set to true for side-by-side diffs
+	syntax-theme = base16
+    line-numbers = true
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default

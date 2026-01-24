@@ -5,7 +5,7 @@
 	],
 	"theme": "ayu-mirage.sublime-theme",
 	"color_scheme": "Packages/Enki Theme/scheme/Enki-Tokyo-Night.tmTheme",
-	"font_size": 12,
+	"font_size": 8,
 	"index_files": true,
 	"color_highlight_file_extensions": [".conf", ".config"],
 }

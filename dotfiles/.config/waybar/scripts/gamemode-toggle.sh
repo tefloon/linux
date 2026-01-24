@@ -18,8 +18,6 @@ if [[ -f "$STATE_FILE" ]]; then
     # Re-enable the clipboard history keybind
     hyprctl keyword bind "CONTROL, grave, exec, \$HOME/.local/share/launch-scripts/wofi-clip-history.sh"
     
-    $HOME/.local/share/launch-scripts/launch-nwg.sh &
-
     pkill -x -RTMIN+12 waybar
     notify-send "Game Mode" "Disabled - Full desktop restored" -t 2000
 else

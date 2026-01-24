@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source "./status.sh"
+
 CURRENT_STEP_MESSAGE="Enabling multilib"
 status_msg
 
@@ -36,14 +38,18 @@ install_aur_pkg() {
 # --- HYPRLAND CORE ---
 install_pkg "hyprland"                    # Wayland compositor (window manager)
 install_pkg "hyprpaper"                   # Wallpaper daemon for Hyprland
-install_pkg "waybar"                      # Status bar for Wayland
-install_pkg "wofi"                        # Application launcher (like rofi for Wayland)
+install_pkg "waybar"                      # System bar
+install_pkg "wofi"                        # Dropdown menus
 install_pkg "mako"                        # Notification daemon for Wayland
 install_pkg "swaylock"                    # Screen locker for Wayland
+install_pkg "nwg-dock-hyprland"           # Dock/taskbar for Hyprland
+
+# --- WAYLAND UTILITIES ---
 install_pkg "wl-clipboard"                # Clipboard utilities for Wayland
-install_pkg "grim"                        # Screenshot utility for Wayland
-install_pkg "slurp"                       # Screen area selection for screenshots
-install_pkg "polkit-gnome"                # Authentication agent for privilege escalation
+install_pkg "grim"                        # Wayland screenshot tool
+install_pkg "slurp"                       # Select region utility
+install_pkg "cliphist"                    # Clipboard manager
+install_pkg "polkit-gnome"                # Visual password input for elevated privileges
 install_pkg "xdg-desktop-portal-hyprland" # Desktop portal for Hyprland (file dialogs, etc.)
 install_pkg "xdg-desktop-portal-gtk"      # Desktop portal for Hyprland (file dialogs, etc.)
 install_pkg "xdg-desktop-portal"          # Desktop portal for Hyprland (file dialogs, etc.)
@@ -51,65 +57,93 @@ install_pkg "qt5-wayland"                 # Qt5 Wayland support
 install_pkg "qt6-wayland"                 # Qt6 Wayland support
 install_pkg "qt5ct"                       # Qt5 configuration tool
 install_pkg "qt6ct"                       # Qt6 configuration tool
-
-# --- SYSTEM ESSENTIALS ---
-install_pkg "alacritty"                   # GPU-accelerated terminal emulator
-install_pkg "starship"                    # GPU-accelerated terminal emulator
 install_pkg "xorg-xwayland"               # X11 compatibility layer for Wayland
 install_pkg "brightnessctl"               # Screen brightness control
 install_pkg "upower"                      # Battery/power management info
-install_pkg "nm-connection-editor"        # GUI network connection editor
-install_pkg "nushell"                     # A data-oriented shell
 
-# --- FILE & ARCHIVE MANAGEMENT ---
+# --- TERMINALS & SHELLS ---
+install_pkg "alacritty"                   # GPU-accelerated terminal emulator
+install_pkg "foot"                        # Modern, super-fast CPU-only terminal
+install_pkg "starship"                    # Modern, fast terminal prompt
+install_pkg "nushell"                     # A data-oriented shell
+install_pkg "zsh-syntax-highlighting"     # Syntax highlighting for zsh
+install_pkg "zsh-autosuggestions"         # Auto-suggestions for zsh
+
+# --- CLI PRODUCTIVITY TOOLS ---
+install_pkg "eza"                         # Colored file/dir lists with icons
+install_pkg "bat"                         # Nicely formatted file contents
+install_pkg "zoxide"                      # Last visited directories shortcut
+install_pkg "tealdeer"                    # Quick help for packages and commands
+install_pkg "fzf"                         # Fuzzy finder. Integrates with everything
+install_pkg "git-delta"                   # Comparing diffs
+install_pkg "sd"                          # Find and replace string in files
+install_pkg "dust"                        # Shows which dirs / files takes most space
+install_pkg "duf"                         # Lists disk usage and free space
+install_pkg "procs"                       # Processes monitor
+install_pkg "fd"                          # Find files
+install_pkg "ugrep"                       # Search files for strings
+
+# --- FILE MANAGEMENT & NAVIGATION ---
 install_pkg "atool"                       # Archive extraction/creation wrapper
 install_pkg "unrar"                       # RAR archive extraction
-install_pkg "fd"                          # Fast file finder (rust alternative to find)
 install_pkg "tree"                        # Directory tree visualization
 install_pkg "yazi"                        # Terminal file manager
-install_pkg "nautilus"                    # GNOME file manager
-install_pkg "age"                         # A simple, modern and secure file encryption tool
-install_pkg "croc"                        # Encrypted, modern large file transfer tool
-install_pkg "stow"                        # Manage installation of multiple softwares in the same directory tree
+install_pkg "nautilus"                    # File manager
+install_pkg "stow"                        # Symlink your dotfiles
 
-# --- SYSTEM MONITORING & INFO ---
-install_pkg "bat"                         # Enhanced cat with syntax highlighting
-install_pkg "btop"                        # System resource monitor (htop alternative)
-install_pkg "ugrep"                       # Fast grep alternative
-install_pkg "tealdeer"                    # Fast tldr client (command examples)
+# --- FILE TRANSFER & ENCRYPTION ---
+install_pkg "age"                         # Simpler digital signing
+install_pkg "croc"                        # Send large file p2p
+
+# --- SYSTEM MONITORING & DIAGNOSTICS ---
+install_pkg "btop"                        # Fancy system resources monitor
 install_pkg "wiki-tui"                    # Wikipedia terminal interface
+install_pkg "hwinfo"                      # Hardware information
+install_pkg "fastfetch"                   # Display system info
+install_pkg "hyperfine"                   # Benchmark scripts / code
 
-# --- PASSWORD & SECURITY ---
+# --- SECURITY & PRIVACY ---
 install_pkg "bitwarden-cli"               # Password manager CLI
 install_pkg "openssl"                     # Cryptography toolkit
 install_pkg "openssh"                     # SSH client/server
 
-# --- DEVELOPMENT & TEXT ---
-install_pkg "jq"                          # JSON processor
+# --- DEVELOPMENT TOOLS ---
+install_pkg "jq"                          # JSON manipulation
 install_pkg "debugedit"                   # Debug information editor
-install_pkg "helix"                       # A great post-modern text editor (nvim replaement)
+install_pkg "helix"                       # NeoVim-like text editor
+install_pkg "micro"                       # Simple but sane text editor
 
 # --- FONTS ---
 install_pkg "ttf-jetbrains-mono-nerd"     # JetBrains Mono with Nerd Font icons
 install_pkg "ttf-fira-code"               # Fira Code programming font
 
-# --- MULTIMEDIA ---
-install_pkg "mpv"                         # Media player
+# --- MULTIMEDIA & VIEWERS ---
+install_pkg "mpv"                         # Video player
 install_pkg "kodi"                        # Media center application
 install_pkg "helvum"                      # PipeWire patchbay/mixer
 install_pkg "yt-dlp"                      # YouTube/video downloader
 install_pkg "zathura"                     # Lightweight PDF viewer
 install_pkg "zathura-pdf-mupdf"           # PDF backend for Zathura
+install_pkg "imv"                         # Image viewer
 
-# --- CLIPBOARD & PRODUCTIVITY ---
-install_pkg "cliphist"                    # Clipboard history for Wayland
-
-# --- NETWORKING & COMMUNICATION ---
+# --- NETWORKING & CONNECTIVITY ---
 install_pkg "kdeconnect"                  # Device integration (phone/computer sync)
 install_pkg "qbittorrent"                 # BitTorrent client
+install_pkg "ookla-speedtest-bin"         # Network speed tester
+install_pkg "nm-connection-editor"        # GUI network connection editor
 
 # --- MUSIC ---
 install_pkg "spotifyd"                    # Spotify daemon
+
+# --- PRODUCTIVITY APPLICATIONS ---
+install_pkg "obsidian"                    # Note-taking application
+install_pkg "gnome-calendar"              # Calendar application
+install_pkg "calibre"                     # E-book management
+install_pkg "libqalculate"                # Calculator library
+
+# --- CREATIVE APPLICATIONS ---
+install_pkg "krita"                       # Full-fledged raster image editor
+install_pkg "obs-studio"                  # Video streaming software
 
 # --- GAMING ---
 install_pkg "steam"                       # Gaming platform
@@ -119,43 +153,32 @@ install_pkg "lib32-vulkan-radeon"         # 32-bit AMD Vulkan drivers for games
 install_pkg "vulkan-tools"                # Vulkan utilities and diagnostics
 
 # --- VIRTUALIZATION ---
-install_pkg "virt-manager"          # GUI for managing VMs
-install_pkg "qemu-full"             # Full QEMU virtualization
-install_pkg "dnsmasq"               # Lightweight DNS/DHCP for VM networking
-install_pkg "ebtables"              # Ethernet bridge filtering (for VM networking)
-install_pkg "iptables-nft"          # Network packet filtering
+install_pkg "virt-manager"                # GUI for managing VMs
+install_pkg "qemu-full"                   # Virtual machines
+install_pkg "dnsmasq"                     # Lightweight DNS/DHCP for VM networking
+install_pkg "ebtables"                    # Ethernet bridge filtering (for VM networking)
+install_pkg "iptables-nft"                # Network packet filtering
+
+# --- SYSTEM TOOLS ---
+install_pkg "corectrl"                    # AMD GPU control panel
 
 # --- AI/ML ---
 # install_pkg "ollama-rocm"                 # Local AI model runner (AMD GPU optimized)
 
-# --- DOCUMENT MANAGEMENT ---
-install_pkg "calibre"                     # E-book management
-install_pkg "libqalculate"                # Calculator library
-
-# --- SYSTEM TOOLS ---
-install_pkg "corectrl"                    # AMD GPU control panel
-install_pkg "nwg-dock-hyprland"           # Dock/taskbar for Hyprland
-
-# --- SHELL ENHANCEMENTS ---
-install_pkg "zsh-syntax-highlighting"     # Syntax highlighting for zsh
-install_pkg "zsh-autosuggestions"         # Auto-suggestions for zsh
-install_pkg "zoxide"                      # Smart directory jumper (cd replacement)
-
-# --- APPLICATIONS (EDITORS, BROWSERS, ETC.) ---
-install_pkg "obsidian"                    # Note-taking application
-install_pkg "gnome-calendar"              # Calendar application
-
 # --- AUR PACKAGES (Third-party/Community) ---
 install_aur_pkg "code"                    # Visual Studio Code
+install_aur_pkg "tmatrix"                 # Matrix-like screensaver
 install_aur_pkg "cursor-electron"         # AI-powered code editor
-install_aur_pkg "dragon-drop"             # Simple drag-and-drop utility
+install_aur_pkg "dragon-drop"             # Creates a widget to drag files from
 install_aur_pkg "ferdium-nightly-bin"     # Multi-platform messaging app
 install_aur_pkg "spotify"                 # Music streaming
 install_aur_pkg "spotify-player"          # Terminal Spotify client
-install_aur_pkg "sublime-text-4"          # Text editor
-install_aur_pkg "helium-browser-bin"      # Privacy-focused web browser (my main)
+install_aur_pkg "sublime-text-4"          # GUI text editor
+install_aur_pkg "helium-browser-bin"      # Fast, minimal, private, Chrome-based browser
 install_aur_pkg "adw-gtk-theme-git"       # Adwaita GTK theme (development version)
 install_aur_pkg "freeoffice"              # Office suite
 install_aur_pkg "hyprpicker"              # Wayland color picker utility
 install_aur_pkg "pinta"                   # Simple raster image editor
 install_aur_pkg "wlogout"                 # Wayland logout utility
+install_aur_pkg "rustdesk-bin"            # Remote system control utility
+install_aur_pkg "satty"                   # Screenshot annotation
