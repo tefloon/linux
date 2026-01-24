@@ -1,0 +1,110 @@
+# Author: dgkf
+
+"ui.background" = { }
+"ui.background.separator" = { fg = "red" }
+"ui.cursor" = { fg = "light-gray", modifiers = ["reversed"] }
+"ui.cursor.match" = { fg = "light-yellow", modifiers = ["reversed"] }
+"ui.cursor.primary" = { fg = "light-gray", modifiers = ["reversed"] }
+"ui.cursor.secondary" = { fg = "gray", modifiers = ["reversed"] }
+"ui.cursorline.primary" = { bg = "black" }
+"ui.gutter" = { }
+"ui.gutter.selected" = { bg = "black" }
+"ui.help" = { fg = "white", bg = "black" }
+"ui.linenr" = { fg = "gray", modifiers = ["bold"] }
+# "ui.linenr.selected" = { fg = "white", modifiers = ["bold"] }
+"ui.linenr.selected" = { fg = "blaze_orange", modifiers = ["bold"] }  
+"ui.menu" = { fg = "light-gray", bg = "gray" }
+"ui.menu.selected" = { modifiers = ["reversed"] }
+"ui.menu.scroll" = { fg = "light-blue" }
+"ui.popup" = { bg = "black" }
+"ui.selection" = { bg = "gray" }
+"ui.statusline" = { fg = "winter_sky", bg = "twilight_blue" }                                        # statusline, fucused
+"ui.statusline.inactive" = { fg = "slate_gray", bg = "pitch_black" }                                 # statusline, unfocused
+"ui.statusline.normal" = { fg = "deep_abyss", bg = "leafy_green", modifiers = ["bold"] }             # statusline normal mode (if editor.color-modes is enabled)
+"ui.statusline.insert" = { fg = "deep_abyss", bg = "blaze_orange", modifiers = ["bold"] }            # statusline insert mode (if editor.color-modes is enabled)
+"ui.statusline.select" = { fg = "deep_abyss", bg = "sky_blue", modifiers = ["bold"] }                # statusline select mode (if editor.color-modes is enabled)
+"ui.statusline.separator" = { fg = "winter_sky" }                                                    # separator character is statusline
+"ui.virtual" = { bg = "black" }
+"ui.virtual.indent-guide" = { fg = "gray" }
+"ui.virtual.whitespace" = {}
+"ui.virtual.wrap" = { fg = "gray" }
+"ui.virtual.inlay-hint" = { fg = "light-gray", modifiers = ["dim", "italic"] }
+"ui.virtual.inlay-hint.parameter" = { fg = "yellow", modifiers = ["dim", "italic"] }
+"ui.virtual.inlay-hint.type" = { fg = "blue", modifiers = ["dim", "italic"] }
+"ui.window" = { fg = "gray", modifiers = ["dim"] }
+
+"comment" = { fg = "light-gray", modifiers = ["italic", "dim"] }
+
+"attribute" = "light-yellow"
+"constant" = { fg = "light-yellow", modifiers = ["bold", "dim"] }
+"constant.numeric" = "light-yellow"
+"constant.character.escape" = "light-cyan"
+"constructor" = "light-blue"
+"function" = "light-blue"
+"function.macro" = "light-red"
+"function.builtin" = { fg = "light-blue", modifiers = ["bold"] }
+"tag" = { fg = "light-magenta", modifiers = ["dim"] }
+"type" = "blue"
+"type.builtin" = { fg = "blue", modifiers = ["bold"] }
+"type.enum.variant" = { fg = "light-magenta", modifiers = ["dim"] }
+"string"  = "light-green"
+"special" = "light-red"
+"variable" = "white"
+"variable.parameter" = { fg = "light-yellow", modifiers = ["italic"] }
+"variable.other.member" = "light-green"
+"keyword" = "light-magenta"
+"keyword.control.exception" = "light-red"
+"keyword.directive" = { fg = "light-yellow", modifiers = ["bold"] }
+"keyword.operator" = { fg = "light-blue", modifiers = ["bold"] }
+"label" = "light-green"
+"namespace" = { fg = "blue", modifiers = ["dim"] }
+
+"markup.heading" = "light-blue"
+"markup.list" = "light-red"
+"markup.bold" = { fg = "light-cyan", modifiers = ["bold"] }
+"markup.italic" = { fg = "light-blue", modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.link.url" = { fg = "magenta", modifiers = ["dim"] }
+"markup.link.text" = "light-magenta"
+"markup.quote" = "light-cyan"
+"markup.raw" = "light-green"
+
+"diff.plus" = "light-green"
+"diff.delta" = "light-yellow"
+"diff.minus" = "light-red"
+
+"diagnostic.hint" = { underline = { color = "gray", style = "curl" } }
+"diagnostic.info" = { underline = { color = "light-cyan", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "light-yellow", style = "curl" } }
+"diagnostic.error" = { underline = { color = "light-red", style = "curl" } }
+
+"info" = "light-cyan"
+"hint" = { fg = "light-gray", modifiers = ["dim"] }
+"debug" = "white"
+"warning" = "yellow"
+"error" = "light-red"
+
+[palette] 
+# PALETTE USER INTERFACE
+deep_abyss = "#080d15"
+stormy_night = "#254862"
+nightfall_blue = "#1f2937"
+midnight_thunder = "#0d1526"
+twilight_blue = "#2c5484"
+pitch_black = "#000000"
+winter_sky = "#f3f4f6"
+slate_gray = "#838a97"
+blaze_orange = "#ff9000"
+lemon_zest = "#ffba00"
+leafy_green = "#81be83"
+dreamy_blue = "#6eb0ff"
+crystal_blue = "#99c7ff"
+sky_blue = "#45b1e8"
+moonlight_ocean = "#0c1420"
+rustic_red = "#540b0c"
+ruby_glow = "#fa7970"
+walnut_brown = "#987654"
+rustic_amber = "#9d5800"
+slate_purple = "#d2a8ff"
+light_purple = "#7533bd"
+deep_purple = "#4c1785"

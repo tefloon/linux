@@ -87,6 +87,7 @@ install_pkg "openssh"                     # SSH client/server
 # --- DEVELOPMENT & TEXT ---
 install_pkg "jq"                          # JSON processor
 install_pkg "debugedit"                   # Debug information editor
+install_pkg "helix"                       # A great post-modern text editor (nvim replaement)
 
 # --- FONTS ---
 install_pkg "ttf-jetbrains-mono-nerd"     # JetBrains Mono with Nerd Font icons

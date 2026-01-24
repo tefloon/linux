@@ -149,6 +149,8 @@ alias q='qalc'
 alias ncdu='ncdu --color dark'
 alias bm='bat --plain'
 alias vim='nvim'
+alias hx='helix'
+alias matrix='tmatrix -c default -s 20'
 
 s() {
   xdg-open "$@" &!

@@ -1,0 +1,61 @@
+theme = "term16_dark_custom"  
+
+[editor]
+scrolloff = 8          
+mouse = true           
+middle-click-paste = false
+cursorline = true
+color-modes = true      
+bufferline = "multiple" 
+auto-completion = true  
+idle-timeout = 2000     
+line-number = "relative" 
+end-of-line-diagnostics = "hint"
+continue-comments = false
+completion-timeout = 400
+completion-trigger-len = 4
+completion-replace = true
+
+[editor.statusline]
+left = ["mode", "spinner", "version-control", "file-modification-indicator"]
+center = ["file-name"]
+right = ["diagnostics", "selections", "position", "file-encoding"]
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
+
+[editor.lsp]
+# enable = false
+display-messages = false
+display-inlay-hints = false
+auto-signature-help = false
+inlay-hints-length-limit = 5
+
+[editor.inline-diagnostics]
+cursor-line = "warning"  # Show warnings and errors inline on the line with cursor
+other-lines = "disable"  # Don't show on other lines (can be noisy)
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false  # Show dotfiles in picker
+git-ignore = true
+
+[editor.indent-guides]
+render = true
+character = "│"
+
+[editor.soft-wrap]
+enable = true  # Wrap long lines (optional, personal preference)
+
+# Make search case-insensitive by default
+[editor.search]
+smart-case = true
+wrap-around = true
+
+# Faster than default
+[editor.auto-save]
+focus-lost = true
