@@ -1,32 +1,33 @@
 /* Waybar styling - minimal and clean */
 * {
-    font-family: "JetBrains Mono";
-    font-size: 14px;
-    min-height: 0;
+  font-family: "JetBrains Mono";
+  font-size: 14px;
+  min-height: 0;
 }
 
 window#waybar {
-    background: transparent;
-    border-radius: 8px;
-    color: #bed1e2;
+  background: rgba(34, 37, 47, 0.9);
+  border-radius: 8px;
+  color: #bed1e2;
 }
 
 #custom-left-spacer,
 #custom-right-spacer {
-    background-color: transparent;
-    color: transparent;
-    min-width: 20px;
-    padding: 0;
-    margin: 0;
+  background-color: transparent;
+  color: transparent;
+  min-width: 20px;
+  padding: 0;
+  margin: 0;
 }
 
-#custom-power{
-    font-size: 14px;
+#custom-power {
+  font-size: 14px;
 }
 
 /* Hover effects */
 #memory:hover,
 #disk:hover,
+#cpu:hover,
 #custom-power:hover,
 #battery:hover,
 #backlight:hover,
@@ -39,16 +40,17 @@ window#waybar {
 #custom-gamemode:hover,
 #custom-moviemode:hover,
 #custom-power:hover {
-    /*filter: brightness(1.2);*/
-    transition: background 0.5s ease;
+  /*filter: brightness(1.2);*/
+  transition: background 0.5s ease;
 }
 
 #workspaces {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 #memory,
 #disk,
+#cpu,
 #custom-power,
 #battery,
 #backlight,
@@ -61,95 +63,118 @@ window#waybar {
 #custom-moon,
 #custom-moviemode,
 #custom-gamemode {
-    border-radius: 400px;
-    margin: 6px 3px;
-    padding: 6px 12px;
-    background-color: rgba(26,27,38,0.6);
+  border-radius: 400px;
+  margin: 6px 3px;
+  padding: 6px 12px;
+  /* background-color: rgba(26, 27, 38, 0.6); */
 }
 
-#custom-weather{
-    /*background-color: blue;*/
-
+#custom-weather {
+  margin-right: 16px;
 }
 
 /* Module-specific styling */
-#memory {
-    color: #bed1e2; /* White/light gray to match default */
+#memory,
+#disk,
+#cpu {
+  color: #bed1e2;
+  /* White/light gray to match default */
+}
+
+#cpu.warning {
+  color: #f9e2af;
+  background-color: rgba(249, 226, 175, 0.1);
+}
+
+#cpu.critical {
+  color: #f38ba8;
+  background-color: rgba(243, 139, 168, 0.1);
+  animation: blink 1s linear infinite alternate;
 }
 
 #memory.warning {
-    color: #f9e2af; /* Yellow for warning */
-    background-color: rgba(249, 226, 175, 0.1);
+  color: #f9e2af;
+  /* Yellow for warning */
+  background-color: rgba(249, 226, 175, 0.1);
 }
 
 #memory.critical {
-    color: #f38ba8; /* Red for critical */
-    background-color: rgba(243, 139, 168, 0.1);
-    animation: blink 1s linear infinite alternate;
+  color: #f38ba8;
+  /* Red for critical */
+  background-color: rgba(243, 139, 168, 0.1);
+  animation: blink 1s linear infinite alternate;
 }
 
 #disk {
-    color: #bed1e2; /* White/light gray to match default */
+  color: #bed1e2;
+  /* White/light gray to match default */
 }
 
 #disk.warning {
-    color: #f9e2af; /* Yellow for warning */
-    background-color: rgba(249, 226, 175, 0.1);
+  color: #f9e2af;
+  /* Yellow for warning */
+  background-color: rgba(249, 226, 175, 0.1);
 }
 
 #disk.critical {
-    color: #f38ba8; /* Red for critical */
-    background-color: rgba(243, 139, 168, 0.1);
-    animation: blink 1s linear infinite alternate;
+  color: #f38ba8;
+  /* Red for critical */
+  background-color: rgba(243, 139, 168, 0.1);
+  animation: blink 1s linear infinite alternate;
 }
 
 #clock {
-    font-weight: 800;
+  font-weight: 800;
 }
 
 #custom-power {
-    padding-right: 20px;
-    padding-left: 16px;
-    margin-right: 6px;
+  padding-right: 20px;
+  padding-left: 16px;
+  margin-right: 6px;
 }
 
 #custom-moviemode {
-    padding-top: 8px;
-    padding-bottom: 4px;
+  padding-top: 8px;
+  padding-bottom: 4px;
 }
 
 #custom-gamemode {
-    padding-top: 8px;
-    padding-bottom: 4px;
+  padding-top: 8px;
+  padding-bottom: 4px;
 }
 
 /* Gamemode active/inactive states */
 #custom-gamemode.active {
-    color: #a6e3a1; /* Green when active */
-    background-color: rgba(166, 227, 161, 0.1);
+  color: #a6e3a1;
+  /* Green when active */
+  background-color: rgba(166, 227, 161, 0.1);
 }
 
 #custom-gamemode.inactive {
-    color: #bed1e2; /* Normal color when inactive */
+  color: #bed1e2;
+  /* Normal color when inactive */
 }
 
 /* Gamemode active/inactive states */
 #custom-moviemode.active {
-    color: #a6e3a1; /* Green when active */
-    background-color: rgba(166, 227, 161, 0.1);
+  color: #a6e3a1;
+  /* Green when active */
+  background-color: rgba(166, 227, 161, 0.1);
 }
 
 #custom-moviemode.inactive {
-    color: #bed1e2; /* Normal color when inactive */
+  color: #bed1e2;
+  /* Normal color when inactive */
 }
 
-#custom-moon{
-    padding-right: 16px;
+#custom-moon {
+  /* padding-right: 16px; */
+  /* margin-right: 16px; */
 }
 
 #custom-moon.moon-phase-special {
   color: #ddd;
-  text-shadow: 
+  text-shadow:
     0 0 2px rgba(255, 255, 255, 0.1),
     0 0 4px rgba(255, 234, 167, 0.8),
     0 0 8px rgba(255, 234, 167, 0.6);
@@ -160,62 +185,64 @@ window#waybar {
     to { color: rgba(223, 248, 39, 0.6); }
 }*/
 #tray {
-    border-radius: 4px;
-    margin: 6px 3px;
-    /*margin-right: 150px;*/
-    padding: 6px 6px;
+  border-radius: 4px;
+  margin: 6px 3px;
+  /*margin-right: 150px;*/
+  padding: 6px 6px;
 }
 
-#tray > *{
-    opacity: 0.1;
+#tray>* {
+  opacity: 0.1;
 
-}#tray > *:hover{
-    opacity: 1;
+}
+
+#tray>*:hover {
+  opacity: 1;
 }
 
 #workspaces {
-    padding-left: 4px;
+  padding-left: 4px;
 }
 
 #workspaces button {
-    all: initial;
-    min-width: 0;
-    padding: 6px 18px;
-    margin: 6px 3px;
-    border-radius: 4px;
-    background-color: rgba(26,27,38,0.6);
-    color: #cdd6f4;
+  all: initial;
+  min-width: 0;
+  padding: 6px 18px;
+  margin: 6px 3px;
+  border-radius: 4px;
+  /* background-color: rgba(26, 27, 38, 0.6); */
+  color: #cdd6f4;
 }
 
 /* Line indicator for non-empty workspaces */
 #workspaces button:not(.empty) * {
-    /*border-bottom: 1px solid #bed1e2;*/
+  /*border-bottom: 1px solid #bed1e2;*/
 }
 
 #workspaces button.urgent {
-    background-color: rgba(243,139,168,0.8);
+  background-color: rgba(243, 139, 168, 0.8);
 }
 
 #workspaces button.active {
-    color: rgba(255,255,255,1);
-    font-weight: 800;
+  color: rgba(255, 255, 255, 1);
+  font-weight: 800;
 }
 
 /* Blinking animation for critical states */
 @keyframes blink {
-    to {
-        opacity: 0.5;
-    }
+  to {
+    opacity: 0.5;
+  }
 }
 
 /* Tooltip styling */
 tooltip {
-    background: rgba(30, 30, 30, 0.9);
-    border: 1px solid rgba(100, 100, 100, 0.3);
-    border-radius: 8px;
-    color: #ffffff;
+  background: rgba(30, 30, 30, 0.9);
+  border: 1px solid rgba(100, 100, 100, 0.3);
+  border-radius: 8px;
+  color: #ffffff;
 }
 
 tooltip label {
-    color: #ffffff;
+  color: #ffffff;
 }

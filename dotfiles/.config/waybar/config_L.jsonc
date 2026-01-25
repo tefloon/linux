@@ -1,48 +1,68 @@
 {
-    "output": "HDMI-A-2",
-    "layer": "top",
-    "position": "top",
-    "height": 48,
-    "spacing": 4,
-    "margin-left": 10,
-    "margin-top": 5,
-    "margin-right": 10,
-
-    "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["clock"],
-    "modules-right": ["tray"],
-
-    "clock": {
-        "format": "{:%H:%M}",
-        "format-alt": "{:%d / %m}",
-        "tooltip": false,
+  "output": "HDMI-A-2",
+  "layer": "top",
+  "position": "top",
+  "height": 48,
+  "spacing": 4,
+  "margin-left": 10,
+  "margin-top": 5,
+  "margin-right": 10,
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "tray",
+    "custom/moon",
+    "custom/weather"
+  ],
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%d / %m}",
+    "tooltip": false
+  },
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "urgent": "󱓻"
     },
-
-    "hyprland/workspaces": {
-        "on-click": "activate",
-        "format": "{icon}",
-        "format-icons": {
-            "default": "",
-            "1": "1",
-            "2": "2",
-            "3": "3",
-            "4": "4",
-            "5": "5",
-            "6": "6",
-            "7": "7",
-            "8": "8",
-            "9": "9",
-            "urgent": "󱓻"
-        },
-        "persistent-workspaces": {
-            "1": [],
-            "2": []
-        }
-    },
-
-    "tray": {
-        "icon-size": 21,
-        "spacing": 15,
-        "reverse-direction": true,
-    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": []
+    }
+  },
+  "custom/weather": {
+    "format": "{}",
+    "tooltip": true,
+    "interval": 1800,
+    "exec": "$HOME/.config/waybar/scripts/weather.sh",
+    "return-type": "json",
+    "on-click": ""
+  },
+  "custom/moon": {
+    "format": "{}",
+    "tooltip": true,
+    "interval": 86410,
+    "exec": "python3 $HOME/.config/waybar/scripts/moon_phase.py", // Call Python directly
+    "return-type": "json",
+    "on-click": "xdg-open https://www.timeanddate.com/moon/phases/poland/warsaw"
+  },
+  "tray": {
+    "icon-size": 21,
+    "spacing": 15,
+    "reverse-direction": true
+  }
 }
