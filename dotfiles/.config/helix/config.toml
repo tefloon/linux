@@ -59,3 +59,8 @@ wrap-around = true
 # Faster than default
 [editor.auto-save]
 focus-lost = true
+
+[keys.normal]
+A-o = ["add_newline_below", "move_line_down"]
+"A-j" = [ "extend_to_line_bounds", "delete_selection", "paste_after" ]
+"A-k" = [ "extend_to_line_bounds", "delete_selection", "move_line_up", "paste_before" ]
