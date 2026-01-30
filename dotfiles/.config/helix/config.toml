@@ -61,6 +61,13 @@ wrap-around = true
 focus-lost = true
 
 [keys.normal]
-A-o = ["add_newline_below", "move_line_down"]
-"A-j" = [ "extend_to_line_bounds", "delete_selection", "paste_after" ]
-"A-k" = [ "extend_to_line_bounds", "delete_selection", "move_line_up", "paste_before" ]
+A-o = [ "add_newline_below", "move_line_down" ]
+A-j = [ "extend_to_line_bounds", "delete_selection", "paste_after" ]
+A-k = [ "extend_to_line_bounds", "delete_selection", "move_line_up", "paste_before" ]
+# S-ret = "insert_newline"
+
+[keys.insert]
+# "A-h" = "move_char_left"
+# "A-j" = "move_line_down"
+# "A-k" = "move_line_up"
+# "A-l" = "move_char_right"

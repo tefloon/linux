@@ -112,6 +112,7 @@ install_pkg "jq"                          # JSON manipulation
 install_pkg "debugedit"                   # Debug information editor
 install_pkg "helix"                       # NeoVim-like text editor
 install_pkg "micro"                       # Simple but sane text editor
+install_pkg "lazygit"                     # Git management tool
 
 # --- FONTS ---
 install_pkg "ttf-jetbrains-mono-nerd"     # JetBrains Mono with Nerd Font icons

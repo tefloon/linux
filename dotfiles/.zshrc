@@ -151,6 +151,7 @@ alias bm='bat --plain'
 alias vim='nvim'
 alias hx='helix'
 alias matrix='tmatrix -c default -s 20'
+alias hx.='hx .'
 
 s() {
   xdg-open "$@" &!
