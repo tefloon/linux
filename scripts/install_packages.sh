@@ -82,6 +82,7 @@ install_pkg "duf"                         # Lists disk usage and free space
 install_pkg "procs"                       # Processes monitor
 install_pkg "fd"                          # Find files
 install_pkg "ugrep"                       # Search files for strings
+install_pkg "translate-shell"             # Terminal translator
 
 # --- FILE MANAGEMENT & NAVIGATION ---
 install_pkg "atool"                       # Archive extraction/creation wrapper
@@ -106,6 +107,8 @@ install_pkg "hyperfine"                   # Benchmark scripts / code
 install_pkg "bitwarden-cli"               # Password manager CLI
 install_pkg "openssl"                     # Cryptography toolkit
 install_pkg "openssh"                     # SSH client/server
+install_pkg "sshfs"                       # SSH filesystem
+install_pkg "keychain"                    # Front to ssh-agent
 
 # --- DEVELOPMENT TOOLS ---
 install_pkg "jq"                          # JSON manipulation
@@ -126,6 +129,7 @@ install_pkg "yt-dlp"                      # YouTube/video downloader
 install_pkg "zathura"                     # Lightweight PDF viewer
 install_pkg "zathura-pdf-mupdf"           # PDF backend for Zathura
 install_pkg "imv"                         # Image viewer
+install_pkg "loupe"                       # GNOME Image viewer
 
 # --- NETWORKING & CONNECTIVITY ---
 install_pkg "kdeconnect"                  # Device integration (phone/computer sync)
@@ -183,3 +187,5 @@ install_aur_pkg "pinta"                   # Simple raster image editor
 install_aur_pkg "wlogout"                 # Wayland logout utility
 install_aur_pkg "rustdesk-bin"            # Remote system control utility
 install_aur_pkg "satty"                   # Screenshot annotation
+install_aur_pkg "beyondallreason-appimage"  # Best game ever
+
