@@ -39,7 +39,7 @@ fi
 
 # Run individual setup scripts
 echo "=== Installing packages ==="
-source "$SCRIPT_DIR/scripts/install-packages.sh"
+bash "$SCRIPT_DIR/scripts/install-packages.sh"
 
 echo "=== Setting up custom scripts ==="
 bash "$SCRIPT_DIR/scripts/setup-scripts.sh"

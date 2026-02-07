@@ -184,7 +184,6 @@ install_pkg "corectrl"                    # AMD GPU control panel
 # --- AUR PACKAGES (Third-party/Community) ---
 install_aur_pkg "code"                    # Visual Studio Code
 install_aur_pkg "tmatrix"                 # Matrix-like screensaver
-# install_aur_pkg "cursor-electron"         # AI-powered code editor
 install_aur_pkg "dragon-drop"             # Creates a widget to drag files from
 install_aur_pkg "ferdium-nightly-bin"     # Multi-platform messaging app
 install_aur_pkg "spotify"                 # Music streaming
@@ -192,9 +191,7 @@ install_aur_pkg "spotify-player"          # Terminal Spotify client
 install_aur_pkg "sublime-text-4"          # GUI text editor
 install_aur_pkg "helium-browser-bin"      # Fast, minimal, private, Chrome-based browser
 install_aur_pkg "adw-gtk-theme-git"       # Adwaita GTK theme (development version)
-install_aur_pkg "freeoffice"              # Office suite
 install_aur_pkg "hyprpicker"              # Wayland color picker utility
-install_aur_pkg "pinta"                   # Simple raster image editor
 install_aur_pkg "wlogout"                 # Wayland logout utility
 install_aur_pkg "rustdesk-bin"            # Remote system control utility
 install_aur_pkg "satty"                   # Screenshot annotation

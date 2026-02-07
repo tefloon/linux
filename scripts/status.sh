@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
 STATUS_COL=60
+LOG_FILE="${LOG_FILE:-/tmp/setup-$(date +%Y%m%d-%H%M%S).log}"
+
+# Initialize log file
+if [[ ! -f "$LOG_FILE" ]]; then
+    echo "=== Setup Log Started: $(date) ===" > "$LOG_FILE"
+fi
 
 status_msg() {
     printf "%s" "$CURRENT_STEP_MESSAGE... "
+    echo "[$(date '+%H:%M:%S')] MSG: $CURRENT_STEP_MESSAGE" >> "$LOG_FILE"
 }
 
 status_ok() {
@@ -12,6 +19,7 @@ status_ok() {
     local padlen=$(( STATUS_COL - ${#CURRENT_STEP_MESSAGE} - 4 ))
     printf "\r%s... %*s[%b  OK   %b]\n" \
         "$CURRENT_STEP_MESSAGE" "$padlen" "" "$GREEN" "$NC"
+    echo "[$(date '+%H:%M:%S')] OK: $CURRENT_STEP_MESSAGE" >> "$LOG_FILE"
 }
 
 status_skip() {
@@ -20,9 +28,12 @@ status_skip() {
     local padlen=$(( STATUS_COL - ${#CURRENT_STEP_MESSAGE} - 4 ))
     printf "\r%s... %*s[%bSKIPPED%b]\n" \
         "$CURRENT_STEP_MESSAGE" "$padlen" "" "$YELLOW" "$NC"
-    if [[ -n "$1" ]]; then
-        echo -e "${YELLOW}Skipped: $1${NC}" >&2
-    fi
+    
+    local reason="${1:-No reason provided}"
+    echo -e "${YELLOW}Skipped: $reason${NC}" >&2
+    echo "[$(date '+%H:%M:%S')] SKIP: $CURRENT_STEP_MESSAGE - $reason" >> "$LOG_FILE"
+    
+    sleep 2
 }
 
 status_error() {
@@ -31,8 +42,10 @@ status_error() {
     local padlen=$(( STATUS_COL - ${#CURRENT_STEP_MESSAGE} - 4 ))
     printf "\r%s... %*s[%b ERROR %b]\n" \
         "$CURRENT_STEP_MESSAGE" "$padlen" "" "$RED" "$NC"
-    if [[ -n "$1" ]]; then
-        echo -e "${RED}Error: $1${NC}" >&2
-    fi
+    
+    local reason="${1:-Unknown error}"
+    echo -e "${RED}Error: $reason${NC}" >&2
+    echo "[$(date '+%H:%M:%S')] ERROR: $CURRENT_STEP_MESSAGE - $reason" >> "$LOG_FILE"
+    
     exit 1
 }
