@@ -21,26 +21,25 @@ xdg-mime default sublime_text.desktop text/x-c++src
 xdg-mime default sublime_text.desktop application/javascript
 xdg-mime default sublime_text.desktop application/json
 xdg-mime default sublime_text.desktop text/css
-xdg-mime default sublime_text.desktop text/html
 xdg-mime default sublime_text.desktop text/xml
 xdg-mime default sublime_text.desktop text/x-log
 xdg-mime default sublime_text.desktop application/x-yaml
 
-# Office documents (FreeOffice)
-# Word processing (TextMaker)
-xdg-mime default freeoffice-textmaker.desktop application/vnd.openxmlformats-officedocument.wordprocessingml.document  # .docx
-xdg-mime default freeoffice-textmaker.desktop application/msword                    # .doc
-xdg-mime default freeoffice-textmaker.desktop application/vnd.oasis.opendocument.text           # .odt
+# Office documents (LibreOffice)
+# Word processing (Writer)
+xdg-mime default libreoffice-writer.desktop application/vnd.openxmlformats-officedocument.wordprocessingml.document  # .docx
+xdg-mime default libreoffice-writer.desktop application/msword                    # .doc
+xdg-mime default libreoffice-writer.desktop application/vnd.oasis.opendocument.text           # .odt
 
-# Spreadsheets (PlanMaker)
-xdg-mime default freeoffice-planmaker.desktop application/vnd.openxmlformats-officedocument.spreadsheetml.sheet        # .xlsx
-xdg-mime default freeoffice-planmaker.desktop application/vnd.ms-excel             # .xls
-xdg-mime default freeoffice-planmaker.desktop application/vnd.oasis.opendocument.spreadsheet    # .ods
+# Spreadsheets (Calc)
+xdg-mime default libreoffice-calc.desktop application/vnd.openxmlformats-officedocument.spreadsheetml.sheet        # .xlsx
+xdg-mime default libreoffice-calc.desktop application/vnd.ms-excel             # .xls
+xdg-mime default libreoffice-calc.desktop application/vnd.oasis.opendocument.spreadsheet    # .ods
 
-# Presentations (Presentations)
-xdg-mime default freeoffice-presentations.desktop application/vnd.openxmlformats-officedocument.presentationml.presentation # .pptx
-xdg-mime default freeoffice-presentations.desktop application/vnd.ms-powerpoint        # .ppt
-xdg-mime default freeoffice-presentations.desktop application/vnd.oasis.opendocument.presentation   # .odp
+# Presentations (Impress)
+xdg-mime default libreoffice-impress.desktop application/vnd.openxmlformats-officedocument.presentationml.presentation # .pptx
+xdg-mime default libreoffice-impress.desktop application/vnd.ms-powerpoint        # .ppt
+xdg-mime default libreoffice-impress.desktop application/vnd.oasis.opendocument.presentation   # .odp
 
 # Video files (uosc/mpv)
 xdg-mime default mpv.desktop video/mp4

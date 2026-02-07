@@ -18,7 +18,7 @@ install_pkg() {
     local pkg="$1"
     CURRENT_STEP_MESSAGE="Installing $pkg"
     status_msg
-    if sudo pacman -S --noconfirm --needed $pkg > /tmp/pacman.log 2>&1; then
+    if sudo pacman -S --noconfirm --needed $pkg >> /tmp/pacman.log 2>&1; then
         status_ok
     else
         status_skip "Failed to install $pkg."
@@ -29,7 +29,7 @@ install_aur_pkg() {
     local pkg="$1"
     CURRENT_STEP_MESSAGE="Installing AUR package $pkg"
     status_msg
-    if yay -S --noconfirm --needed $pkg > /tmp/yay.log 2>&1; then
+    if yay -S --noconfirm --needed $pkg >> /tmp/yay.log 2>&1; then
         status_ok
     else
         status_skip "Failed to install $pkg."
@@ -152,6 +152,7 @@ install_pkg "nm-connection-editor"        # GUI network connection editor
 install_pkg "spotifyd"                    # Spotify daemon
 
 # --- PRODUCTIVITY APPLICATIONS ---
+install_pkg "libreoffice-fresh"           # Office suite
 install_aur_pkg "obsidian"                # Note-taking application
 install_pkg "gnome-calendar"              # Calendar application
 install_pkg "calibre"                     # E-book management

@@ -11,7 +11,7 @@ enable_service() {
     local service="$1"
     CURRENT_STEP_MESSAGE="Enabling $service"
     status_msg
-    if sudo systemctl enable --now "$service" 2>/dev/null; then
+    if sudo systemctl enable "$service" 2>/dev/null; then
         status_ok
     else
         status_skip "Service $service not found or already enabled"

@@ -3,11 +3,11 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/status.sh"
 source "$SCRIPT_DIR/post-install-scripts/setup-services.sh"
-source "$SCRIPT_DIR/post-install-scripts/setup-default-browser.sh"
+bash "$SCRIPT_DIR/post-install-scripts/setup-default-browser.sh"
 
 CURRENT_STEP_MESSAGE="Setting up default programs"
 status_msg
-source "$SCRIPT_DIR/post-install-scripts/set-default-programs.sh"
+bash "$SCRIPT_DIR/post-install-scripts/set-default-programs.sh"
 status_ok
 
 CURRENT_STEP_MESSAGE="Updating desktop database"
