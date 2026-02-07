@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-HOSTS_FILE="$(readlink -f "$SCRIPT_DIR/../dotfiles/hosts")"
+REPO_ROOT="$(readlink -f "$SCRIPT_DIR/..")"
+HOSTS_FILE="$(readlink -f "$REPO_ROOT/dotfiles/hosts")"
+SYSTEM_CONFIGS="$REPO_ROOT/system-configs"
 source "$SCRIPT_DIR/status.sh"
 
 CURRENT_STEP_MESSAGE="Setting zsh as default shell"
@@ -35,6 +37,15 @@ if [[ -d "$HOME/.local/share/icons/Bibata-Modern-Classic" ]]; then
     status_ok
 else
     status_skip "Bibata cursor theme not found"
+fi
+
+CURRENT_STEP_MESSAGE="Copying system configs to /etc/"
+status_msg
+if [[ -d "$SYSTEM_CONFIGS" ]]; then
+    sudo cp -r "$SYSTEM_CONFIGS"/* /etc/
+    status_ok
+else
+    status_skip "No system-configs directory found"
 fi
 
 CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"

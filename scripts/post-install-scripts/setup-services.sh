@@ -31,6 +31,7 @@ enable_service "tailscaled"            # Tailscale VPN
 
 # Virtualization
 enable_service "libvirtd"              # VM management
+enable_service "sddm.service"          # Launcher service
 
 # Optional services (uncomment if needed)
 # enable_service "ufw"                 # Firewall
