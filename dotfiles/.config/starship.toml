@@ -7,7 +7,6 @@ add_newline = false
 # Format
 format = """$directory\
 $git_branch\
-$git_status
 $character"""
 
 [directory]
@@ -25,9 +24,9 @@ error_symbol = "[❯](bold red)"
 symbol = ""
 style = "bold #ff6fef"  # Changed from purple to magenta for consistency
 
-[git_status]
-style = "bold yellow"
-format = '([\[$ahead_behind\]]($style) )'
+# [git_status]
+# style = "bold yellow"
+# format = '([\[$ahead_behind\]]($style) )'
 # ahead = "⇡${count}"
 # behind = "⇣${count}"
 # diverged = "⇕⇡${ahead_count}⇣${behind_count}"

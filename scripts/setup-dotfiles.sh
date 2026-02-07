@@ -7,7 +7,7 @@ source "$SCRIPT_DIR/status.sh"
 # Stow all packages
 CURRENT_STEP_MESSAGE="Stowing dotfiles"
 status_msg
-cd "$DOTFILES_DIR"
+cd "$DOTFILES_DIR" || { status_error "Failed to enter dotfiles directory"; }
 if stow -R . -t "$HOME" 2>/dev/null; then
     status_ok
 else

@@ -70,7 +70,7 @@ xdg-mime default calibre-ebook-viewer.desktop application/x-mobipocket-ebook
 xdg-mime default calibre-ebook-viewer.desktop application/vnd.amazon.ebook
 
 # Terminal
-xdg-mime default kitty.desktop application/x-terminal-emulator
+xdg-mime default foot.desktop application/x-terminal-emulator
 
 # File manager
 xdg-mime default org.gnome.Nautilus.desktop inode/directory

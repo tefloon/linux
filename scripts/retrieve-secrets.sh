@@ -39,12 +39,12 @@ status_ok
 
 CURRENT_STEP_MESSAGE="Checking for Bitwarden CLI"
 status_msg
-command -v bw >/dev/null || status_error
+command -v bw >/dev/null || status_error "Bitwarden CLI (bw) not found"
 status_ok
 
 CURRENT_STEP_MESSAGE="Checking for jq CLI"
 status_msg
-command -v jq >/dev/null || status_error
+command -v jq >/dev/null || status_error "jq not found"
 status_ok
 
 CURRENT_STEP_MESSAGE="Checking status of BW authentication"
@@ -130,18 +130,16 @@ else
             else
                 # Create temporary file for this specific key
                 KEY_FILE=$(mktemp)
-                trap "rm -f '$KEY_FILE'" EXIT
-                
                 echo "$NOTES" > "$KEY_FILE"
-                
+
                 echo -n "  $item_name → "
                 if gpg --batch --import "$KEY_FILE" 2>/dev/null; then
                     echo "imported to GPG keyring"
                 else
                     echo "FAILED (invalid key format)"
                 fi
-                
-                # Clean up immediately (trap is backup)
+
+                # Clean up immediately
                 rm -f "$KEY_FILE"
             fi
         else

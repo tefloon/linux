@@ -71,7 +71,7 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # --- Environment Variables (set early) ---
 export PATH="$HOME/.local/bin:$PATH"
-export EDITOR='subl -w'
+export EDITOR='helix'
 export SUDO_EDITOR=micro
 export PAGER="bat"
 export BAT_PAGER="less -RF"
@@ -152,6 +152,7 @@ alias vim='nvim'
 alias hx='helix'
 alias matrix='tmatrix -c default -s 20'
 alias hx.='hx .'
+alias y='yazi'
 
 s() {
   xdg-open "$@" &!

@@ -23,9 +23,15 @@ fi
 if ! command -v yay >/dev/null 2>&1; then
     CURRENT_STEP_MESSAGE="Installing yay (AUR helper)"
     status_msg
-    git clone https://aur.archlinux.org/yay.git /tmp/yay
-    pushd /tmp/yay > /dev/null
-    makepkg -si --noconfirm
+    if ! git clone https://aur.archlinux.org/yay.git /tmp/yay; then
+        status_error "Failed to clone yay repository"
+    fi
+    pushd /tmp/yay > /dev/null || status_error "Failed to enter yay directory"
+    if ! makepkg -si --noconfirm; then
+        popd > /dev/null
+        rm -rf /tmp/yay
+        status_error "Failed to build yay"
+    fi
     popd > /dev/null
     rm -rf /tmp/yay
     status_ok
@@ -33,30 +39,30 @@ fi
 
 # Run individual setup scripts
 echo "=== Installing packages ==="
-source "$SCRIPT_DIR/scripts/install_packages.sh"
+source "$SCRIPT_DIR/scripts/install-packages.sh"
 
 echo "=== Setting up shell ==="
-bash "$SCRIPT_DIR/scripts/setup_shell.sh"
+bash "$SCRIPT_DIR/scripts/setup-shell.sh"
 
 echo "=== Setting up custom scripts ==="
-bash "$SCRIPT_DIR/scripts/setup_scripts.sh"
+bash "$SCRIPT_DIR/scripts/setup-scripts.sh"
 
 echo "=== Setting up dotfiles ==="
-bash "$SCRIPT_DIR/scripts/setup_dotfiles.sh"
+bash "$SCRIPT_DIR/scripts/setup-dotfiles.sh"
 
 echo "=== Setting up launch scripts ==="
-bash "$SCRIPT_DIR/scripts/setup_launch_scripts.sh"
+bash "$SCRIPT_DIR/scripts/setup-launch-scripts.sh"
 
 echo "=== Setting up assets ==="
-bash "$SCRIPT_DIR/scripts/setup_assets.sh"
+bash "$SCRIPT_DIR/scripts/setup-assets.sh"
 
 echo "=== Setting up system configurations ==="
-bash "$SCRIPT_DIR/scripts/setup_system.sh"
+bash "$SCRIPT_DIR/scripts/setup-system.sh"
 
 echo "=== Running post-install configuration ==="
 bash "$SCRIPT_DIR/scripts/post-install.sh"
 
 echo "=== Retrieving secrets ==="
-bash "$SCRIPT_DIR/scripts/retrieve_secrets.sh"
+bash "$SCRIPT_DIR/scripts/retrieve-secrets.sh"
 
 echo -e "All done!"

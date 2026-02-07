@@ -44,4 +44,29 @@ done
 # so /assets/wallpaper/image.png will be symlinked to $HOME/.local/share/wallpaper/image.png
 find "$ASSETS_DIR" -type f \( \
      -iname "*.png"    -o \
-     -iname "*.jpg"
+     -iname "*.jpg"    -o \
+     -iname "*.jpeg"   -o \
+     -iname "*.gif"    -o \
+     -iname "*.webp"   -o \
+     -iname "*.svg"     \
+\) -print0 | while IFS= read -r -d '' src; do
+    # Compute the path relative to the assets directory
+    relpath="${src#$ASSETS_DIR/}"
+
+    # Determine the destination path
+    dest="$HOME/.local/share/$relpath"
+    dest_dir="$(dirname "$dest")"
+
+    CURRENT_STEP_MESSAGE="Symlinking '$relpath'"
+    status_msg
+
+    # Ensure the destination directory exists
+    mkdir -p "$dest_dir"
+
+    # Create the symlink
+    if ln -sf "$src" "$dest"; then
+        status_ok
+    else
+        status_skip
+    fi
+done

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # Screenshot text selection script for Wayland/Hyprland
 
 grim -g "$(slurp)" - | wl-copy

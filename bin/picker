@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Pick color and copy to clipboard
 color=$(hyprpicker -f hex)

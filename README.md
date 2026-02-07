@@ -143,20 +143,30 @@ linux/
 │
 ├── bin/                        # Custom utility scripts
 │   ├── cb                      # Clipboard copy tool (stdout + clipboard)
-│   └── mdd                     # Markdown directory formatter
+│   ├── deck                    # Netrunner deck list parser (JSON output)
+│   ├── mdd                     # Markdown directory formatter
+│   ├── ocr                     # OCR screen selection (tesseract)
+│   ├── picker                  # Color picker (hyprpicker)
+│   ├── screen-dimmer           # Screen brightness dimmer utility
+│   ├── screenshot              # Screenshot to clipboard
+│   ├── screenshot-with-window  # Screenshot with satty annotation
+│   └── tokens                  # Token counter (tiktoken)
 │
 ├── scripts/                    # Modular setup scripts
 │   ├── status.sh              # Status message helpers (used by all scripts)
-│   ├── install_packages.sh    # Package installation
-│   ├── setup_shell.sh         # Shell configuration (zsh)
-│   ├── setup_scripts.sh       # Links bin/ scripts to ~/.local/bin
-│   ├── setup_dotfiles.sh      # Symlinks all dotfiles
-│   ├── setup_launch_scripts.sh # Sets up application launchers
-│   ├── setup_assets.sh        # Extracts themes, wallpapers
-│   ├── setup_system.sh        # System-level configurations
-│   ├── setup_services.sh      # Enable services, add user to groups
+│   ├── install-packages.sh    # Package installation
+│   ├── setup-shell.sh         # Shell configuration (zsh)
+│   ├── setup-scripts.sh       # Links bin/ scripts to ~/.local/bin
+│   ├── setup-dotfiles.sh      # Symlinks all dotfiles
+│   ├── setup-launch-scripts.sh # Sets up application launchers
+│   ├── setup-assets.sh        # Extracts themes, wallpapers
+│   ├── setup-system.sh        # System-level configurations
 │   ├── post-install.sh        # Post-installation tasks
-│   └── retrieve_secrets.sh    # Bitwarden integration
+│   ├── post-install-scripts/  # Post-install subscripts
+│   │   ├── setup-services.sh  # Enable services, add user to groups
+│   │   ├── setup-default-browser.sh # Browser MIME configuration
+│   │   └── set-default-programs.sh  # Default app associations
+│   └── retrieve-secrets.sh    # Bitwarden integration
 │
 ├── dotfiles/                   # Configuration files (symlinked to ~/)
 │   ├── .gitconfig             # Git configuration
@@ -201,16 +211,18 @@ The `setup.sh` script orchestrates the entire installation by calling modular sc
 
 ```
 setup.sh
-├── scripts/install_packages.sh     # Install all packages (pacman + AUR)
-├── scripts/setup_shell.sh          # Configure zsh with plugins
-├── scripts/setup_scripts.sh        # Link custom bin/ scripts
-├── scripts/setup_dotfiles.sh       # Symlink all dotfiles
-├── scripts/setup_launch_scripts.sh # Setup application launchers
-├── scripts/setup_assets.sh         # Extract and setup themes/wallpapers
-├── scripts/setup_system.sh         # System configs (theme, shell, hosts)
-├── scripts/setup_services.sh       # Enable services, add to groups
+├── scripts/install-packages.sh     # Install all packages (pacman + AUR)
+├── scripts/setup-shell.sh          # Configure zsh with plugins
+├── scripts/setup-scripts.sh        # Link custom bin/ scripts
+├── scripts/setup-dotfiles.sh       # Symlink all dotfiles
+├── scripts/setup-launch-scripts.sh # Setup application launchers
+├── scripts/setup-assets.sh         # Extract and setup themes/wallpapers
+├── scripts/setup-system.sh         # System configs (theme, shell, hosts)
 ├── scripts/post-install.sh         # Post-installation tasks
-└── scripts/retrieve_secrets.sh     # Fetch secrets from Bitwarden
+│   ├── setup-services.sh           # Enable services, add to groups
+│   ├── setup-default-browser.sh    # Browser MIME configuration
+│   └── set-default-programs.sh     # Default app associations
+└── scripts/retrieve-secrets.sh     # Fetch secrets from Bitwarden
 ```
 
 Each script includes status indicators for every step, making it easy to see what succeeded, failed, or was skipped.
@@ -235,6 +247,56 @@ Recursively converts directory contents to markdown format with syntax highlight
 ```bash
 mdd /path/to/project
 mdd .  # Current directory
+```
+
+### `ocr` - OCR Screen Selection
+Select a region of the screen and extract text using Tesseract OCR (supports Polish and English). Text is copied to clipboard:
+
+```bash
+ocr  # Select region, text is copied to clipboard
+```
+
+### `picker` - Color Picker
+Pick a color from anywhere on screen using hyprpicker. Color is copied to clipboard in hex format:
+
+```bash
+picker  # Click anywhere to pick color
+```
+
+### `screenshot` - Screenshot to Clipboard
+Take a screenshot of a selected region and copy directly to clipboard:
+
+```bash
+screenshot  # Select region, image copied to clipboard
+```
+
+### `screenshot-with-window` - Screenshot with Annotation
+Take a screenshot with satty annotation tool for markup before copying:
+
+```bash
+screenshot-with-window  # Select region, annotate, then copy
+```
+
+### `tokens` - Token Counter
+Count tokens in text or files using tiktoken (OpenAI's tokenizer):
+
+```bash
+tokens file.txt        # Count tokens in file
+echo "text" | tokens   # Count tokens from stdin
+```
+
+### `deck` - Netrunner Deck Parser
+Parse Netrunner deck lists and output as JSON:
+
+```bash
+deck decklist.txt  # Output JSON array of cards
+```
+
+### `screen-dimmer` - Screen Brightness Dimmer
+Compiled utility for controlling screen brightness/dimming:
+
+```bash
+screen-dimmer  # Run the screen dimmer utility
 ```
 
 ---

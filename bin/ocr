@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+set -o pipefail
 # OCR text selection script for Wayland/Hyprland
 
 # Take screenshot of selected area and pipe to tesseract

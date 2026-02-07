@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 # Screenshot script with satty for Wayland/Hyprland
 
 # Take screenshot

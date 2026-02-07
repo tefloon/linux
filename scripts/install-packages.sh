@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-source "./status.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/status.sh"
 
 CURRENT_STEP_MESSAGE="Enabling multilib"
 status_msg
@@ -11,7 +12,7 @@ sudo sed -i '/^\s*#\s*\[multilib\]/, /^\s*#\s*Include = \/etc\/pacman.d\/mirrorl
     s/^\s*#\s*\(\[multilib\]\)/\1/
     s/^\s*#\s*\(Include = \/etc\/pacman.d\/mirrorlist\)/\1/
 }' "$PACMAN_CONF"
-
+status_ok
 
 install_pkg() {
     local pkg="$1"
@@ -34,6 +35,11 @@ install_aur_pkg() {
         status_skip "Failed to install $pkg."
     fi
 }
+
+# --- CORE UTILITIES ---
+install_pkg "curl"                        # HTTP client (for Oh-My-Zsh download)
+install_pkg "git"                         # Version control (for yay, Powerlevel10k)
+install_pkg "desktop-file-utils"          # For update-desktop-database
 
 # --- HYPRLAND CORE ---
 install_pkg "hyprland"                    # Wayland compositor (window manager)
@@ -70,6 +76,9 @@ install_pkg "zsh-syntax-highlighting"     # Syntax highlighting for zsh
 install_pkg "zsh-autosuggestions"         # Auto-suggestions for zsh
 
 # --- CLI PRODUCTIVITY TOOLS ---
+install_pkg "tesseract"                   # OCR engine (for bin/ocr script)
+install_pkg "tesseract-data-eng"          # English OCR data
+install_pkg "tesseract-data-pol"          # Polish OCR data
 install_pkg "eza"                         # Colored file/dir lists with icons
 install_pkg "bat"                         # Nicely formatted file contents
 install_pkg "zoxide"                      # Last visited directories shortcut
@@ -104,6 +113,7 @@ install_pkg "fastfetch"                   # Display system info
 install_pkg "hyperfine"                   # Benchmark scripts / code
 
 # --- SECURITY & PRIVACY ---
+install_pkg "gnupg"                       # GPG encryption (for retrieve-secrets.sh)
 install_pkg "bitwarden-cli"               # Password manager CLI
 install_pkg "openssl"                     # Cryptography toolkit
 install_pkg "openssh"                     # SSH client/server
@@ -134,14 +144,14 @@ install_pkg "loupe"                       # GNOME Image viewer
 # --- NETWORKING & CONNECTIVITY ---
 install_pkg "kdeconnect"                  # Device integration (phone/computer sync)
 install_pkg "qbittorrent"                 # BitTorrent client
-install_pkg "ookla-speedtest-bin"         # Network speed tester
+install_aur_pkg "ookla-speedtest-bin"     # Network speed tester
 install_pkg "nm-connection-editor"        # GUI network connection editor
 
 # --- MUSIC ---
 install_pkg "spotifyd"                    # Spotify daemon
 
 # --- PRODUCTIVITY APPLICATIONS ---
-install_pkg "obsidian"                    # Note-taking application
+install_aur_pkg "obsidian"                # Note-taking application
 install_pkg "gnome-calendar"              # Calendar application
 install_pkg "calibre"                     # E-book management
 install_pkg "libqalculate"                # Calculator library
@@ -152,7 +162,7 @@ install_pkg "obs-studio"                  # Video streaming software
 
 # --- GAMING ---
 install_pkg "steam"                       # Gaming platform
-install_pkg "lutris"                      # Gaming management (Wine, emulators)
+# install_pkg "lutris"                      # Gaming management (Wine, emulators)
 install_pkg "vulkan-radeon"               # AMD Vulkan graphics drivers
 install_pkg "lib32-vulkan-radeon"         # 32-bit AMD Vulkan drivers for games
 install_pkg "vulkan-tools"                # Vulkan utilities and diagnostics
@@ -173,7 +183,7 @@ install_pkg "corectrl"                    # AMD GPU control panel
 # --- AUR PACKAGES (Third-party/Community) ---
 install_aur_pkg "code"                    # Visual Studio Code
 install_aur_pkg "tmatrix"                 # Matrix-like screensaver
-install_aur_pkg "cursor-electron"         # AI-powered code editor
+# install_aur_pkg "cursor-electron"         # AI-powered code editor
 install_aur_pkg "dragon-drop"             # Creates a widget to drag files from
 install_aur_pkg "ferdium-nightly-bin"     # Multi-platform messaging app
 install_aur_pkg "spotify"                 # Music streaming
