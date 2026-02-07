@@ -17,7 +17,6 @@ This repository contains my personal dotfiles and automated setup scripts for qu
 - [Key Bindings](#key-bindings)
 - [Customization](#customization)
 - [Troubleshooting](#troubleshooting)
-- [Testing](#testing)
 - [Maintenance](#maintenance)
 - [License](#license)
 
@@ -77,10 +76,13 @@ cd linux
    - Multiple Waybar instances (one per monitor)
    - Auto-started applications (Ferdium, Obsidian, terminal)
    - Custom wallpaper and cursor theme (Bibata Modern Classic)
+3. **Run `sudo tailscale up` to join the tailnet**
+4. **Run `retrieve-secrets.sh` to get all the SSH keys, .env, GPG etc. from Bitwarden**
+5. **Setup the SDDM theme by running `bash -c "$(curl -fsSL https://raw.githubusercontent.com/keyitdev/sddm-astronaut-theme/master/setup.sh)`"
 
-### 3. Secrets Setup
+### 3. Secrets Retrieval
 
-The setup will pull secrets from Bitwarden. Those include SSH keys, PGP/GPG private keys and environment variables.
+The `retrive-secrets.sh` script will pull secrets from Bitwarden. Those include SSH keys, PGP/GPG private keys and environment variables.
 
 #### SSH Keys
 Bitwarden supports SSH keys as an asset type so the script will pull them (both private and public) and put them in `~/.ssh/`.
@@ -339,8 +341,6 @@ Configured for 3 monitors with workspace assignments:
 
 ```
 Workspace 2: Ferdium (messaging)
-Workspace 5: GNOME Calendar
-Workspace 6: Kitty terminal
 Special magic: Obsidian (notes)
 ```
 
@@ -509,79 +509,6 @@ pavucontrol
 - Use game mode toggle in Waybar (🎮) for gaming
 - Disable animations in `~/.config/hypr/hyprland/general.conf`
 - Check GPU drivers: `lspci -k | grep -A 2 -E "(VGA|3D)"`
-
----
-
-## Testing
-
-### Validation Steps
-
-```bash
-# Check key applications
-which hyprland waybar wofi kitty
-
-# Verify dotfiles are linked
-ls -la ~/.config/hypr/
-ls -la ~/.zshrc
-
-# Test custom scripts
-cb --help          # Should work or show usage
-echo "test" | cb   # Should copy to clipboard
-
-# Check secrets (if using Bitwarden)
-ls -la ~/.ssh/
-echo $SSH_AUTH_SOCK
-
-# Test Hyprland features
-hyprctl version
-hyprctl monitors
-wofi --show drun --allow-images &  # Test app launcher
-```
-
-### Performance Verification
-
-```bash
-# Check system resources
-htop  # or btop
-
-# GPU information
-lspci | grep -i vga
-glxinfo | grep "OpenGL renderer"
-
-# Check audio
-pactl info
-```
-
-### Full System Test
-
-Test the setup in a clean environment:
-
-#### 1. Create a Test User
-```bash
-sudo useradd -m testuser -G wheel
-sudo passwd testuser
-# Set a simple password you'll remember
-```
-
-#### 2. Reboot and Login as Test User
-```bash
-reboot
-```
-
-#### 3. Run Setup
-```bash
-whoami          # Verify you're testuser
-cd ~
-git clone https://github.com/tefloon/linux.git
-cd linux
-./setup.sh
-```
-
-#### 4. Clean Up
-```bash
-# Back on your main user
-sudo userdel -r testuser
-```
 
 ---
 
