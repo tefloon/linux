@@ -41,9 +41,6 @@ fi
 echo "=== Installing packages ==="
 source "$SCRIPT_DIR/scripts/install-packages.sh"
 
-echo "=== Setting up shell ==="
-bash "$SCRIPT_DIR/scripts/setup-shell.sh"
-
 echo "=== Setting up custom scripts ==="
 bash "$SCRIPT_DIR/scripts/setup-scripts.sh"
 

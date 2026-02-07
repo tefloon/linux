@@ -198,4 +198,4 @@ install_aur_pkg "wlogout"                 # Wayland logout utility
 install_aur_pkg "rustdesk-bin"            # Remote system control utility
 install_aur_pkg "satty"                   # Screenshot annotation
 install_aur_pkg "beyondallreason-appimage"  # Best game ever
-
+install_aur_pkg "fzf-tab-git"
