@@ -120,6 +120,7 @@ install_pkg "openssl"                     # Cryptography toolkit
 install_pkg "openssh"                     # SSH client/server
 install_pkg "sshfs"                       # SSH filesystem
 install_pkg "keychain"                    # Front to ssh-agent
+install_pkg "tailscale"                   # Zero-trust VPN
 
 # --- DEVELOPMENT TOOLS ---
 install_pkg "jq"                          # JSON manipulation

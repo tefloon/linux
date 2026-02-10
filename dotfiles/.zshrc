@@ -70,7 +70,7 @@ zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
 
 # --- Environment Variables (set early) ---
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 export EDITOR='helix'
 export SUDO_EDITOR=micro
 export PAGER="bat"

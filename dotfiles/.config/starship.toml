@@ -5,12 +5,10 @@ scan_timeout = 10  # default is 30ms
 add_newline = false
 
 # Format
-format = """$directory\
-$git_branch\
-$character"""
+format = """$directory$git_branch\n$character"""
 
 [directory]
-style = "bold blue" 
+style = "bold #ff9000" 
 read_only = " 󰍁"
 read_only_style = "dimmed bold blue"
 truncation_length = 3
