@@ -8,7 +8,7 @@ add_newline = false
 format = """$directory$git_branch\n$character"""
 
 [directory]
-style = "bold #ff9000" 
+style = "bold blue" 
 read_only = " 󰍁"
 read_only_style = "dimmed bold blue"
 truncation_length = 3

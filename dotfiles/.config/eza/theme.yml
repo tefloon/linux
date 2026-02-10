@@ -7,6 +7,11 @@ date:
   is_dimmed: true
   is_italic: true
 
+users:
+  user_you:
+    foreground: "white"
+    is_bold: false
+
 filenames:
   "Videos":
     icon:

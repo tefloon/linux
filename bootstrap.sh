@@ -57,6 +57,9 @@ add_fstab_entry() {
 echo "Adding drives to /etc/fstab"
 add_fstab_entry "UUID=3ECEEACFCEEA7F11 /mnt/backups ntfs-3g uid=1000,gid=1000,umask=003 0 0"
 add_fstab_entry "UUID=243C543D3C540BE4 /mnt/chmury ntfs-3g uid=1000,gid=1000,umask=003 0 0"
+add_fstab_entry "UUID=A8426D93426D6752 /mnt/projects ntfs-3g uid=1000,gid=1000,umask=003 0 0"
+add_fstab_entry "UUID=06E8FAA9E8FA9661 /mnt/dane ntfs-3g uid=1000,gid=1000,umask=003 0 0"
+add_fstab_entry "UUID=5402FCC602FCADDC /mnt/zainstalowane ntfs-3g uid=1000,gid=1000,umask=003 0 0"
 
 
 # === 5. Run the main setup as the user ===
