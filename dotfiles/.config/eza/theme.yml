@@ -3,8 +3,9 @@
 
 # Timestamp colors
 date:
-  foreground: "#666666"
-  is_dimmed: false
+  foreground: "white"
+  is_dimmed: true
+  is_italic: true
 
 filenames:
   "Videos":
