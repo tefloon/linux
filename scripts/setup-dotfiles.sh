@@ -1,20 +1,30 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(readlink -f "$SCRIPT_DIR/..")"
+DOTFILES_DIR="$(readlink -f "$SCRIPT_DIR/../dotfiles")"
 source "$SCRIPT_DIR/status.sh"
 
-CURRENT_STEP_MESSAGE="Removing default Hyprland config"
-status_msg
-rm -rf "$HOME/.config/hypr"
-status_ok
+# Symlink dotfiles from the dotfiles folder
 
-# Stow all packages
-CURRENT_STEP_MESSAGE="Stowing dotfiles"
-status_msg
-cd "$REPO_ROOT" || { status_error "Failed to enter repo root"; }
-if stow -R dotfiles -t "$HOME" 2>/dev/null; then
-    status_ok
-else
-    status_skip "Failed to stow dotfiles"
-fi
+find "$DOTFILES_DIR" -type f | while read -r src; do
+
+    # Compute the relative path from $DOTFILES_DIR
+    relpath="${src#$DOTFILES_DIR/}"
+    dest="$HOME/$relpath"
+
+    CURRENT_STEP_MESSAGE="Symlinking $relpath"
+    status_msg
+
+    # Ensure the parent directory exists
+    mkdir -p "$(dirname "$dest")"
+
+    # Remove any existing file/symlink/directory at the destination
+    rm -rf "$dest"
+
+    # Create the symlink
+    if ln -s "$src" "$dest"; then
+        status_ok
+    else
+        status_skip "Failed to link $src to $dest"
+    fi
+done

@@ -103,7 +103,6 @@ install_pkg "unrar"                       # RAR archive extraction
 install_pkg "tree"                        # Directory tree visualization
 install_pkg "yazi"                        # Terminal file manager
 install_pkg "nautilus"                    # File manager
-install_pkg "stow"                        # Symlink your dotfiles
 
 # --- FILE TRANSFER & ENCRYPTION ---
 install_pkg "age"                         # Simpler digital signing
