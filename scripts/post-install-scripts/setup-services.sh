@@ -36,7 +36,7 @@ enable_service "sddm.service"          # Launcher service
 # Optional services (uncomment if needed)
 # enable_service "ufw"                 # Firewall
 # enable_service "cups"                # Printing
-# enable_service "avahi-daemon"        # Local network discovery
+enable_service "avahi-daemon"        # Local network discovery
 # enable_service "ollama"              # Local AI models
 
 # Add user to groups

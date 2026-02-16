@@ -16,9 +16,27 @@ filenames:
   "Videos":
     icon:
       glyph: "󰿎"  
+  "videos":
+    icon:
+      glyph: "󰿎"  
   "Games":
     icon:
       glyph: "󰊗"
+  "games":
+    icon:
+      glyph: "󰊗"
+  "downloads":
+    icon:
+      glyph: ""
+  "documents":
+    icon:
+      glyph: "󰲂"
+  "music":
+    icon:
+      glyph: "󰝚"
+  "linux":
+    icon:
+      glyph: ""
 
 # Custom icons for specific file types
 extensions:

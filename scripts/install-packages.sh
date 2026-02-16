@@ -48,6 +48,7 @@ install_pkg "hyprpaper"                   # Wallpaper daemon for Hyprland
 install_pkg "waybar"                      # System bar
 install_pkg "wofi"                        # Dropdown menus
 install_pkg "mako"                        # Notification daemon for Wayland
+install_pkg "libnotify"                   # Notification daemon for Wayland
 install_pkg "swaylock"                    # Screen locker for Wayland
 install_pkg "nwg-dock-hyprland"           # Dock/taskbar for Hyprland
 
@@ -67,6 +68,8 @@ install_pkg "qt6ct"                       # Qt6 configuration tool
 install_pkg "xorg-xwayland"               # X11 compatibility layer for Wayland
 install_pkg "brightnessctl"               # Screen brightness control
 install_pkg "upower"                      # Battery/power management info
+install_pkg "papirus-icon-theme"          # GTK icon theme
+
 
 # --- TERMINALS & SHELLS ---
 install_pkg "alacritty"                   # GPU-accelerated terminal emulator
