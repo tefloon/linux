@@ -43,9 +43,6 @@ fi
 if [[ -d "$REPO_NAME/dotfiles" ]]; then
     find "$REPO_NAME/dotfiles" -type f -exec chmod 644 {} \;
 fi
-if [[ -d "$REPO_NAME/configs" ]]; then
-    find "$REPO_NAME/configs" -type f -exec chmod 644 {} \;
-fi
 
 add_fstab_entry() {
     local line="$1"
@@ -61,22 +58,17 @@ add_fstab_entry "UUID=A8426D93426D6752 /mnt/projects ntfs-3g uid=1000,gid=1000,u
 add_fstab_entry "UUID=06E8FAA9E8FA9661 /mnt/dane ntfs-3g uid=1000,gid=1000,umask=003 0 0"
 add_fstab_entry "UUID=5402FCC602FCADDC /mnt/zainstalowane ntfs-3g uid=1000,gid=1000,umask=003 0 0"
 
+# === 5. Creating symlinks in the home folder ===
+USER_HOME="/home/$USERNAME"
+ln -sf /mnt/chmury $USER_HOME/
+ln -sf /mnt/dane $USER_HOME/
+ln -sf /mnt/projects $USER_HOME/
+ln -sf /mnt/zainstalowane $USER_HOME/
 
-# === 5. Run the main setup as the user ===
+# === 6. Run the main setup as the user ===
 cd "$REPO_NAME"
 sudo -u $USERNAME ./setup.sh
 
-# === 6. Setup personal hosts file ===
-echo "Setting up personal hosts file..."
-if [[ -f hosts ]]; then
-    if sudo ln -sf "$(pwd)/hosts" /etc/hosts; then
-        echo "✓ Personal hosts file linked to /etc/hosts"
-    else
-        echo "⚠ Failed to link hosts file"
-    fi
-else
-    echo "⚠ hosts file not found in $(pwd)"
-fi
 
 # === 7. Setup git remote to use SSH (personal preference) ===
 echo "Setting up git remote to use SSH..."

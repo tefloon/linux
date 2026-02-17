@@ -148,6 +148,7 @@ install_pkg "loupe"                       # GNOME Image viewer
 # --- NETWORKING & CONNECTIVITY ---
 install_pkg "kdeconnect"                  # Device integration (phone/computer sync)
 install_pkg "qbittorrent"                 # BitTorrent client
+install_pkg "syncthing"                   # Self-hosted data syncthings
 install_aur_pkg "ookla-speedtest-bin"     # Network speed tester
 install_pkg "nm-connection-editor"        # GUI network connection editor
 
