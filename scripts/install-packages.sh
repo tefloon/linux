@@ -41,6 +41,7 @@ install_pkg "curl"                        # HTTP client (for Oh-My-Zsh download)
 install_pkg "git"                         # Version control (for yay, Powerlevel10k)
 install_pkg "desktop-file-utils"          # For update-desktop-database
 install_pkg "sddm"                        # Login manager/launcher
+install_pkg "uwsm"                        # Wayland session manager
 
 # --- HYPRLAND CORE ---
 install_pkg "hyprland"                    # Wayland compositor (window manager)

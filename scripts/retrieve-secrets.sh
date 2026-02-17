@@ -69,11 +69,17 @@ else
     status_error "Unknown Bitwarden status"
 fi
 
+# Fetch all vault items once
+CURRENT_STEP_MESSAGE="Fetching vault items"
+status_msg
+BW_ITEMS=$(bw list items --session "$BW_SESSION")
+status_ok
+
+# Retrieve SSH keys
 CURRENT_STEP_MESSAGE="Retrieving SSH keys from Bitwarden"
 echo "$CURRENT_STEP_MESSAGE"
 
-# Get all items that have SSH keys
-SSH_ITEMS=$(bw list items --session "$BW_SESSION" | jq -r '.[] | select(.sshKey != null) | .id + ":" + .name')
+SSH_ITEMS=$(echo "$BW_ITEMS" | jq -r '.[] | select(.sshKey != null) | .id + ":" + .name')
 
 if [[ -z "$SSH_ITEMS" ]]; then
     status_msg
@@ -87,11 +93,11 @@ else
         ITEM_JSON=$(bw get item "$item_id" --session "$BW_SESSION")
         PRIVATE_KEY=$(echo "$ITEM_JSON" | jq -r '.sshKey.privateKey')
         PUBLIC_KEY=$(echo "$ITEM_JSON" | jq -r '.sshKey.publicKey')
-        
+
         if [[ "$PRIVATE_KEY" != "null" && "$PUBLIC_KEY" != "null" ]]; then
             # Create safe filename from item name
             safe_name=$(echo "$item_name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/_/g')
-            
+
             if [[ $TEST_MODE -eq 1 ]]; then
                 echo "  $item_name → id_ed25519_${safe_name}"
             else
@@ -113,8 +119,7 @@ fi
 CURRENT_STEP_MESSAGE="Looking for PGP private keys in secure notes"
 echo "$CURRENT_STEP_MESSAGE"
 
-# Find items with "pgp" or "gpg" in the name that have notes
-PGP_NOTES=$(bw list items --session "$BW_SESSION" | jq -r '.[] | select(.name | test("(pgp|gpg)"; "i")) | select(.notes != null and .notes != "") | .id + ":" + .name')
+PGP_NOTES=$(echo "$BW_ITEMS" | jq -r '.[] | select(.name | test("(pgp|gpg)"; "i")) | select(.notes != null and .notes != "") | .id + ":" + .name')
 
 if [[ -z "$PGP_NOTES" ]]; then
     status_skip "No PGP keys found in notes"
@@ -122,7 +127,7 @@ else
     echo "$PGP_NOTES" | while IFS=':' read -r item_id item_name; do
         ITEM_JSON=$(bw get item "$item_id" --session "$BW_SESSION")
         NOTES=$(echo "$ITEM_JSON" | jq -r '.notes')
-        
+
         # Check if notes contain PGP private key blocks
         if echo "$NOTES" | grep -q "BEGIN PGP PRIVATE KEY"; then
             if [[ $TEST_MODE -eq 1 ]]; then
@@ -148,12 +153,14 @@ else
     done
 fi
 
-# Optional: Look for other secrets (like API tokens) in secure notes
+# Look for secrets in secure notes
 CURRENT_STEP_MESSAGE="Looking for additional secrets in secure notes"
 echo "$CURRENT_STEP_MESSAGE"
 
-# Find items with "secret" in the name that have notes
-SECRET_NOTES=$(bw list items --session "$BW_SESSION" | jq -r '.[] | select(.name | test("secret"; "i")) | select(.notes != null and .notes != "") | .name + ":" + .notes')
+SECRET_NOTES=$(echo "$BW_ITEMS" | jq -r '.[] | select(.name | test("secret"; "i")) | select(.notes != null and .notes != "") | .name + ":" + .notes')
+
+ZSH_DIR="$HOME/.zsh"
+mkdir -p "$ZSH_DIR"
 
 if [[ -z "$SECRET_NOTES" ]]; then
     status_msg
@@ -161,7 +168,7 @@ if [[ -z "$SECRET_NOTES" ]]; then
 else
     if [[ $TEST_MODE -eq 0 ]]; then
         # Initialize or clear the secrets file
-        echo "# Auto-generated secrets from Bitwarden" > "$HOME/.zsh_secrets"
+        echo "# Auto-generated secrets from Bitwarden" > "$ZSH_DIR/.zsh_secrets"
     fi
 
     echo "$SECRET_NOTES" | while IFS=':' read -r item_name notes; do
@@ -171,8 +178,8 @@ else
                 echo "  $item_name:"
                 echo "$notes" | grep "=" | sed 's/^/    /'
             else
-                echo "  $item_name → ~/.zsh_secrets"
-                echo "$notes" | grep "=" | sed 's/^/export /' >> "$HOME/.zsh_secrets"
+                echo "  $item_name → $ZSH_DIR/.zsh_secrets"
+                echo "$notes" | grep "=" | sed 's/^/export /' >> "$ZSH_DIR/.zsh_secrets"
             fi
         fi
     done

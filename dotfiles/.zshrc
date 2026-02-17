@@ -17,7 +17,7 @@ WORDCHARS=${WORDCHARS//[\/]}
 # History Configuration
 HISTSIZE=10000
 SAVEHIST=10000
-HISTFILE=~/.zsh_history
+HISTFILE=~/.zsh/.zsh_history
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt APPEND_HISTORY             # Append rather than overwrite
@@ -48,7 +48,7 @@ bindkey "^[3;5~" delete-char
 # --- Completion System (OPTIMIZED for speed) ---
 # Only regenerate compdump once per day
 autoload -Uz compinit
-compinit -C -u  # Always skip security checks
+compinit -C -u -d ~/.zsh/.zcompdump
 
 source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh
 
@@ -139,7 +139,7 @@ if [ -f /usr/share/fzf/key-bindings.zsh ]; then
 fi
 
 # Load secrets (if exists)
-[ -f "$HOME/.zsh_secrets" ] && source "$HOME/.zsh_secrets"
+[ -f "$HOME/.zsh/.zsh_secrets" ] && source "$HOME/.zsh/.zsh_secrets"
 
 # --- Aliases ---
 alias sdn='shutdown now'
