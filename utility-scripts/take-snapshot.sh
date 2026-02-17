@@ -1,0 +1,1 @@
+rsync -aAX --link-dest=/mnt/backup/snapshots/latest --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/lost+found"} / /mnt/backup/snapshots/$(date +%Y-%m-%d)/ && ln -sfn /mnt/backup/snapshots/$(date +%Y-%m-%d) /mnt/backup/snapshots/latest

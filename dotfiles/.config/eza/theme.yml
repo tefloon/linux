@@ -13,15 +13,9 @@ users:
     is_bold: false
 
 filenames:
-  "Videos":
-    icon:
-      glyph: "󰿎"  
   "videos":
     icon:
       glyph: "󰿎"  
-  "Games":
-    icon:
-      glyph: "󰊗"
   "games":
     icon:
       glyph: "󰊗"
@@ -37,6 +31,9 @@ filenames:
   "linux":
     icon:
       glyph: ""
+  "photos":
+    icon:
+      glyph: ""
 
 # Custom icons for specific file types
 extensions:

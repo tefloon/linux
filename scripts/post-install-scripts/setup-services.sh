@@ -18,16 +18,22 @@ enable_service() {
     fi
 }
 
+# Enable and start user services
+enable_user_service() {
+    local service="$1"
+    CURRENT_STEP_MESSAGE="Enabling user service $service"
+    status_msg
+    if systemctl enable --user "$service" 2>/dev/null; then
+        status_ok
+    else
+        status_skip "Service $service not found or already enabled"
+    fi
+}
+
 # Core networking & system services
 enable_service "NetworkManager"        # Network management
 enable_service "systemd-timesyncd"     # Time synchronization
 enable_service "tailscaled"            # Tailscale VPN
-
-# Hardware support
-# enable_service "bluetooth"             # Bluetooth
-
-# Remote access
-# enable_service "sshd"                  # SSH server
 
 # Virtualization
 enable_service "libvirtd"              # VM management
@@ -35,9 +41,8 @@ enable_service "sddm.service"          # Launcher service
 
 # Optional services (uncomment if needed)
 # enable_service "ufw"                 # Firewall
-# enable_service "cups"                # Printing
-enable_service "avahi-daemon"        # Local network discovery
-# enable_service "ollama"              # Local AI models
+enable_service "avahi-daemon"          # Local network discovery
+enable_service "syncthing.service"     # File syncing
 
 # Add user to groups
 add_to_group() {

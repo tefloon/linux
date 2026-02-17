@@ -64,6 +64,7 @@ ln -sf /mnt/chmury $USER_HOME/
 ln -sf /mnt/dane $USER_HOME/
 ln -sf /mnt/projects $USER_HOME/
 ln -sf /mnt/zainstalowane $USER_HOME/
+ln -sf /mnt/backups $USER_HOME/
 
 # === 6. Run the main setup as the user ===
 cd "$REPO_NAME"
