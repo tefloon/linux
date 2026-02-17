@@ -50,7 +50,6 @@ install_pkg "wofi"                        # Dropdown menus
 install_pkg "mako"                        # Notification daemon for Wayland
 install_pkg "libnotify"                   # Notification daemon for Wayland
 install_pkg "swaylock"                    # Screen locker for Wayland
-install_pkg "nwg-dock-hyprland"           # Dock/taskbar for Hyprland
 
 # --- WAYLAND UTILITIES ---
 install_pkg "wl-clipboard"                # Clipboard utilities for Wayland
@@ -69,7 +68,6 @@ install_pkg "xorg-xwayland"               # X11 compatibility layer for Wayland
 install_pkg "brightnessctl"               # Screen brightness control
 install_pkg "upower"                      # Battery/power management info
 install_pkg "papirus-icon-theme"          # GTK icon theme
-
 
 # --- TERMINALS & SHELLS ---
 install_pkg "alacritty"                   # GPU-accelerated terminal emulator
@@ -96,6 +94,9 @@ install_pkg "procs"                       # Processes monitor
 install_pkg "fd"                          # Find files
 install_pkg "ugrep"                       # Search files for strings
 install_pkg "translate-shell"             # Terminal translator
+
+# --- PYTHON PACKAGES ---
+install_pkg "python-astral"               # Needed for the moon phase script
 
 # --- FILE MANAGEMENT & NAVIGATION ---
 install_pkg "atool"                       # Archive extraction/creation wrapper
@@ -168,7 +169,6 @@ install_pkg "obs-studio"                  # Video streaming software
 
 # --- GAMING ---
 install_pkg "steam"                       # Gaming platform
-# install_pkg "lutris"                      # Gaming management (Wine, emulators)
 install_pkg "vulkan-radeon"               # AMD Vulkan graphics drivers
 install_pkg "lib32-vulkan-radeon"         # 32-bit AMD Vulkan drivers for games
 install_pkg "vulkan-tools"                # Vulkan utilities and diagnostics
@@ -182,9 +182,6 @@ install_pkg "iptables-nft"                # Network packet filtering
 
 # --- SYSTEM TOOLS ---
 install_pkg "corectrl"                    # AMD GPU control panel
-
-# --- AI/ML ---
-# install_pkg "ollama-rocm"                 # Local AI model runner (AMD GPU optimized)
 
 # --- AUR PACKAGES (Third-party/Community) ---
 install_aur_pkg "code"                    # Visual Studio Code
