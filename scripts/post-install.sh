@@ -17,3 +17,9 @@ if update-desktop-database ~/.local/share/applications/ 2>/dev/null; then
 else
     status_skip
 fi
+
+CURRENT_STEP_MESSAGE="Applying the XDG home folders"
+status_msg
+rmdir -rf $HOME/Desktop $HOME/Downloads $HOME/Documents $HOME/Templates $HOME/Pictures $HOME/Videos $HOME/Public 
+xdg-user-dirs-update
+status_ok
