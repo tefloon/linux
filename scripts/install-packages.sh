@@ -97,6 +97,8 @@ install_pkg "translate-shell"             # Terminal translator
 
 # --- PYTHON PACKAGES ---
 install_pkg "python-astral"               # Needed for the moon phase script
+install_pkg "python-tiktoken"             # Needed for token counting script
+install_pkg "python-youtube-transcript-api" # Needed for transcripts 
 
 # --- FILE MANAGEMENT & NAVIGATION ---
 install_pkg "atool"                       # Archive extraction/creation wrapper
