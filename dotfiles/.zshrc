@@ -153,6 +153,9 @@ alias hx='helix'
 alias matrix='tmatrix -c default -s 20'
 alias hx.='hx .'
 alias y='yazi'
+alias urban='urban -m 3'
+alias ten='trans en:pl'
+alias tpl='trans pl:en'
 
 s() {
   xdg-open "$@" &!

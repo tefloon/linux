@@ -95,6 +95,7 @@ install_pkg "procs"                       # Processes monitor
 install_pkg "fd"                          # Find files
 install_pkg "ugrep"                       # Search files for strings
 install_pkg "translate-shell"             # Terminal translator
+install_pkg "urban-cli-bin"               # Urban dictionary CLI
 
 # --- PYTHON PACKAGES ---
 install_pkg "python-astral"               # Needed for the moon phase script
