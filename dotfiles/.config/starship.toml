@@ -1,6 +1,6 @@
 # Faster startup
 command_timeout = 500
-scan_timeout = 30  # default is 30ms
+scan_timeout = 50  # default is 30ms
 "$schema" = 'https://starship.rs/config-schema.json'
 add_newline = false
 
