@@ -149,6 +149,8 @@ install_pkg "zathura"                     # Lightweight PDF viewer
 install_pkg "zathura-pdf-mupdf"           # PDF backend for Zathura
 install_pkg "imv"                         # Image viewer
 install_pkg "loupe"                       # GNOME Image viewer
+install_pkg "sox"                         # GNOME Image viewer
+install_pkg "ffmpeg"                       # GNOME Image viewer
 
 # --- NETWORKING & CONNECTIVITY ---
 install_pkg "kdeconnect"                  # Device integration (phone/computer sync)
