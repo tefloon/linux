@@ -21,7 +21,7 @@ window#waybar {
 }
 
 #custom-power {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 /* Hover effects */
@@ -38,6 +38,7 @@ window#waybar {
 #custom-weather:hover,
 #custom-moon:hover,
 #custom-gamemode:hover,
+#custom-internet:hover,
 #custom-moviemode:hover,
 #custom-power:hover {
   /*filter: brightness(1.2);*/
@@ -62,8 +63,9 @@ window#waybar {
 #custom-weather,
 #custom-moon,
 #custom-moviemode,
+#custom-internet,
 #custom-gamemode {
-  border-radius: 400px;
+  border-radius: 4px;
   margin: 6px 3px;
   padding: 6px 12px;
   /* background-color: rgba(26, 27, 38, 0.6); */
@@ -136,6 +138,7 @@ window#waybar {
 #custom-moviemode {
   padding-top: 8px;
   padding-bottom: 4px;
+  font-size: 16px;
 }
 
 #custom-gamemode {
@@ -146,16 +149,28 @@ window#waybar {
 /* Gamemode active/inactive states */
 #custom-gamemode.active {
   color: #a6e3a1;
-  /* Green when active */
   background-color: rgba(166, 227, 161, 0.1);
 }
 
 #custom-gamemode.inactive {
   color: #bed1e2;
-  /* Normal color when inactive */
 }
 
-/* Gamemode active/inactive states */
+#custom-internet{
+  padding-top: 0px;
+  padding-right: 16px;
+  padding-bottom: 0px;
+  font-size: 16px;
+}
+
+#custom-internet.connected {
+  /* color: #a6e3a1; */
+}
+
+#custom-internet.disconnected {
+  color: red;  
+}
+
 #custom-moviemode.active {
   color: #a6e3a1;
   /* Green when active */

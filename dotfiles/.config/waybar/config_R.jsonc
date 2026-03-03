@@ -10,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/moviemode", "custom/gamemode", "custom/power"],
+    "modules-right": ["custom/internet", "custom/moviemode", "custom/gamemode", "custom/power"],
 
     "clock": {
         "format": "{:%d / %m}",
@@ -56,6 +56,14 @@
         "return-type": "json",
         "interval": "once",
         "signal": 12
+    },
+    
+    "custom/internet": {
+        "format": "{}",
+        "tooltip": true,
+        "exec": "$HOME/.config/waybar/scripts/internet-status.sh",
+        "return-type": "json",
+        "interval": "5",
     },
 
     "custom/moviemode": {
