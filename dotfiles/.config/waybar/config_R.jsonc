@@ -63,7 +63,7 @@
         "tooltip": true,
         "exec": "$HOME/.config/waybar/scripts/internet-status.sh",
         "return-type": "json",
-        "interval": "5",
+        "interval": 5,
     },
 
     "custom/moviemode": {
