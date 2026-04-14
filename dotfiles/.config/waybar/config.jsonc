@@ -1,5 +1,5 @@
 {
-  "output": "DP-1",
+  "output": "HDMI-A-2",
   "layer": "top",
   "position": "top",
   "height": 48,
@@ -17,7 +17,9 @@
     "cpu",
     "memory",
     "disk",
-    "wireplumber"
+    "wireplumber",
+    "custom/internet",
+    "custom/power"
   ],
   "clock": {
     "format": "{:%H:%M}",
@@ -38,6 +40,7 @@
       }
     }
   },
+
   "hyprland/workspaces": {
     "on-click": "activate",
     "all-outputs": false,
@@ -60,6 +63,7 @@
       "4": [],
     }
   },
+
   "cpu": {
     "interval": 2,
     "format": "󰍛  {usage}%",
@@ -68,6 +72,7 @@
     "warning": 70,
     "critical": 90
   },
+
   "memory": {
     "interval": 1,
     "format": "\uefc5   {percentage}%",
@@ -76,6 +81,7 @@
     "warning": 80,
     "critical": 90
   },
+
   "disk": {
     "interval": 30,
     "format": "󰋊  {percentage_used}%",
@@ -85,6 +91,7 @@
     "warning": 80,
     "critical": 90,
   },
+
   "wireplumber": {
     "format": "󰕾   {volume}%",
     "format-muted": "󰖁   {volume}%",
@@ -92,5 +99,21 @@
     // "on-click": "$HOME/.config/waybar/scripts/audio-toggle.sh",
     "tooltip": true,
     "tooltip-format": "Volume: {volume}%\nClick to toggle mute"
+  },
+  
+  "custom/internet": {
+    "format": "{}",
+    "tooltip": true,
+    "exec": "$HOME/.config/waybar/scripts/internet-status.sh",
+    "return-type": "json",
+    "interval": 5,
+  },
+  
+  "custom/power": {
+    "format": "󰤆",
+    "tooltip": false,
+    "on-click": "wlogout"
+  },
+
   }
 }

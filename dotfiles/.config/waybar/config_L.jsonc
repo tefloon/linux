@@ -1,5 +1,5 @@
 {
-  "output": "HDMI-A-2",
+  "output": "HDMI-A-1",
   "layer": "top",
   "position": "top",
   "height": 48,
@@ -15,6 +15,8 @@
   ],
   "modules-right": [
     "tray",
+    "custom/gamemode",
+    "custom/moviemode",
     "custom/moon",
     "custom/weather"
   ],
@@ -64,5 +66,31 @@
     "icon-size": 21,
     "spacing": 15,
     "reverse-direction": true
-  }
+  },
+
+  "custom/gamemode": {
+    "format": "🕹",
+    "tooltip": false,
+    "on-click": "$HOME/.config/waybar/scripts/gamemode-toggle.sh",
+    "exec": "if [[ -f /tmp/waybar_gamemode ]]; then echo '{\"class\": \"active\"}'; else echo '{\"class\": \"inactive\"}'; fi",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 12
+  },
+
+  "custom/moviemode": {
+    "format": "󰿎",
+    "tooltip": false,
+    "on-click": "$HOME/.config/waybar/scripts/movie-toggle.sh",
+    "exec": "if [[ -f /tmp/waybar_cinemamode ]]; then echo '{\"class\": \"active\"}'; else echo '{\"class\": \"inactive\"}'; fi",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 13
+  },
+  
+  "custom/power": {
+    "format": "󰤆",
+    "tooltip": false,
+    "on-click": "wlogout"
+  },
 }

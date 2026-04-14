@@ -209,8 +209,8 @@ window#waybar {
 }
 
 #tray>* {
-  opacity: 0.1;
-
+  /* opacity: 0.1; */
+  /* cursor: pointer; */
 }
 
 #tray>*:hover {

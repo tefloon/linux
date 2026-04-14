@@ -75,10 +75,4 @@
         "interval": "once",
         "signal": 13
     },
-    
-    "custom/power": {
-        "format": "󰤆",
-        "tooltip": false,
-        "on-click": "wlogout"
-    },
 }
