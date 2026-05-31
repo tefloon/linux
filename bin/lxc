@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+#
+# lxc-throwaway.sh — spin up a disposable Arch LXC container, drop you into a
+# shell, and automatically destroy it when you exit.
+#
+# Usage:
+#   ./lxc-throwaway.sh [name] [dir-to-mount]
+#
+#   name          optional container name        (default: archtest)
+#   dir-to-mount  optional host dir bind-mounted  (default: none)
+#                 read-only into the container at the same path, handy for
+#                 testing a dotfiles/setup script against your real repo
+#                 without the test being able to clobber it.
+#
+# Examples:
+#   ./lxc-throwaway.sh
+#   ./lxc-throwaway.sh dotfiles-test ~/dotfiles
+#
+set -euo pipefail
+
+# ---- config -----------------------------------------------------------------
+NAME="${1:-archtest}"
+MOUNT_DIR="${2:-}"
+DISTRO="archlinux"
+RELEASE="current"
+ARCH="amd64"
+
+# ---- re-run as root if needed -----------------------------------------------
+if [[ $EUID -ne 0 ]]; then
+    echo ">> need root, re-running with sudo..."
+    exec sudo "$0" "$@"
+fi
+
+# ---- one-time host setup (idempotent) ---------------------------------------
+if ! pacman -Qi lxc &>/dev/null; then
+    echo ">> installing lxc..."
+    pacman -S --noconfirm lxc
+fi
+
+# host networking — only add the line if it isn't already there
+if ! grep -qxF 'lxc.net.0.type = none' /etc/lxc/default.conf 2>/dev/null; then
+    echo ">> enabling host networking in /etc/lxc/default.conf"
+    echo 'lxc.net.0.type = none' >> /etc/lxc/default.conf
+fi
+
+# ---- cleanup: runs on ANY exit (normal, Ctrl-C, error) ----------------------
+cleanup() {
+    echo
+    echo ">> tearing down '$NAME'..."
+    lxc-stop    -n "$NAME" &>/dev/null || true
+    lxc-destroy -n "$NAME" &>/dev/null || true
+    echo ">> done."
+}
+trap cleanup EXIT
+
+# ---- nuke any stale container with the same name ----------------------------
+if lxc-info -n "$NAME" &>/dev/null; then
+    echo ">> removing pre-existing '$NAME'..."
+    lxc-stop    -n "$NAME" &>/dev/null || true
+    lxc-destroy -n "$NAME" &>/dev/null || true
+fi
+
+# ---- create -----------------------------------------------------------------
+# The rootfs is cached under /var/cache/lxc after the first run, so subsequent
+# creates are fast — no re-download.
+echo ">> creating '$NAME' ($DISTRO/$RELEASE/$ARCH)..."
+lxc-create -n "$NAME" -t download -- -d "$DISTRO" -r "$RELEASE" -a "$ARCH"
+
+# ---- optional: bind-mount a host dir (read-only) ----------------------------
+if [[ -n "$MOUNT_DIR" ]]; then
+    abs="$(realpath "$MOUNT_DIR")"
+    # target path inside the rootfs is relative, hence the stripped leading /
+    # drop ',ro' below if you actually want the test to write back to it
+    echo "lxc.mount.entry = $abs ${abs#/} none bind,ro,create=dir 0 0" \
+        >> "/var/lib/lxc/$NAME/config"
+    echo ">> bind-mounted (ro) $abs -> $abs inside container"
+fi
+
+# ---- start + wait + attach --------------------------------------------------
+echo ">> starting..."
+lxc-start -n "$NAME"
+lxc-wait  -n "$NAME" -s RUNNING
+
+echo ">> attaching. exit the shell (or Ctrl-D) to destroy everything."
+echo
+lxc-attach -n "$NAME" || true
+
+# script ends here -> EXIT trap fires -> container is destroyed

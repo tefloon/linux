@@ -67,4 +67,5 @@ status_summary() {
         grep "] ERROR:" "$LOG_FILE" | sed 's/^[^]]*] ERROR: /  - /'
     fi
     echo -e "\nFull log: $LOG_FILE"
+    echo
 }
