@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export LOG_FILE="/tmp/setup-$(date +%Y%m%d-%H%M%S).log"
 source "$SCRIPT_DIR/scripts/status.sh"
 
 CURRENT_STEP_MESSAGE="Checking for sudo"
@@ -61,6 +62,8 @@ bash "$SCRIPT_DIR/scripts/post-install.sh"
 
 # echo "=== Retrieving secrets ==="
 # bash "$SCRIPT_DIR/scripts/retrieve-secrets.sh"
+
+status_summary
 
 echo "All done!"
 echo "============================"

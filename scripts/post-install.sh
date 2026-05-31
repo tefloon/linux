@@ -20,6 +20,6 @@ fi
 
 CURRENT_STEP_MESSAGE="Applying the XDG home folders"
 status_msg
-rmdir -rf $HOME/Desktop $HOME/Downloads $HOME/Documents $HOME/Templates $HOME/Pictures $HOME/Videos $HOME/Public 
+rmdir $HOME/Desktop $HOME/Downloads $HOME/Documents $HOME/Templates $HOME/Pictures $HOME/Videos $HOME/Public 
 xdg-user-dirs-update
 status_ok

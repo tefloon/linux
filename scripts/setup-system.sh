@@ -2,7 +2,6 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(readlink -f "$SCRIPT_DIR/..")"
-HOSTS_FILE="$(readlink -f "$REPO_ROOT/dotfiles/hosts")"
 SYSTEM_CONFIGS="$REPO_ROOT/system-configs"
 source "$SCRIPT_DIR/status.sh"
 
@@ -47,7 +46,3 @@ if [[ -d "$SYSTEM_CONFIGS" ]]; then
 else
     status_skip "No system-configs directory found"
 fi
-
-CURRENT_STEP_MESSAGE="Symlinking /etc/hosts"
-status_msg
-sudo ln -sf "$HOSTS_FILE" /etc/hosts && status_ok || status_skip

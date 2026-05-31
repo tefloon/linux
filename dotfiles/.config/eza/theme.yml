@@ -34,6 +34,12 @@ filenames:
   "photos":
     icon:
       glyph: ""
+  "mnt":
+    icon:
+      glyph: ""
+  "projects":
+    icon:
+      glyph: ""
 
 # Custom icons for specific file types
 extensions:
