@@ -1,90 +1,108 @@
 #!/usr/bin/env python3
+"""Fetch a YouTube video's transcript and save it as a kebab-case .txt file."""
+
 import sys
-import subprocess
-import json
 import re
-from youtube_transcript_api import YouTubeTranscriptApi
+import subprocess
+
+from youtube_transcript_api import (
+    YouTubeTranscriptApi,
+    CouldNotRetrieveTranscript,
+    TranscriptsDisabled,
+    NoTranscriptFound,
+    VideoUnavailable,
+)
+
+# Each pattern captures the 11-char video ID from a different URL shape.
+YOUTUBE_ID_PATTERNS = [
+    r'(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]{11})',
+    r'youtube\.com/(?:embed|shorts|live)/([a-zA-Z0-9_-]{11})',
+]
+
 
 def extract_video_id(url):
-    """Extract video ID from YouTube URL"""
-    patterns = [
-        r'(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]{11})',
-        r'youtube\.com/embed/([a-zA-Z0-9_-]{11})',
-    ]
-    
-    for pattern in patterns:
+    """Return an 11-char video ID from a URL, or accept a bare ID. None if neither."""
+    for pattern in YOUTUBE_ID_PATTERNS:
         match = re.search(pattern, url)
         if match:
             return match.group(1)
-    
-    return url
+    # Allow passing a bare video ID directly.
+    if re.fullmatch(r'[a-zA-Z0-9_-]{11}', url):
+        return url
+    return None
+
 
 def get_video_title(video_id):
-    """Fetch video title using yt-dlp"""
+    """Fetch just the title via yt-dlp (--print, not a full --dump-json blob)."""
     try:
         result = subprocess.run(
-            ['yt-dlp', '--dump-json', f'https://www.youtube.com/watch?v={video_id}'],
+            ['yt-dlp', '--print', '%(title)s',
+             f'https://www.youtube.com/watch?v={video_id}'],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
-        data = json.loads(result.stdout)
-        return data['title']
+        return result.stdout.strip() or video_id
     except Exception as e:
-        print(f"Warning: Could not fetch title, using video ID instead. Error: {e}")
+        print(f"Warning: could not fetch title, using video ID instead. ({e})")
         return video_id
 
+
 def title_to_filename(title):
-    """Convert title to kebab-case filename"""
-    # Remove apostrophes and quotes
-    title = title.replace("'", "").replace('"', '').replace("'", '').replace('"', '').replace('"', '')
-    # Convert to lowercase
+    """Convert a title to a safe kebab-case .txt filename."""
     title = title.lower()
-    # Replace spaces and special chars with hyphens
-    title = re.sub(r'[^\w\s-]', '', title)  # Keep only alphanumeric, spaces, and hyphens
-    title = re.sub(r'[-\s]+', '-', title)   # Replace spaces and multiple hyphens with single hyphen
-    # Remove leading/trailing hyphens
-    title = title.strip('-')
-    return f"{title}.txt"
+    # This single pass drops everything that isn't a word char, space, or hyphen
+    # (apostrophes and quotes included), so no separate strip step is needed.
+    title = re.sub(r'[^\w\s-]', '', title)
+    title = re.sub(r'[-\s]+', '-', title).strip('-')
+    title = title[:200]  # stay well under the filesystem's ~255-char limit
+    return f"{title or 'transcript'}.txt"
+
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: ./get-transcript.py <youtube_url>")
+        print("Usage: ./get-transcript.py <youtube_url_or_id>")
         sys.exit(1)
-    
-    url = sys.argv[1]
-    video_id = extract_video_id(url)
-    
+
+    raw = sys.argv[1]
+    video_id = extract_video_id(raw)
+    if video_id is None:
+        print(f"✗ Error: couldn't find a YouTube video ID in {raw!r}")
+        sys.exit(1)
+
     print(f"Fetching video info for: {video_id}")
-    
-    # Get video title
     title = get_video_title(video_id)
     print(f"Title: {title}")
-    
+
     filename = title_to_filename(title)
     print(f"Filename: {filename}")
-    
-    print(f"\nFetching transcript...")
-    
+
+    print("\nFetching transcript...")
     try:
-        # Create API instance and fetch transcript
-        ytt_api = YouTubeTranscriptApi()
-        fetched_transcript = ytt_api.fetch(video_id)
-        
-        # Extract text from snippets
-        full_text = " ".join([snippet.text for snippet in fetched_transcript.snippets])
-        
-        # Save to file
+        fetched = YouTubeTranscriptApi().fetch(video_id)
+        full_text = " ".join(snippet.text for snippet in fetched.snippets)
+
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(full_text)
-        
+
         print(f"\n✓ Transcript saved to {filename}")
         print(f"  ({len(full_text)} characters)")
-        print(f"  Language: {fetched_transcript.language}")
-        
-    except Exception as e:
-        print(f"✗ Error: {e}")
+        print(f"  Language: {fetched.language}")
+
+    except TranscriptsDisabled:
+        print("✗ Error: transcripts are disabled for this video.")
         sys.exit(1)
+    except NoTranscriptFound:
+        print("✗ Error: no transcript found for this video.")
+        sys.exit(1)
+    except VideoUnavailable:
+        print("✗ Error: this video is unavailable.")
+        sys.exit(1)
+    except CouldNotRetrieveTranscript as e:
+        # Base class catch-all: IP blocked, region-locked, age-restricted, etc.
+        print(f"✗ Error: could not retrieve transcript. ({e})")
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
