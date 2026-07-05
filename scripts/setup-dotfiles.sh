@@ -6,10 +6,10 @@ source "$SCRIPT_DIR/status.sh"
 
 # Symlink dotfiles from the dotfiles folder
 
-find "$DOTFILES_DIR" -type f | while read -r src; do
+find "$DOTFILES_DIR" -type f -print0 | while IFS= read -r -d '' src; do
 
     # Compute the relative path from $DOTFILES_DIR
-    relpath="${src#$DOTFILES_DIR/}"
+    relpath="${src#"$DOTFILES_DIR"/}"
     dest="$HOME/$relpath"
 
     CURRENT_STEP_MESSAGE="Symlinking $relpath"

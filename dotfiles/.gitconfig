@@ -6,7 +6,7 @@
     lg = log --graph --abbrev-commit --decorate --date=short   --format=format:'%C(yellow)%h%Creset - %C(green)%ad%Creset %C(blue)%d%Creset %s %C(red)<%an>%Creset'
 
 [core]
-    pager = delta
+	pager = bat --style plain --pager never
 
 [interactive]
     diffFilter = delta --color-only

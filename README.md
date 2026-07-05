@@ -146,6 +146,8 @@ linux/
 ├── bin/                        # Custom utility scripts
 │   ├── cb                      # Clipboard copy tool (stdout + clipboard)
 │   ├── deck                    # Netrunner deck list parser (JSON output)
+│   ├── get-transcript          # YouTube transcript fetcher (saved as .txt)
+│   ├── lxc                     # Disposable Arch LXC container (auto-destroyed)
 │   ├── mdd                     # Markdown directory formatter
 │   ├── ocr                     # OCR screen selection (tesseract)
 │   ├── picker                  # Color picker (hyprpicker)
@@ -294,6 +296,21 @@ Parse Netrunner deck lists and output as JSON:
 deck decklist.txt  # Output JSON array of cards
 ```
 
+### `get-transcript` - YouTube Transcript Fetcher
+Fetch a YouTube video's transcript and save it as a kebab-case `.txt` file:
+
+```bash
+get-transcript https://youtu.be/VIDEO_ID
+```
+
+### `lxc` - Disposable Arch Container
+Spin up a throwaway Arch LXC container, drop into a shell, and automatically destroy it on exit. Optionally bind-mount a host directory (read-only) — handy for testing this setup against your real repo without risking it:
+
+```bash
+lxc                           # Ephemeral container named "archtest"
+lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
+```
+
 ### `screen-dimmer` - Screen Brightness Dimmer
 Compiled utility for controlling screen brightness/dimming:
 
@@ -315,7 +332,7 @@ The repository includes a comprehensive SSH config (`.ssh/config`) with:
 
 ## Asset Management
 
-The `setup_assets.sh` script automatically handles assets in the `assets/` directory:
+The `setup-assets.sh` script automatically handles assets in the `assets/` directory:
 
 - **Archives** (`.zip`, `.tar.gz`, `.tar.xz`, etc.): Automatically extracted to `~/.local/share/`
 - **Images** (`.png`, `.jpg`, `.svg`, etc.): Symlinked to `~/.local/share/`
@@ -386,7 +403,7 @@ Additional auto-starts:
 
 ### Adding Packages
 
-Edit `scripts/install_packages.sh` and add your packages:
+Edit `scripts/install-packages.sh` and add your packages:
 
 ```bash
 # Official repository packages
@@ -396,12 +413,12 @@ install_pkg "package-name"
 install_aur_pkg "aur-package-name"
 ```
 
-Then re-run: `source scripts/install_packages.sh`
+Then re-run: `source scripts/install-packages.sh`
 
 ### Adding Dotfiles
 
 1. Place your config file in the `dotfiles/` directory, maintaining the same path structure as it would be in `~/`
-2. Run `bash scripts/setup_dotfiles.sh` to create symlinks
+2. Run `bash scripts/setup-dotfiles.sh` to create symlinks
 3. Files automatically maintain the correct relative paths
 
 Example:
@@ -443,14 +460,14 @@ cd ~/linux
 ```bash
 # Re-run package installation
 cd ~/linux
-source scripts/install_packages.sh
+source scripts/install-packages.sh
 ```
 
 **Dotfiles Not Applied:**
 ```bash
 # Re-run dotfile setup
 cd ~/linux
-bash scripts/setup_dotfiles.sh
+bash scripts/setup-dotfiles.sh
 ```
 
 ### Specific Problems
