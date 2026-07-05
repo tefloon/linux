@@ -2,35 +2,58 @@
 set -e
 set -o pipefail
 
-DIR="${1:-.}"
+NO_COPY=0
+DIR="."
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -n|--nc) NO_COPY=1 ;;
+        *)       DIR="$1" ;;
+    esac
+    shift
+done
+DIR="${DIR%/}"          # normalize: drop a trailing slash so relpath stripping works
 output=""
 
 get_lang() {
     case "$1" in
-        *.sh) echo "bash" ;;
-        *.zsh) echo "zsh" ;;
-        *.py) echo "python" ;;
-        *.js) echo "javascript" ;;
-        *.ts) echo "typescript" ;;
-        *.rb) echo "ruby" ;;
-        *.pl) echo "perl" ;;
-        *.lua) echo "lua" ;;
-        *.vim) echo "vim" ;;
-        *.conf) echo "conf" ;;
-        *.ini) echo "ini" ;;
+        *.sh)         echo "bash" ;;
+        *.zsh)        echo "zsh" ;;
+        *.py)         echo "python" ;;
+        *.js)         echo "javascript" ;;
+        *.ts)         echo "typescript" ;;
+        *.rb)         echo "ruby" ;;
+        *.pl)         echo "perl" ;;
+        *.lua)        echo "lua" ;;
+        *.vim)        echo "vim" ;;
+        *.conf)       echo "conf" ;;
+        *.ini|*.cfg)  echo "ini" ;;
         *.yml|*.yaml) echo "yaml" ;;
-        *.json) echo "json" ;;
-        *.md) echo "markdown" ;;
-        *.jsonc) echo "jsonc" ;;
-        *.css) echo "css" ;;
-        *.md) echo "markdown" ;;
-        *) echo "" ;;
+        *.json)       echo "json" ;;
+        *.md)         echo "markdown" ;;
+        *.jsonc)      echo "jsonc" ;;
+        *.css)        echo "css" ;;
+        *)            echo "" ;;
     esac
+}
+
+# Copy stdin to the clipboard with whatever tool fits the session.
+# Prefer Wayland when WAYLAND_DISPLAY is set (XWayland sets DISPLAY too),
+# fall back to X11/xclip, otherwise skip quietly with a note.
+copy_to_clipboard() {
+    if [ -n "$WAYLAND_DISPLAY" ] && command -v wl-copy >/dev/null 2>&1; then
+        wl-copy
+    elif [ -n "$DISPLAY" ] && command -v xclip >/dev/null 2>&1; then
+        xclip -selection clipboard
+    else
+        cat >/dev/null   # drain stdin so tee doesn't hit EPIPE
+        echo "No clipboard tool found (need wl-copy or xclip); skipped copy." >&2
+    fi
 }
 
 while IFS= read -r -d '' file; do
     if ! file --mime "$file" | grep -q 'charset=binary'; then
-        relpath="${file#$DIR/}"
+        relpath="${file#"$DIR"/}"
         lang=$(get_lang "$file")
         output+=$'\n'"### $relpath"$'\n'
         output+="\`\`\`${lang}"$'\n'
@@ -39,4 +62,8 @@ while IFS= read -r -d '' file; do
     fi
 done < <(find "$DIR" -type d -name .git -prune -o -type f -print0 | sort -z)
 
-echo "$output" | tee >(wl-copy)
+if [ "$NO_COPY" -eq 1 ]; then
+    echo "$output"
+else
+    echo "$output" | tee >(copy_to_clipboard)
+fi
