@@ -1,3 +1,10 @@
 #!/usr/bin/env bash
-# Print input and copy to Wayland clipboard
-tee >(wl-copy)
+# Print input and copy to clipboard (Wayland or X11)
+if command -v wl-copy >/dev/null 2>&1 && [ -n "$WAYLAND_DISPLAY" ]; then
+    tee >(wl-copy)
+elif command -v xclip >/dev/null 2>&1; then
+    tee >(xclip -selection clipboard)
+else
+    cat
+    echo "Warning: no clipboard tool found (wl-copy/xclip/xsel)" >&2
+fi
