@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+out="${1:-playlist.m3u8}"
+
+{
+  echo "#EXTM3U"
+  for f in *.mp3; do
+    dur=$(ffprobe -v error -show_entries format=duration \
+                  -of default=nw=1:nk=1 -- "$f")
+    dur=${dur%.*}                      # truncate to whole seconds
+    title=$(ffprobe -v error -show_entries format_tags=title \
+                    -of default=nw=1:nk=1 -- "$f")
+    artist=$(ffprobe -v error -show_entries format_tags=artist \
+                     -of default=nw=1:nk=1 -- "$f")
+    label="${artist:+$artist - }${title:-${f%.mp3}}"
+    printf '#EXTINF:%s,%s\n%s\n' "${dur:-0}" "$label" "$f"
+  done
+} > "$out"
+
+echo "Wrote $out ($(grep -c '^#EXTINF' "$out") tracks)"

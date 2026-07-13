@@ -76,6 +76,7 @@ export SUDO_EDITOR=micro
 export PAGER="bat"
 export BAT_PAGER="less -RF"
 export LESS='-RFX'
+export BAT_THEME="Catppuccin Mocha"
 
 # --- Colors & LS Configuration ---
 # Conditional eza setup (only if installed)
@@ -155,6 +156,13 @@ alias hx.='hx .'
 alias urban='urban -m 3'
 alias ten='trans en:pl'
 alias tpl='trans pl:en'
+alias cat='bat -pp'
+
+c() {
+  local prev="$PWD"
+  cd ~/claude && claude "$@"
+  cd "$prev"
+}
 
 s() {
   xdg-open "$@" &!

@@ -83,3 +83,7 @@ xdg-mime default org.qbittorrent.qBittorrent.desktop application/x-bittorrent
 # Configuration files
 xdg-mime default sublime_text.desktop text/x-ini
 xdg-mime default sublime_text.desktop application/x-desktop
+
+xdg-mime default helium.desktop text/html
+xdg-mime default helium.desktop x-scheme-handler/http
+xdg-mime default helium.desktop x-scheme-handler/https
