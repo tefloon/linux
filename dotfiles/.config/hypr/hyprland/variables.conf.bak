@@ -1,0 +1,13 @@
+# From execs.conf, move these:
+$terminal = footclient
+$notes = obsidian
+$menu = $HOME/.config/wofi/wofi-toggle.sh
+$mainMod = SUPER
+$fileManager = nautilus --new-window
+$editor = subl
+$browser = helium-browser
+$launchScriptsDir = $HOME/.local/share/launch-scripts
+
+# You might also want to add animation/styling variables:
+$animSpeed = 1.5
+$opacity = 0.85
