@@ -153,7 +153,6 @@ install_pkg "sox"                         # GNOME Image viewer
 install_pkg "ffmpeg"                       # GNOME Image viewer
 
 # --- NETWORKING & CONNECTIVITY ---
-install_pkg "kdeconnect"                  # Device integration (phone/computer sync)
 install_pkg "qbittorrent"                 # BitTorrent client
 install_pkg "syncthing"                   # Self-hosted data syncthings
 install_aur_pkg "ookla-speedtest-bin"     # Network speed tester
@@ -165,7 +164,6 @@ install_pkg "spotifyd"                    # Spotify daemon
 # --- PRODUCTIVITY APPLICATIONS ---
 install_pkg "libreoffice-fresh"           # Office suite
 install_aur_pkg "obsidian"                # Note-taking application
-install_pkg "gnome-calendar"              # Calendar application
 install_pkg "calibre"                     # E-book management
 install_pkg "libqalculate"                # Calculator library
 

@@ -96,7 +96,7 @@
     "format": "󰕾   {volume}%",
     "format-muted": "󰖁   {volume}%",
     "on-click": "pavucontrol-qt",
-    // "on-click": "$HOME/.config/waybar/scripts/audio-toggle.sh",
+    "on-click": "$HOME/.config/waybar/scripts/audio-toggle.sh",
     "tooltip": true,
     "tooltip-format": "Volume: {volume}%\nClick to toggle mute"
   },
