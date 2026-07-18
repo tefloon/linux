@@ -52,7 +52,7 @@
     "interval": 1800,
     "exec": "$HOME/.config/waybar/scripts/weather.sh",
     "return-type": "json",
-    "on-click": ""
+    "on-click": "footclient -H curl v2.wttr.in/ursynow"
   },
   "custom/moon": {
     "format": "{}",
