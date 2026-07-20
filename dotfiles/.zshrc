@@ -10,6 +10,7 @@ skip_global_compinit=1
 
 # --- ZSH Configuration ---
 autoload -Uz zmv zln
+stty -ixon                        # Disable XOFF with Ctrl+S 
 
 # Remove forward slash and maybe dot
 WORDCHARS=${WORDCHARS//[\/]}
@@ -181,12 +182,17 @@ pacman() {
   command pacman "$@" && rehash
 }
 
+mkcd() {
+  mkdir -p $1
+  cd $1
+}
+
 git() {
-    if [[ $1 == "log" ]]; then
-        command git log "${@:2}" | bat --style=plain --paging=always
-    else
-        command git "$@"
-    fi
+  if [[ $1 == "log" ]]; then
+    command git log "${@:2}" | bat --style=plain --paging=always
+  else
+    command git "$@"
+  fi
 }
 
 function y() {
@@ -196,6 +202,19 @@ function y() {
 	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
 	rm -f -- "$tmp"
 }
+
+fzf-command-search() {
+  local selected
+  selected=$( { print -l ${(k)aliases}; print -l ${(k)functions}; print -l ${(k)commands} } \
+    | sort -u \
+    | fzf --height 40% --reverse --border --prompt="cmd> ")
+  if [[ -n $selected ]]; then
+    LBUFFER="${LBUFFER}${selected}"
+  fi
+  zle reset-prompt
+}
+zle -N fzf-command-search
+bindkey '^S' fzf-command-search
 
 # Track if this is the first prompt
 typeset -g FIRST_PROMPT=1
