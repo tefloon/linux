@@ -77,7 +77,7 @@ export SUDO_EDITOR=micro
 export PAGER="bat"
 export BAT_PAGER="less -RF"
 export LESS='-RFX'
-export BAT_THEME="Catppuccin Mocha"
+export BAT_THEME="OneHalfDark"
 
 # --- Colors & LS Configuration ---
 # Conditional eza setup (only if installed)
