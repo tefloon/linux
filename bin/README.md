@@ -2,6 +2,20 @@
 
 Located in `bin/` and automatically symlinked to `~/.local/bin`:
 
+- [`cb`](#cb---clipboard-copy-tool) — print to stdout and copy to the clipboard in one pipe
+- [`create-playlist`](#create-playlist) — build an M3U playlist for an album folder (Jellyfin-friendly)
+- [`deck`](#deck---netrunner-deck-parser) — parse Netrunner deck lists to JSON
+- [`get-transcript`](#get-transcript---youtube-transcript-fetcher) — fetch a YouTube transcript to a file
+- [`kebabify`](#kebabify) — rename files and folders to kebab-case
+- [`lxc`](#lxc---disposable-arch-container) — spin up a throwaway Arch container
+- [`mdd`](#mdd---markdown-directory-formatter) — dump directory contents as markdown for AI tools
+- [`ocr`](#ocr---ocr-screen-selection) — OCR a screen selection to the clipboard
+- [`picker`](#picker---color-picker) — pick a screen colour to the clipboard
+- [`screen-dimmer`](#screen-dimmer---screen-brightness-dimmer) — control screen brightness
+- [`screenshot`](#screenshot---screenshot-to-clipboard) — screenshot a region to the clipboard
+- [`screenshot-with-window`](#screenshot-with-window---screenshot-with-annotation) — screenshot, annotate, then copy
+- [`tokens`](#tokens---token-counter) — count tokens in text or files
+
 ### `cb` - Clipboard Copy Tool
 Prints to stdout AND copies to Wayland clipboard simultaneously. Perfect for piping command output:
 
@@ -10,48 +24,40 @@ echo "Hello World" | cb
 cat file.txt | cb
 ```
 
-### `mdd` - Markdown Directory Formatter
-Recursively converts directory contents to markdown format with syntax highlighting. Great for sharing code context with AI tools:
+### create-playlist
 
-```bash
-mdd /path/to/project
-mdd .  # Current directory
-```
+Build an **Extended M3U playlist** for one or more album folders — made for
+getting ripped CDs into Jellyfin with correct track order and names.
 
-### `ocr` - OCR Screen Selection
-Select a region of the screen and extract text using Tesseract OCR (supports Polish and English). Text is copied to clipboard:
+#### What it does
 
-```bash
-ocr  # Select region, text is copied to clipboard
-```
+For each directory given (default: the current one), `create-playlist`:
 
-### `picker` - Color Picker
-Pick a color from anywhere on screen using hyprpicker. Color is copied to clipboard in hex format:
+1. **Scans audio files** in the folder, non-recursively — `mp3`, `flac`, `m4a`,
+   `aac`, `ogg`, `opus`, `wma`, `wav` (case-insensitive). Cover art and other
+   non-audio files are ignored.
+2. **Reads tags** with a single `ffprobe` call per file: duration plus
+   `disc`, `track`, `title` and `artist`.
+3. **Sorts by disc, then track**, so `10` follows `9` instead of `1`. Files with
+   no track tag fall back to a natural filename sort and land last.
+4. **Labels each entry** as `Artist - Title`, falling back to just the title, or
+   to the filename (minus extension) when tags are missing.
+5. **Writes `<folder name>.m3u8` inside the folder**, using bare filenames so the
+   playlist stays valid when the album is copied to Jellyfin.
 
-```bash
-picker  # Click anywhere to pick color
-```
+#### Notes
 
-### `screenshot` - Screenshot to Clipboard
-Take a screenshot of a selected region and copy directly to clipboard:
+- **Skips folders with no audio** with a notice, instead of writing a broken file.
+- **Batch-friendly** — pass many folders at once; a bad path is reported and the
+  rest still process (exit status is non-zero if any fail).
+- Handles `N/M` tag forms (`1/10` → `1`) and missing `disc` tags (default `1`).
 
-```bash
-screenshot  # Select region, image copied to clipboard
-```
+#### Usage
 
-### `screenshot-with-window` - Screenshot with Annotation
-Take a screenshot with satty annotation tool for markup before copying:
-
-```bash
-screenshot-with-window  # Select region, annotate, then copy
-```
-
-### `tokens` - Token Counter
-Count tokens in text or files using tiktoken (OpenAI's tokenizer):
-
-```bash
-tokens file.txt        # Count tokens in file
-echo "text" | tokens   # Count tokens from stdin
+```sh
+create-playlist                 # the current directory
+create-playlist .               # the current directory
+create-playlist ~/rips/*/       # every album folder in a rip session
 ```
 
 ### `deck` - Netrunner Deck Parser
@@ -66,21 +72,6 @@ Fetch a YouTube video's transcript and save it as a kebab-case `.txt` file:
 
 ```bash
 get-transcript https://youtu.be/VIDEO_ID
-```
-
-### `lxc` - Disposable Arch Container
-Spin up a throwaway Arch LXC container, drop into a shell, and automatically destroy it on exit. Optionally bind-mount a host directory (read-only) — handy for testing this setup against your real repo without risking it:
-
-```bash
-lxc                           # Ephemeral container named "archtest"
-lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
-```
-
-### `screen-dimmer` - Screen Brightness Dimmer
-Compiled utility for controlling screen brightness/dimming:
-
-```bash
-screen-dimmer  # Run the screen dimmer utility
 ```
 
 ### kebabify
@@ -116,7 +107,7 @@ For each name, `kebabify`:
 - **Folders recurse fully** and the folder itself is renamed too, done
   **bottom-up** so child paths stay valid throughout the walk.
 
-## Usage
+#### Usage
 
 ```sh
 kebabify [options] PATH [PATH ...]
@@ -128,3 +119,64 @@ kebabify [options] PATH [PATH ...]
 | `-l, --limit N` | word-truncation length threshold (default: `40`) |
 | `-n, --dry-run` | print planned renames without changing anything |
 | `-R, --no-recurse` | for a folder, rename only the folder, not its contents |
+
+### `lxc` - Disposable Arch Container
+Spin up a throwaway Arch LXC container, drop into a shell, and automatically destroy it on exit. Optionally bind-mount a host directory (read-only) — handy for testing this setup against your real repo without risking it:
+
+```bash
+lxc                           # Ephemeral container named "archtest"
+lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
+```
+
+### `mdd` - Markdown Directory Formatter
+Recursively converts directory contents to markdown format with syntax highlighting. Prints to `stdout` and copies to clipboard.
+
+Great for sharing code context with AI tools:
+
+```bash
+mdd /path/to/project
+mdd .  # Current directory
+```
+
+### `ocr` - OCR Screen Selection
+Select a region of the screen and extract text using Tesseract OCR (supports Polish and English). Text is copied to clipboard:
+
+```bash
+ocr  # Select region, text is copied to clipboard
+```
+
+### `picker` - Color Picker
+Pick a color from anywhere on screen using hyprpicker. Color is copied to clipboard in hex format:
+
+```bash
+picker  # Click anywhere to pick color
+```
+
+### `screen-dimmer` - Screen Brightness Dimmer
+Compiled utility for controlling screen brightness/dimming:
+
+```bash
+screen-dimmer  # Run the screen dimmer utility
+```
+
+### `screenshot` - Screenshot to Clipboard
+Take a screenshot of a selected region and copy directly to clipboard:
+
+```bash
+screenshot  # Select region, image copied to clipboard
+```
+
+### `screenshot-with-window` - Screenshot with Annotation
+Take a screenshot with satty annotation tool for markup before copying:
+
+```bash
+screenshot-with-window  # Select region, annotate, then copy
+```
+
+### `tokens` - Token Counter
+Count tokens in text or files using tiktoken (OpenAI's tokenizer):
+
+```bash
+tokens file.txt        # Count tokens in file
+echo "text" | tokens   # Count tokens from stdin
+```

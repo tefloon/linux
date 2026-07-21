@@ -1,21 +1,95 @@
 #!/usr/bin/env bash
 set -euo pipefail
+shopt -s nullglob nocaseglob extglob
 
-out="${1:-playlist.m3u8}"
+# create-playlist — write an Extended M3U playlist for one or more album folders.
+#
+# For each directory given (default: the current one), scans its audio files
+# (non-recursive), reads duration + disc/track/title/artist tags via ffprobe,
+# sorts by disc then track (falling back to a natural filename sort for
+# untagged files), and writes "<album folder name>.m3u8" *inside* that folder.
+# Entries use bare filenames so the playlist stays portable when the folder is
+# copied to Jellyfin.
+#
+# Usage:
+#   create-playlist                 # the current directory
+#   create-playlist .               # the current directory
+#   create-playlist ~/rips/*/       # every album folder in a rip session
 
-{
-  echo "#EXTM3U"
-  for f in *.mp3; do
-    dur=$(ffprobe -v error -show_entries format=duration \
-                  -of default=nw=1:nk=1 -- "$f")
-    dur=${dur%.*}                      # truncate to whole seconds
-    title=$(ffprobe -v error -show_entries format_tags=title \
-                    -of default=nw=1:nk=1 -- "$f")
-    artist=$(ffprobe -v error -show_entries format_tags=artist \
-                     -of default=nw=1:nk=1 -- "$f")
-    label="${artist:+$artist - }${title:-${f%.mp3}}"
-    printf '#EXTINF:%s,%s\n%s\n' "${dur:-0}" "$label" "$f"
-  done
-} > "$out"
+AUDIO_GLOB='*.@(mp3|flac|m4a|aac|ogg|opus|wma|wav)'
+FS=$'\037'   # unit separator: a field delimiter that never appears in tags
 
-echo "Wrote $out ($(grep -c '^#EXTINF' "$out") tracks)"
+# Integer part of a tag value: "1/10" -> "1", "  07 " -> "7", "" -> default.
+num() {
+    local v="${1%%/*}"
+    v="${v//[^0-9]/}"
+    printf '%s' "${v:-$2}"
+}
+
+make_playlist() {
+    local dir="${1%/}"
+    [ -z "$dir" ] && dir="."
+    if [ ! -d "$dir" ]; then
+        echo "create-playlist: not a directory: $dir" >&2
+        return 1
+    fi
+
+    local files=( "$dir"/$AUDIO_GLOB )
+    if [ ${#files[@]} -eq 0 ]; then
+        echo "create-playlist: no audio files in '$dir' — skipped" >&2
+        return 0
+    fi
+
+    local album
+    album=$(basename -- "$dir")
+    [ "$album" = "." ] && album=$(basename -- "$PWD")
+    local out="$dir/$album.m3u8"
+
+    {
+        echo "#EXTM3U"
+        {
+            local f base meta dur disc track title artist dkey tkey durout label
+            for f in "${files[@]}"; do
+                base=$(basename -- "$f")
+                # One ffprobe per file: duration + the tags we sort/label on,
+                # joined by our field separator (empty for missing values).
+                meta=$(ffprobe -v error \
+                        -show_entries format=duration:format_tags=disc,track,title,artist \
+                        -of json -- "$f" \
+                    | jq -j --arg fs "$FS" '
+                        .format as $x | ($x.tags // {}) as $t
+                        | [ ($x.duration // "0"),
+                            ($t.disc  // ""), ($t.track // ""),
+                            ($t.title // ""), ($t.artist // "") ]
+                        | join($fs)' 2>/dev/null) || meta=""
+                IFS="$FS" read -r dur disc track title artist <<<"$meta"
+
+                dkey=$(num "$disc" 1)          # missing disc -> 1
+                tkey=$(num "$track" 999999)    # untagged -> sorts after tagged
+                durout=${dur%.*}; durout=${durout//[^0-9]/}
+                label="${artist:+$artist - }${title:-${base%.*}}"
+
+                # disc \x1f track \x1f filename \x1f duration \x1f label \0
+                printf '%s%s%s%s%s%s%s%s%s\0' \
+                    "$dkey" "$FS" "$tkey" "$FS" "$base" "$FS" "${durout:-0}" "$FS" "$label"
+            done
+        } | sort -z -t"$FS" -k1,1n -k2,2n -k3,3V \
+          | while IFS="$FS" read -r -d '' _d _t base dur label; do
+                printf '#EXTINF:%s,%s\n%s\n' "$dur" "$label" "$base"
+            done
+    } > "$out"
+
+    echo "Wrote $out (${#files[@]} tracks)"
+}
+
+main() {
+    local dirs=( "$@" )
+    [ ${#dirs[@]} -eq 0 ] && dirs=( "." )
+    local d status=0
+    for d in "${dirs[@]}"; do
+        make_playlist "$d" || status=1
+    done
+    return $status
+}
+
+main "$@"
