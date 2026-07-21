@@ -135,11 +135,17 @@ def process(path: str, limit: int, dry_run: bool, recurse: bool = True) -> None:
     """
     if (recurse and os.path.isdir(path)
             and not os.path.basename(path.rstrip("/")).startswith(".")):
-        # Bottom-up so children are renamed before their parent directory,
-        # keeping the paths os.walk hands us valid throughout.
-        for dirpath, dirnames, filenames in os.walk(path, topdown=False):
-            for entry in filenames + dirnames:
-                rename_one(os.path.join(dirpath, entry), limit, dry_run)
+        # Walk top-down so hidden directories can be pruned -- a bottom-up walk
+        # has already descended into them by the time it yields them, which
+        # would let us rename the insides of .git and friends. Collect first,
+        # then rename in reverse: that is bottom-up, so children are renamed
+        # before their parent and every path stays valid throughout.
+        targets = []
+        for dirpath, dirnames, filenames in os.walk(path, topdown=True):
+            dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+            targets.extend(os.path.join(dirpath, e) for e in filenames + dirnames)
+        for entry in reversed(targets):
+            rename_one(entry, limit, dry_run)
     rename_one(path, limit, dry_run)
 
 
@@ -168,7 +174,11 @@ def main() -> int:
             print(f"no such path: {path}", file=sys.stderr)
             status = 1
             continue
-        process(path, args.limit, args.dry_run, recurse=not args.no_recurse)
+        # Resolve "." / ".." / trailing slashes to a real basename, otherwise the
+        # dotfile guards mistake them for hidden names and silently skip everything.
+        # abspath (not realpath) so a symlink is renamed, not its target.
+        process(os.path.abspath(path), args.limit, args.dry_run,
+                recurse=not args.no_recurse)
     return status
 
 

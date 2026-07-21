@@ -101,7 +101,8 @@ For each name, `kebabify`:
 
 - **Collision-safe** — if the target name already exists, appends `-2`, `-3`, …
   so nothing is overwritten (checked case-insensitively).
-- **Skips dotfiles/dotdirs** (anything starting with `.`).
+- **Skips dotfiles/dotdirs** (anything starting with `.`) — hidden directories
+  are not descended into either, so `.git` and friends are left completely alone.
 - **Skips well-known project files** — `CLAUDE.md`, `README.md`, `HANDOFF.md`
   (case-insensitive).
 - **Folders recurse fully** and the folder itself is renamed too, done
@@ -119,6 +120,20 @@ kebabify [options] PATH [PATH ...]
 | `-l, --limit N` | word-truncation length threshold (default: `40`) |
 | `-n, --dry-run` | print planned renames without changing anything |
 | `-R, --no-recurse` | for a folder, rename only the folder, not its contents |
+
+### Examples
+
+```sh
+kebabify -n .              # preview renaming everything here, incl. this folder
+kebabify ~/music/album     # rename a folder and its contents
+kebabify -R ~/music/album  # rename just the folder, leave contents alone
+kebabify *.mp3             # let the shell pick the targets
+```
+
+Note that `kebabify .` renames the current directory too. Your shell follows the
+inode, so nothing breaks, but the prompt shows the old name until you `cd .`.
+Passing no path at all is an error rather than an implicit `.` — a no-argument
+command that recursively renames your whole working tree is a bad typo to have.
 
 ## `lxc` - Disposable Arch Container
 Spin up a throwaway Arch LXC container, drop into a shell, and automatically destroy it on exit. Optionally bind-mount a host directory (read-only) — handy for testing this setup against your real repo without risking it:
