@@ -161,6 +161,8 @@ alias tpl='trans pl:en'
 alias cat='bat -pp'
 alias dust='dust -i -B -r'
 
+
+# --- Functions ---
 # Launch a throwaway instance of claude in ~/claude
 # Used for conversations, just in the terminal
 c() {
@@ -176,10 +178,12 @@ count-chars(){
     | sort -t$'\t' -k2 -n | column -t -s$'\t' -R2
 }
 
+# Open the file/folder in the default program
 s() {
   xdg-open "$@" &!
 }
 
+# Prettier man pages
 man() {
   command man "$@" | col -bx | bat --language=man --plain
 }
@@ -193,11 +197,13 @@ pacman() {
   command pacman "$@" && rehash
 }
 
+# Create a directory/directory chain and enter them
 mkcd() {
   mkdir -p $1
   cd $1
 }
 
+# Styling of the git log
 git() {
   if [[ $1 == "log" ]]; then
     command git log "${@:2}" | bat --style=plain --paging=always

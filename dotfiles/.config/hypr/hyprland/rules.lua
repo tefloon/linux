@@ -129,6 +129,11 @@ hl.window_rule({ match = { class = "code-oss" },             opacity = opacity }
 hl.window_rule({ match = { class = "brave-browser-nightly" }, opacity = opacity })
 hl.window_rule({ match = { title = ".*" },                   opacity = opacity })
 
+-- foot brings its own alpha (see foot.ini [colors-dark] alpha/blur), which it
+-- needs in order to request blur over ext-background-effect-v1. Leave it at 1
+-- here so the catch-all rule above does not dim it a second time.
+hl.window_rule({ match = { class = "^foot(client)?$" },      opacity = "1" })
+
 hl.window_rule({ match = { class = "obsidian" }, immediate = true })
 hl.window_rule({ match = { class = "obsidian" }, workspace = "special:magic" })
 
