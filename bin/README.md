@@ -1,4 +1,4 @@
-## Custom Scripts
+# Custom Scripts
 
 Located in `bin/` and automatically symlinked to `~/.local/bin`:
 
