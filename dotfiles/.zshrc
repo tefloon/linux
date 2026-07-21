@@ -165,6 +165,12 @@ c() {
   cd "$prev"
 }
 
+# displays the number of characters each filename in the folder has
+count-chars(){
+  local dir=${1:-.}
+  ( cd "$dir" && for f in *; do printf '%s\t%s\n' "$f" "${#f}"; done ) \
+    | sort -t$'\t' -k2 -n | column -t -s$'\t' -R2
+}
 s() {
   xdg-open "$@" &!
 }

@@ -155,7 +155,7 @@ def main() -> int:
     )
     parser.add_argument("paths", nargs="+", help="files or folders to rename")
     parser.add_argument(
-        "-l", "--limit", type=int, default=40,
+        "-l", "--limit", type=int, default=20,
         help="truncate the name once a word pushes it past this length (default: 40)",
     )
     parser.add_argument(
