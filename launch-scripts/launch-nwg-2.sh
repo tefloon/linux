@@ -1,1 +1,0 @@
-nwg-dock-hyprland -d -o "DP-1" -p "right" -i 24 -mb 5 -hd 0 -nolauncher -iw "special" -c "~/linux/dotfiles/.config/nwg-dock-hyprland/dock-side"

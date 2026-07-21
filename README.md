@@ -74,7 +74,7 @@ cd linux
 1. **Reboot your system** to ensure all services start properly
 2. **Log in** and you should see your Hyprland desktop with:
    - Multiple Waybar instances (one per monitor)
-   - Auto-started applications (Ferdium, Obsidian, terminal)
+   - Auto-started applications (Ferdium, Obsidian)
    - Custom wallpaper and cursor theme (Bibata Modern Classic)
 3. **Run `sudo tailscale up` to join the tailnet**
 4. **Run `retrieve-secrets.sh` to get all the SSH keys, .env, GPG etc. from Bitwarden**
@@ -142,53 +142,11 @@ linux/
 ├── README.md                   # This file
 ├── setup.sh                    # Main setup orchestrator
 ├── bootstrap.sh                # Root installation script
-│
 ├── bin/                        # Custom utility scripts
-│   ├── cb                      # Clipboard copy tool (stdout + clipboard)
-│   ├── deck                    # Netrunner deck list parser (JSON output)
-│   ├── get-transcript          # YouTube transcript fetcher (saved as .txt)
-│   ├── lxc                     # Disposable Arch LXC container (auto-destroyed)
-│   ├── mdd                     # Markdown directory formatter
-│   ├── ocr                     # OCR screen selection (tesseract)
-│   ├── picker                  # Color picker (hyprpicker)
-│   ├── screen-dimmer           # Screen brightness dimmer utility
-│   ├── screenshot              # Screenshot to clipboard
-│   ├── screenshot-with-window  # Screenshot with satty annotation
-│   └── tokens                  # Token counter (tiktoken)
-│
 ├── scripts/                    # Modular setup scripts
-│   ├── status.sh              # Status message helpers (used by all scripts)
-│   ├── install-packages.sh    # Package installation
-│   ├── setup-shell.sh         # Shell configuration (zsh)
-│   ├── setup-scripts.sh       # Links bin/ scripts to ~/.local/bin
-│   ├── setup-dotfiles.sh      # Symlinks all dotfiles
-│   ├── setup-launch-scripts.sh # Sets up application launchers
-│   ├── setup-assets.sh        # Extracts themes, wallpapers
-│   ├── setup-system.sh        # System-level configurations
-│   ├── post-install.sh        # Post-installation tasks
-│   ├── post-install-scripts/  # Post-install subscripts
-│   │   ├── setup-services.sh  # Enable services, add user to groups
-│   │   ├── setup-default-browser.sh # Browser MIME configuration
-│   │   └── set-default-programs.sh  # Default app associations
-│   └── retrieve-secrets.sh    # Bitwarden integration
-│
-├── dotfiles/                   # Configuration files (symlinked to ~/)
-│   ├── .gitconfig             # Git configuration
-│   ├── .ssh/config            # SSH configuration
-│   ├── .zshrc                 # Zsh configuration
-│   ├── hosts                  # Custom hosts file
-│   └── .config/               # Application configs
-│       ├── hypr/              # Hyprland configuration
-│       ├── waybar/            # Waybar configuration
-│       ├── kitty/             # Kitty terminal config
-│       └── ...                # Other app configs
-│
-├── assets/                     # Themes, wallpapers, archives
-│   ├── icons/                 # Cursor themes
-│   └── wallpapers/            # Desktop backgrounds
-│
+├── dotfiles/                   # Configuration files (symlinked to ~/ preserving their relative paths)
+├── assets/                     # Themes, wallpapers, archives (copied/extracted to ~/.local/share)
 └── launch-scripts/             # Application launchers
-    └── launch-nwg.sh          # NWG panel launcher
 ```
 
 ### Hyprland Config Organization
@@ -233,93 +191,6 @@ Each script includes status indicators for every step, making it easy to see wha
 
 ---
 
-## Custom Scripts
-
-Located in `bin/` and automatically symlinked to `~/.local/bin`:
-
-### `cb` - Clipboard Copy Tool
-Prints to stdout AND copies to Wayland clipboard simultaneously. Perfect for piping command output:
-
-```bash
-echo "Hello World" | cb
-cat file.txt | cb
-```
-
-### `mdd` - Markdown Directory Formatter
-Recursively converts directory contents to markdown format with syntax highlighting. Great for sharing code context with AI tools:
-
-```bash
-mdd /path/to/project
-mdd .  # Current directory
-```
-
-### `ocr` - OCR Screen Selection
-Select a region of the screen and extract text using Tesseract OCR (supports Polish and English). Text is copied to clipboard:
-
-```bash
-ocr  # Select region, text is copied to clipboard
-```
-
-### `picker` - Color Picker
-Pick a color from anywhere on screen using hyprpicker. Color is copied to clipboard in hex format:
-
-```bash
-picker  # Click anywhere to pick color
-```
-
-### `screenshot` - Screenshot to Clipboard
-Take a screenshot of a selected region and copy directly to clipboard:
-
-```bash
-screenshot  # Select region, image copied to clipboard
-```
-
-### `screenshot-with-window` - Screenshot with Annotation
-Take a screenshot with satty annotation tool for markup before copying:
-
-```bash
-screenshot-with-window  # Select region, annotate, then copy
-```
-
-### `tokens` - Token Counter
-Count tokens in text or files using tiktoken (OpenAI's tokenizer):
-
-```bash
-tokens file.txt        # Count tokens in file
-echo "text" | tokens   # Count tokens from stdin
-```
-
-### `deck` - Netrunner Deck Parser
-Parse Netrunner deck lists and output as JSON:
-
-```bash
-deck decklist.txt  # Output JSON array of cards
-```
-
-### `get-transcript` - YouTube Transcript Fetcher
-Fetch a YouTube video's transcript and save it as a kebab-case `.txt` file:
-
-```bash
-get-transcript https://youtu.be/VIDEO_ID
-```
-
-### `lxc` - Disposable Arch Container
-Spin up a throwaway Arch LXC container, drop into a shell, and automatically destroy it on exit. Optionally bind-mount a host directory (read-only) — handy for testing this setup against your real repo without risking it:
-
-```bash
-lxc                           # Ephemeral container named "archtest"
-lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
-```
-
-### `screen-dimmer` - Screen Brightness Dimmer
-Compiled utility for controlling screen brightness/dimming:
-
-```bash
-screen-dimmer  # Run the screen dimmer utility
-```
-
----
-
 ### SSH Configuration
 
 The repository includes a comprehensive SSH config (`.ssh/config`) with:
@@ -350,7 +221,6 @@ All assets maintain proper permissions and ownership.
 Configured for 3 monitors with workspace assignments:
 
 - **HDMI-A-2** (Left): Workspaces 1, 4
-- **DP-1** (Center): Workspaces 2, 5
 - **HDMI-A-1** (Right): Workspaces 3, 6
 - **Special workspace `magic`**: Scratchpad for Obsidian
 
@@ -362,7 +232,6 @@ Special magic: Obsidian (notes)
 ```
 
 Additional auto-starts:
-- KDE Connect (phone integration)
 - EasyEffects (audio processing)
 - Clipboard history (cliphist)
 - Polkit authentication agent
@@ -524,7 +393,6 @@ pavucontrol
 **Performance Issues:**
 
 - Use game mode toggle in Waybar (🎮) for gaming
-- Disable animations in `~/.config/hypr/hyprland/general.conf`
 - Check GPU drivers: `lspci -k | grep -A 2 -E "(VGA|3D)"`
 
 ---
@@ -549,7 +417,7 @@ git pull
 
 - Use `htop` or `btop` for system monitoring
 - Check GPU usage: `corectrl` (AMD) or `nvidia-smi` (NVIDIA)
-- Monitor disk usage: `df -h` and `du -sh ~/.local/share/`
+- Monitor disk usage: `dysk` and `dust`
 
 
 ---
@@ -567,30 +435,7 @@ hyprctl clients
 
 # Monitor information
 hyprctl monitors
-
-# Take screenshot
-grim -g "$(slurp)" ~/screenshot.png
-
-# Restart Waybar
-killall waybar && waybar &
-
-# Update system
-yay -Syu
-
-# Clear clipboard history
-cliphist wipe
 ```
-
-### Directory Quick Access
-
-- **Hyprland configs**: `~/.config/hypr/`
-- **Scripts**: `~/linux/scripts/`
-- **Custom bins**: `~/.local/bin/`
-- **Wallpapers**: `~/.local/share/wallpapers/`
-- **Assets**: `~/.local/share/`
-- **Launch scripts**: `~/.local/share/launch-scripts/`
-
----
 
 ## License
 

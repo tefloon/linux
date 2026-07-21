@@ -9,6 +9,7 @@
 - given a folder, recurses fully and renames the folder itself too
 - on a name collision, appends -2, -3, … so nothing is overwritten
 - skips dotfiles/dotdirs (names starting with ".")
+- skips well-known project files: CLAUDE.md, README.md, HANDOFF.md
 """
 
 import argparse
@@ -29,6 +30,9 @@ APOSTROPHES = str.maketrans({"'": "", "’": "", "‘": "", "`": ""})
 
 # Multi-part extensions to keep intact (checked longest-match first, lowercased).
 DOUBLE_EXTS = (".tar.gz", ".tar.bz2", ".tar.xz", ".tar.zst")
+
+# Filenames left untouched wherever they appear (matched case-insensitively).
+IGNORE_NAMES = {"claude.md", "readme.md", "handoff.md"}
 
 
 def transliterate(s: str) -> str:
@@ -104,6 +108,9 @@ def rename_one(path: str, limit: int, dry_run: bool) -> None:
 
     if name.startswith("."):
         return  # leave dotfiles/dotdirs alone
+
+    if name.lower() in IGNORE_NAMES:
+        return  # leave well-known project files alone
 
     new_name = target_name(name, limit)
     if new_name is None:
