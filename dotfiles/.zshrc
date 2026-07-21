@@ -144,6 +144,7 @@ fi
 [ -f "$HOME/.zsh/.zsh_secrets" ] && source "$HOME/.zsh/.zsh_secrets"
 
 # --- Aliases ---
+# For convenience (shortening) and overwritting defaults
 alias sdn='shutdown now'
 alias dgd='dragon-drop -x'
 alias cd..='cd ..'
@@ -158,6 +159,7 @@ alias urban='urban -m 3'
 alias ten='trans en:pl'
 alias tpl='trans pl:en'
 alias cat='bat -pp'
+alias dust='dust -i -B -r'
 
 # Launch a throwaway instance of claude in ~/claude
 # Used for conversations, just in the terminal
