@@ -159,6 +159,8 @@ alias ten='trans en:pl'
 alias tpl='trans pl:en'
 alias cat='bat -pp'
 
+# Launch a throwaway instance of claude in ~/claude
+# Used for conversations, just in the terminal
 c() {
   local prev="$PWD"
   cd ~/claude && claude "$@"
@@ -171,6 +173,7 @@ count-chars(){
   ( cd "$dir" && for f in *; do printf '%s\t%s\n' "$f" "${#f}"; done ) \
     | sort -t$'\t' -k2 -n | column -t -s$'\t' -R2
 }
+
 s() {
   xdg-open "$@" &!
 }
@@ -201,6 +204,7 @@ git() {
   fi
 }
 
+# yazi with a fix to return to the folder that was open
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	command yazi "$@" --cwd-file="$tmp"
