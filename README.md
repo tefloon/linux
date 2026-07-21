@@ -10,8 +10,6 @@ This repository contains my personal dotfiles and automated setup scripts for qu
 - [What Gets Installed](#what-gets-installed)
 - [Repository Structure](#repository-structure)
 - [Setup Scripts](#setup-scripts)
-- [Custom Scripts](#custom-scripts)
-- [Secrets Management](#secrets-management)
 - [Asset Management](#asset-management)
 - [Configuration](#configuration)
 - [Key Bindings](#key-bindings)
@@ -403,7 +401,7 @@ pavucontrol
 
 ```bash
 # Update all packages
-yay -Syu
+yay
 
 # Update dotfiles repo
 cd ~/linux
