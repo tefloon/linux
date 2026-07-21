@@ -16,7 +16,7 @@ Located in `bin/` and automatically symlinked to `~/.local/bin`:
 - [`screenshot-with-window`](#screenshot-with-window---screenshot-with-annotation) — screenshot, annotate, then copy
 - [`tokens`](#tokens---token-counter) — count tokens in text or files
 
-### `cb` - Clipboard Copy Tool
+## `cb` - Clipboard Copy Tool
 Prints to stdout AND copies to Wayland clipboard simultaneously. Perfect for piping command output:
 
 ```bash
@@ -24,12 +24,12 @@ echo "Hello World" | cb
 cat file.txt | cb
 ```
 
-### create-playlist
+## create-playlist
 
 Build an **Extended M3U playlist** for one or more album folders — made for
 getting ripped CDs into Jellyfin with correct track order and names.
 
-#### What it does
+### What it does
 
 For each directory given (default: the current one), `create-playlist`:
 
@@ -45,14 +45,14 @@ For each directory given (default: the current one), `create-playlist`:
 5. **Writes `<folder name>.m3u8` inside the folder**, using bare filenames so the
    playlist stays valid when the album is copied to Jellyfin.
 
-#### Notes
+### Notes
 
 - **Skips folders with no audio** with a notice, instead of writing a broken file.
 - **Batch-friendly** — pass many folders at once; a bad path is reported and the
   rest still process (exit status is non-zero if any fail).
 - Handles `N/M` tag forms (`1/10` → `1`) and missing `disc` tags (default `1`).
 
-#### Usage
+### Usage
 
 ```sh
 create-playlist                 # the current directory
@@ -60,21 +60,21 @@ create-playlist .               # the current directory
 create-playlist ~/rips/*/       # every album folder in a rip session
 ```
 
-### `deck` - Netrunner Deck Parser
+## `deck` - Netrunner Deck Parser
 Parse Netrunner deck lists and output as JSON:
 
 ```bash
 deck decklist.txt  # Output JSON array of cards
 ```
 
-### `get-transcript` - YouTube Transcript Fetcher
+## `get-transcript` - YouTube Transcript Fetcher
 Fetch a YouTube video's transcript and save it as a kebab-case `.txt` file:
 
 ```bash
 get-transcript https://youtu.be/VIDEO_ID
 ```
 
-### kebabify
+## kebabify
 
 Rename files and folders to clean **kebab-case**.
 
@@ -82,7 +82,7 @@ Rename files and folders to clean **kebab-case**.
 Mój Ważny Plik'ów.TAR.GZ  →  moj-wazny-plikow.tar.gz
 ```
 
-#### What it does
+### What it does
 
 For each name, `kebabify`:
 
@@ -97,7 +97,7 @@ For each name, `kebabify`:
 6. **Preserves the extension**, including double extensions like `.tar.gz`,
    `.tar.bz2`, `.tar.xz`, `.tar.zst`.
 
-#### Safety
+### Safety
 
 - **Collision-safe** — if the target name already exists, appends `-2`, `-3`, …
   so nothing is overwritten (checked case-insensitively).
@@ -107,7 +107,7 @@ For each name, `kebabify`:
 - **Folders recurse fully** and the folder itself is renamed too, done
   **bottom-up** so child paths stay valid throughout the walk.
 
-#### Usage
+### Usage
 
 ```sh
 kebabify [options] PATH [PATH ...]
@@ -120,7 +120,7 @@ kebabify [options] PATH [PATH ...]
 | `-n, --dry-run` | print planned renames without changing anything |
 | `-R, --no-recurse` | for a folder, rename only the folder, not its contents |
 
-### `lxc` - Disposable Arch Container
+## `lxc` - Disposable Arch Container
 Spin up a throwaway Arch LXC container, drop into a shell, and automatically destroy it on exit. Optionally bind-mount a host directory (read-only) — handy for testing this setup against your real repo without risking it:
 
 ```bash
@@ -128,7 +128,7 @@ lxc                           # Ephemeral container named "archtest"
 lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
 ```
 
-### `mdd` - Markdown Directory Formatter
+## `mdd` - Markdown Directory Formatter
 Recursively converts directory contents to markdown format with syntax highlighting. Prints to `stdout` and copies to clipboard.
 
 Great for sharing code context with AI tools:
@@ -138,42 +138,42 @@ mdd /path/to/project
 mdd .  # Current directory
 ```
 
-### `ocr` - OCR Screen Selection
+## `ocr` - OCR Screen Selection
 Select a region of the screen and extract text using Tesseract OCR (supports Polish and English). Text is copied to clipboard:
 
 ```bash
 ocr  # Select region, text is copied to clipboard
 ```
 
-### `picker` - Color Picker
+## `picker` - Color Picker
 Pick a color from anywhere on screen using hyprpicker. Color is copied to clipboard in hex format:
 
 ```bash
 picker  # Click anywhere to pick color
 ```
 
-### `screen-dimmer` - Screen Brightness Dimmer
+## `screen-dimmer` - Screen Brightness Dimmer
 Compiled utility for controlling screen brightness/dimming:
 
 ```bash
 screen-dimmer  # Run the screen dimmer utility
 ```
 
-### `screenshot` - Screenshot to Clipboard
+## `screenshot` - Screenshot to Clipboard
 Take a screenshot of a selected region and copy directly to clipboard:
 
 ```bash
 screenshot  # Select region, image copied to clipboard
 ```
 
-### `screenshot-with-window` - Screenshot with Annotation
+## `screenshot-with-window` - Screenshot with Annotation
 Take a screenshot with satty annotation tool for markup before copying:
 
 ```bash
 screenshot-with-window  # Select region, annotate, then copy
 ```
 
-### `tokens` - Token Counter
+## `tokens` - Token Counter
 Count tokens in text or files using tiktoken (OpenAI's tokenizer):
 
 ```bash

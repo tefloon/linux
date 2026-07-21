@@ -93,6 +93,7 @@ install_pkg "dust"                        # Shows which dirs / files takes most 
 install_pkg "duf"                         # Lists disk usage and free space
 install_pkg "procs"                       # Processes monitor
 install_pkg "fd"                          # Find files
+install_pkg "sd"                          # Modern replacement for sed
 install_pkg "ugrep"                       # Search files for strings
 install_pkg "translate-shell"             # Terminal translator
 install_pkg "urban-cli-bin"               # Urban dictionary CLI
