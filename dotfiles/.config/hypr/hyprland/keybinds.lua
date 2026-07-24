@@ -64,7 +64,7 @@ hl.bind(mainMod .. " + F10", hl.dsp.exec_cmd("~/.local/bin/ocr"))
 hl.bind(mainMod .. " + F9",  hl.dsp.exec_cmd("~/.local/bin/picker"))
 
 -- --- Clipboard history ---
-hl.bind("CONTROL + grave", hl.dsp.exec_cmd(vars.launchScriptsDir .. "/wofi-clip-history.sh"))
+-- hl.bind("CONTROL + grave", hl.dsp.exec_cmd(vars.launchScriptsDir .. "/wofi-clip-history.sh"))
 
 -- --- Launch Claude ---
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd(vars.launchScriptsDir .. "/launch-claude.sh"))

@@ -40,6 +40,13 @@ filenames:
   "projects":
     icon:
       glyph: ""
+  "HANDOFF.md":
+    icon:
+      glyph: "󰷉"
+    filename:
+      foreground: Orange
+      is_bold: true
+      underline: true
 
 # Custom icons for specific file types
 extensions:
