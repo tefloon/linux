@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+md="${1:?Usage: mdv <file.md>}"
+[[ -f "$md" ]] || { echo "No such file: $md" >&2; exit 1; }
+
+# Temp dir holds the output; whole thing gets nuked on exit.
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT INT TERM HUP
+
+pdf="$tmpdir/$(basename "${md%.*}").pdf"
+
+css="$tmpdir/style.css"
+cat > "$css" <<'EOF'
+@page {
+    margin: 0cm;   /* now THIS is your one knob for whitespace */
+}
+body {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+EOF
+
+pandoc -f gfm "$md" -o "$pdf" --pdf-engine=weasyprint \
+    --pdf-engine-opt=-s --pdf-engine-opt="$css" 2>/dev/null
+
+zathura "$pdf"   # blocks until you close it, then trap cleans up

@@ -8,6 +8,7 @@ Located in `bin/` and automatically symlinked to `~/.local/bin`:
 - [`get-transcript`](#get-transcript---youtube-transcript-fetcher) — fetch a YouTube transcript to a file
 - [`kebabify`](#kebabify) — rename files and folders to kebab-case
 - [`lxc`](#lxc---disposable-arch-container) — spin up a throwaway Arch container
+- [`mdv`](#mdv---markdown-to-pdf) — create a temporary PDF from an MD and display it
 - [`mdd`](#mdd---markdown-directory-formatter) — dump directory contents as markdown for AI tools
 - [`ocr`](#ocr---ocr-screen-selection) — OCR a screen selection to the clipboard
 - [`picker`](#picker---color-picker) — pick a screen colour to the clipboard
@@ -142,6 +143,9 @@ Spin up a throwaway Arch LXC container, drop into a shell, and automatically des
 lxc                           # Ephemeral container named "archtest"
 lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
 ```
+
+## `mdv` - Markdown to PDF
+Create a temporary PDF file in `/tmp` using `pandoc` and `weasyprint`. Display in Zathura then tear all the temp files down after the window is colsed
 
 ## `mdd` - Markdown Directory Formatter
 Recursively converts directory contents to markdown format with syntax highlighting. Prints to `stdout` and copies to clipboard.

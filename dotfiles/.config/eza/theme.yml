@@ -44,7 +44,7 @@ filenames:
     icon:
       glyph: "󰷉"
     filename:
-      foreground: Orange
+      foreground: '#999999'
       is_bold: true
       underline: true
 

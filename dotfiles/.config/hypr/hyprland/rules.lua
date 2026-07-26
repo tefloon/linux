@@ -98,6 +98,7 @@ hl.window_rule({ match = { class = "com.github.hluk.copyq" },  float = true })
 hl.window_rule({ match = { class = "brave" },                  float = true })
 hl.window_rule({ match = { class = "imv" },                    float = true })
 hl.window_rule({ match = { class = "com.gabm.satty" },         min_size = { 1, 1 } })
+hl.window_rule({ match = { class = "org.pwmt.zathura" }, opaque = true, no_blur = true })
 
 -- ==== Floating windows ====
 hl.window_rule({ match = { class = "org.kde.kdeconnect.app" },      float = true })
