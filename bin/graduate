@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+#
+# graduate
+#
+# Adopt one or more individual files into your dotfiles repo, moving each
+# one into the mirrored location under the repo and symlinking it back.
+#
+# Usage:
+#   dotfiles-adopt.sh <file1> [file2] [file3] ...
+#
+# Paths can be relative (to your current directory) or absolute, e.g.:
+#
+#   cd ~/.config/waybar
+#   dotfiles-adopt.sh config.jsonc config_L.jsonc scripts/script1.sh
+#
+#   dotfiles-adopt.sh ~/.zshrc ~/.gitconfig
+#
+# This operates strictly on a PER-FILE basis - it never walks directories
+# and never symlinks a directory, only individual files you name
+# explicitly. Directory structure in the repo is recreated with mkdir -p
+# as needed.
+#
+# It is all-or-nothing: if ANY named file would conflict with an existing
+# path in the dotfiles repo, is already a symlink, is missing, or is a
+# directory, NOTHING is touched and a full error report is printed
+# instead.
+
+set -euo pipefail
+
+# --- Configuration -----------------------------------------------------
+DOTFILES_REPO="/home/antek/linux/dotfiles"
+# The subfolder inside the repo that mirrors $HOME itself (contains
+# .config, .zshrc, .gitconfig, etc.)
+DOTFILES_HOME_MIRROR="$DOTFILES_REPO/dotfiles"
+# ------------------------------------------------------------------------
+
+if (( $# == 0 )); then
+    echo "Usage: $(basename "$0") <file1> [file2] [file3] ..." >&2
+    exit 1
+fi
+
+# --- Phase 1: scan and validate -----------------------------------------
+declare -a not_found=()
+declare -a is_directory=()
+declare -a already_symlink=()
+declare -a already_exists=()
+declare -a to_process=()   # each entry: "abs_src|abs_dest"
+
+for arg in "$@"; do
+    # Resolve to an absolute path without requiring the file to already
+    # exist in a canonicalized form (so we can give a clean "not found"
+    # error instead of a realpath failure).
+    if [[ "$arg" = /* ]]; then
+        abs_src="$arg"
+    else
+        abs_src="$PWD/$arg"
+    fi
+
+    if [[ ! -e "$abs_src" && ! -L "$abs_src" ]]; then
+        not_found+=("$arg")
+        continue
+    fi
+
+    if [[ -L "$abs_src" ]]; then
+        already_symlink+=("$arg")
+        continue
+    fi
+
+    if [[ -d "$abs_src" ]]; then
+        is_directory+=("$arg")
+        continue
+    fi
+
+    # Must be inside $HOME for the mirroring logic to make sense.
+    case "$abs_src" in
+        "$HOME"/*) ;;
+        *)
+            echo "Error: '$arg' resolves to '$abs_src', which is not inside \$HOME ($HOME)." >&2
+            exit 1
+            ;;
+    esac
+
+    rel_path="${abs_src#"$HOME"/}"
+    abs_dest="$DOTFILES_HOME_MIRROR/$rel_path"
+
+    if [[ -e "$abs_dest" || -L "$abs_dest" ]]; then
+        already_exists+=("$arg  ->  $abs_dest")
+        continue
+    fi
+
+    to_process+=("$abs_src|$abs_dest")
+done
+
+if (( ${#not_found[@]} > 0 || ${#is_directory[@]} > 0 || ${#already_symlink[@]} > 0 || ${#already_exists[@]} > 0 )); then
+    echo "Aborting - found problems, nothing has been touched:" >&2
+    echo >&2
+
+    if (( ${#not_found[@]} > 0 )); then
+        echo "  Not found:" >&2
+        for f in "${not_found[@]}"; do
+            echo "    - $f" >&2
+        done
+        echo >&2
+    fi
+
+    if (( ${#is_directory[@]} > 0 )); then
+        echo "  Is a directory (this script only adopts individual files):" >&2
+        for f in "${is_directory[@]}"; do
+            echo "    - $f" >&2
+        done
+        echo >&2
+    fi
+
+    if (( ${#already_symlink[@]} > 0 )); then
+        echo "  Already symlinks (fix or remove these first):" >&2
+        for f in "${already_symlink[@]}"; do
+            echo "    - $f" >&2
+        done
+        echo >&2
+    fi
+
+    if (( ${#already_exists[@]} > 0 )); then
+        echo "  Destination already exists in dotfiles repo (resolve conflict manually):" >&2
+        for f in "${already_exists[@]}"; do
+            echo "    - $f" >&2
+        done
+        echo >&2
+    fi
+
+    exit 1
+fi
+
+echo "Files to adopt (${#to_process[@]}):"
+for entry in "${to_process[@]}"; do
+    src="${entry%%|*}"
+    dest="${entry#*|}"
+    echo "  - $src"
+    echo "      -> $dest"
+done
+echo
+
+# --- Phase 2: execute -----------------------------------------------------
+for entry in "${to_process[@]}"; do
+    src="${entry%%|*}"
+    dest="${entry#*|}"
+
+    mkdir -p "$(dirname "$dest")"
+    mv "$src" "$dest"
+    ln -s "$dest" "$src"
+
+    echo "Adopted: $src"
+done
+
+echo
+echo "Done. ${#to_process[@]} file(s) moved into $DOTFILES_HOME_MIRROR and symlinked back."

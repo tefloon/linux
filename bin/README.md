@@ -6,6 +6,7 @@ Located in `bin/` and automatically symlinked to `~/.local/bin`:
 - [`create-playlist`](#create-playlist) — build an M3U playlist for an album folder (Jellyfin-friendly)
 - [`deck`](#deck---netrunner-deck-parser) — parse Netrunner deck lists to JSON
 - [`get-transcript`](#get-transcript---youtube-transcript-fetcher) — fetch a YouTube transcript to a file
+- [`graduate`](#graduate---symlink-helper) — move a config file to dotfiles repo and symlink it back
 - [`kebabify`](#kebabify) — rename files and folders to kebab-case
 - [`lxc`](#lxc---disposable-arch-container) — spin up a throwaway Arch container
 - [`mdv`](#mdv---markdown-to-pdf) — create a temporary PDF from an MD and display it
@@ -21,8 +22,8 @@ Located in `bin/` and automatically symlinked to `~/.local/bin`:
 Prints to stdout AND copies to Wayland clipboard simultaneously. Perfect for piping command output:
 
 ```bash
-echo "Hello World" | cb
-cat file.txt | cb
+   echo "Hello World" | cb
+   cat file.txt | cb
 ```
 
 ## create-playlist
@@ -56,31 +57,51 @@ For each directory given (default: the current one), `create-playlist`:
 ### Usage
 
 ```sh
-create-playlist                 # the current directory
-create-playlist .               # the current directory
-create-playlist ~/rips/*/       # every album folder in a rip session
+   create-playlist                 # the current directory
+   create-playlist .               # the current directory
+   create-playlist ~/rips/*/       # every album folder in a rip session
 ```
 
-## `deck` - Netrunner Deck Parser
+## deck - Netrunner Deck Parser
 Parse Netrunner deck lists and output as JSON:
 
 ```bash
-deck decklist.txt  # Output JSON array of cards
+   deck decklist.txt  # Output JSON array of cards
 ```
 
-## `get-transcript` - YouTube Transcript Fetcher
+## get-transcript - YouTube Transcript Fetcher
 Fetch a YouTube video's transcript and save it as a kebab-case `.txt` file:
 
 ```bash
-get-transcript https://youtu.be/VIDEO_ID
+   get-transcript https://youtu.be/VIDEO_ID
 ```
+
+## graduate - Symlink Helper
+Adopt one or more individual files into your dotfiles repo, moving each
+one into the mirrored location under the repo and symlinking it back.
+
+```bash
+  dotfiles-adopt.sh <file1> [file2] [file3] ...
+```
+
+Paths can be relative (to your current directory) or absolute, e.g.:
+```bash
+   cd ~/.config/waybar
+   dotfiles-adopt.sh config.jsonc config_L.jsonc scripts/script1.sh
+```
+or
+```
+   dotfiles-adopt.sh ~/.zshrc ~/.gitconfig
+```
+This operates strictly on a PER-FILE basis - it never walks directories
+and never symlinks a directory, only individual files you name
+explicitly. Directory structure in the repo is recreated with mkdir -p
+as needed.
 
 ## kebabify
-
 Rename files and folders to clean **kebab-case**.
-
-```
-Mój Ważny Plik'ów.TAR.GZ  →  moj-wazny-plikow.tar.gz
+```bash
+   Mój Ważny Plik'ów.TAR.GZ  →  moj-wazny-plikow.tar.gz
 ```
 
 ### What it does
@@ -112,7 +133,7 @@ For each name, `kebabify`:
 ### Usage
 
 ```sh
-kebabify [options] PATH [PATH ...]
+   kebabify [options] PATH [PATH ...]
 ```
 
 | Flag | Effect |
@@ -125,10 +146,10 @@ kebabify [options] PATH [PATH ...]
 ### Examples
 
 ```sh
-kebabify -n .              # preview renaming everything here, incl. this folder
-kebabify ~/music/album     # rename a folder and its contents
-kebabify -R ~/music/album  # rename just the folder, leave contents alone
-kebabify *.mp3             # let the shell pick the targets
+   kebabify -n .              # preview renaming everything here, incl. this folder
+   kebabify ~/music/album     # rename a folder and its contents
+   kebabify -R ~/music/album  # rename just the folder, leave contents alone
+   kebabify *.mp3             # let the shell pick the targets
 ```
 
 Note that `kebabify .` renames the current directory too. Your shell follows the
@@ -140,8 +161,8 @@ command that recursively renames your whole working tree is a bad typo to have.
 Spin up a throwaway Arch LXC container, drop into a shell, and automatically destroy it on exit. Optionally bind-mount a host directory (read-only) — handy for testing this setup against your real repo without risking it:
 
 ```bash
-lxc                           # Ephemeral container named "archtest"
-lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
+   lxc                           # Ephemeral container named "archtest"
+   lxc dotfiles-test ~/linux     # Mount ~/linux read-only for testing
 ```
 
 ## `mdv` - Markdown to PDF
@@ -153,49 +174,49 @@ Recursively converts directory contents to markdown format with syntax highlight
 Great for sharing code context with AI tools:
 
 ```bash
-mdd /path/to/project
-mdd .  # Current directory
+   mdd /path/to/project
+   mdd .  # Current directory
 ```
 
 ## `ocr` - OCR Screen Selection
 Select a region of the screen and extract text using Tesseract OCR (supports Polish and English). Text is copied to clipboard:
 
 ```bash
-ocr  # Select region, text is copied to clipboard
+   ocr  # Select region, text is copied to clipboard
 ```
 
 ## `picker` - Color Picker
 Pick a color from anywhere on screen using hyprpicker. Color is copied to clipboard in hex format:
 
 ```bash
-picker  # Click anywhere to pick color
+   picker  # Click anywhere to pick color
 ```
 
 ## `screen-dimmer` - Screen Brightness Dimmer
 Compiled utility for controlling screen brightness/dimming:
 
 ```bash
-screen-dimmer  # Run the screen dimmer utility
+   screen-dimmer  # Run the screen dimmer utility
 ```
 
 ## `screenshot` - Screenshot to Clipboard
 Take a screenshot of a selected region and copy directly to clipboard:
 
 ```bash
-screenshot  # Select region, image copied to clipboard
+   screenshot  # Select region, image copied to clipboard
 ```
 
 ## `screenshot-with-window` - Screenshot with Annotation
 Take a screenshot with satty annotation tool for markup before copying:
 
 ```bash
-screenshot-with-window  # Select region, annotate, then copy
+   screenshot-with-window  # Select region, annotate, then copy
 ```
 
 ## `tokens` - Token Counter
 Count tokens in text or files using tiktoken (OpenAI's tokenizer):
 
 ```bash
-tokens file.txt        # Count tokens in file
-echo "text" | tokens   # Count tokens from stdin
+   tokens file.txt        # Count tokens in file
+   echo "text" | tokens   # Count tokens from stdin
 ```

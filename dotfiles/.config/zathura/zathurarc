@@ -1,0 +1,82 @@
+# ~/.config/zathura/zathurarc
+# ------------------------------------------------------------------
+# Dark-mode-by-default configuration
+# ------------------------------------------------------------------
+
+# --- Launch already in recolored (dark) mode ----------------------
+# This is the real "dark mode" switch: `recolor` is what CTRL+R
+# toggles. Setting it true means zathura starts dark instead of
+# showing the document's own (usually white) page first.
+set recolor true
+
+# --- Document recoloring colors -----------------------------------
+# COUNTERINTUITIVE, read carefully:
+#   recolor-lightcolor = what LIGHT areas (paper) become -> BACKGROUND
+#   recolor-darkcolor  = what DARK areas (text)  become  -> TEXT
+# So in dark mode, lightcolor is the dark value, darkcolor the light one.
+
+# Active palette: Dracula, high-contrast "Stronger" tier
+# (tuned to survive Hyprland transparency + blur)
+set recolor-lightcolor "#191A21"   # background / paper
+set recolor-darkcolor  "#FFFFFF"   # text
+
+# Dracula contrast tiers -- swap the pair above for one of these:
+#   Nudge       bg #21222C  text #F8F8F2   (~15:1, mild boost, keeps warmth)
+#   Stronger    bg #191A21  text #FFFFFF   (~17:1, current)
+#   Heavy-blur  bg #0F1017  text #FFFFFF   (~19:1, near-black w/ blue tint)
+# Original Dracula was bg #282A36 / text #F8F8F2 (~13:1).
+
+# --- Alternative palettes -----------------------------------------
+# Uncomment one pair and comment out the Dracula pair above.
+#
+# Gruvbox dark (warm, low-contrast, easy on the eyes)
+# set recolor-lightcolor "#282828"
+# set recolor-darkcolor  "#EBDBB2"
+#
+# Solarized dark
+# set recolor-lightcolor "#002B36"
+# set recolor-darkcolor  "#93A1A1"
+#
+# Nord
+# set recolor-lightcolor "#2E3440"
+# set recolor-darkcolor  "#D8DEE9"
+#
+# Sepia-dark (low blue light, cozy night reading)
+# set recolor-lightcolor "#1B1B1B"
+# set recolor-darkcolor  "#C9B98F"
+#
+# Sepia-dark (low blue light, cozy night reading)
+# set recolor-lightcolor "#1B1B1B"
+# set recolor-darkcolor  "#C9B98F"
+#
+# Tomorrow Night (neutral soft gray)
+# set recolor-lightcolor "#1D1F21"
+# set recolor-darkcolor  "#C5C8C6"
+
+# --- How recolor treats color & images ----------------------------
+# Keep the hue of colored content (diagrams, colored text, links)
+# instead of flattening everything onto the two colors above.
+# Flip to false if you want a strict two-tone look.
+set recolor-keephue true
+
+# Book scans / images: by default recolor remaps EVERYTHING by
+# luminance, including embedded images and full-page scans -- that's
+# the picture-color swapping you noticed. The option below keeps
+# original image colors while still recoloring text.
+#
+# Caveat: for a full-page *scan* (the whole page is one image) this
+# usually leaves the entire page in its original colors, i.e. no
+# darkening. It's most useful for PDFs that mix real text with
+# separate embedded figures. Test it on your own files:
+# set recolor-reverse-video true
+
+# --- UI chrome (frame around the page, statusbar, inputbar) -------
+# default-bg is the space AROUND the pages -- it does NOT recolor the
+# document (that's `recolor` above). Matching it to the paper color
+# gives a seamless dark frame.
+set default-bg    "#191A21"
+set default-fg    "#FFFFFF"
+set statusbar-bg  "#0F1017"
+set statusbar-fg  "#F8F8F2"
+set inputbar-bg   "#0F1017"
+set inputbar-fg   "#F8F8F2"
