@@ -36,6 +36,8 @@ install_aur_pkg() {
     fi
 }
 
+sudo pacman -Rns --noconfirm tldr >> /tmp/pacman.log 2>&1 || true # EndeavourOS preinstalls the python tldr client, which conflicts with tealdeer
+
 # --- CORE UTILITIES ---
 install_pkg "curl"                        # HTTP client (for Oh-My-Zsh download)
 install_pkg "git"                         # Version control (for yay, Powerlevel10k)
@@ -102,7 +104,7 @@ install_pkg "aria2"                       # CLI Torrent downloader
 # --- PYTHON PACKAGES ---
 install_pkg "python-astral"               # Needed for the moon phase script
 install_pkg "python-tiktoken"             # Needed for token counting script
-install_pkg "python-youtube-transcript-api" # Needed for transcripts 
+install_aur_pkg "python-youtube-transcript-api" # Needed for transcripts
 
 # --- FILE MANAGEMENT & NAVIGATION ---
 install_pkg "atool"                       # Archive extraction/creation wrapper
@@ -117,7 +119,7 @@ install_pkg "croc"                        # Send large file p2p
 
 # --- SYSTEM MONITORING & DIAGNOSTICS ---
 install_pkg "btop"                        # Fancy system resources monitor
-install_pkg "wiki-tui"                    # Wikipedia terminal interface
+install_aur_pkg "wiki-tui"                # Wikipedia terminal interface
 install_pkg "hwinfo"                      # Hardware information
 install_pkg "fastfetch"                   # Display system info
 install_pkg "hyperfine"                   # Benchmark scripts / code
