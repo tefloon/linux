@@ -93,6 +93,7 @@ install_pkg "fzf"                         # Fuzzy finder. Integrates with everyt
 install_pkg "git-delta"                   # Comparing diffs
 install_pkg "sd"                          # Find and replace string in files
 install_pkg "dust"                        # Shows which dirs / files takes most space
+install_pkg "dysk"                        # Disk space utility
 install_pkg "duf"                         # Lists disk usage and free space
 install_pkg "procs"                       # Processes monitor
 install_pkg "fd"                          # Find files
