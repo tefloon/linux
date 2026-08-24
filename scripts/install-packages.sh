@@ -40,6 +40,7 @@ install_aur_pkg() {
 install_pkg "curl"                        # HTTP client (for Oh-My-Zsh download)
 install_pkg "git"                         # Version control (for yay, Powerlevel10k)
 install_pkg "desktop-file-utils"          # For update-desktop-database
+install_pkg "pacman-contrib"              # paccache (for cache cleanup at the end)
 install_pkg "sddm"                        # Login manager/launcher
 install_pkg "uwsm"                        # Wayland session manager
 
@@ -93,10 +94,9 @@ install_pkg "dust"                        # Shows which dirs / files takes most 
 install_pkg "duf"                         # Lists disk usage and free space
 install_pkg "procs"                       # Processes monitor
 install_pkg "fd"                          # Find files
-install_pkg "sd"                          # Modern replacement for sed
 install_pkg "ugrep"                       # Search files for strings
 install_pkg "translate-shell"             # Terminal translator
-install_pkg "urban-cli-bin"               # Urban dictionary CLI
+install_aur_pkg "urban-cli-bin"           # Urban dictionary CLI
 install_pkg "aria2"                       # CLI Torrent downloader
 
 # --- PYTHON PACKAGES ---
@@ -151,8 +151,8 @@ install_pkg "zathura"                     # Lightweight PDF viewer
 install_pkg "zathura-pdf-mupdf"           # PDF backend for Zathura
 install_pkg "imv"                         # Image viewer
 install_pkg "loupe"                       # GNOME Image viewer
-install_pkg "sox"                         # GNOME Image viewer
-install_pkg "ffmpeg"                       # GNOME Image viewer
+install_pkg "sox"                         # Audio processing toolkit
+install_pkg "ffmpeg"                      # Audio/video conversion toolkit
 
 # --- NETWORKING & CONNECTIVITY ---
 install_pkg "qbittorrent"                 # BitTorrent client
@@ -181,7 +181,7 @@ install_pkg "vulkan-tools"                # Vulkan utilities and diagnostics
 
 # --- VIRTUALIZATION ---
 install_pkg "virt-manager"                # GUI for managing VMs
-install_pkg "qemu-full"                   # Virtual machines
+install_pkg "qemu-desktop"                # Virtual machines (x86_64 only; qemu-full pulls every arch, ~2-3GB extra)
 install_pkg "dnsmasq"                     # Lightweight DNS/DHCP for VM networking
 install_pkg "ebtables"                    # Ethernet bridge filtering (for VM networking)
 install_pkg "iptables-nft"                # Network packet filtering
@@ -205,3 +205,22 @@ install_aur_pkg "rustdesk-bin"            # Remote system control utility
 install_aur_pkg "satty"                   # Screenshot annotation
 install_aur_pkg "beyondallreason-appimage"  # Best game ever
 install_aur_pkg "fzf-tab-git"
+
+# --- CACHE CLEANUP ---
+# Package archives in /var/cache/pacman/pkg and build files in ~/.cache/yay
+# can roughly double the installed size — reclaim them.
+CURRENT_STEP_MESSAGE="Cleaning pacman cache"
+status_msg
+if sudo paccache -rk0 >> /tmp/pacman.log 2>&1; then
+    status_ok
+else
+    status_skip "Failed to clean pacman cache."
+fi
+
+CURRENT_STEP_MESSAGE="Cleaning yay cache"
+status_msg
+if yay -Sc --noconfirm >> /tmp/yay.log 2>&1; then
+    status_ok
+else
+    status_skip "Failed to clean yay cache."
+fi
