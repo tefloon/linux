@@ -23,3 +23,6 @@ status_msg
 rmdir $HOME/Desktop $HOME/Downloads $HOME/Documents $HOME/Templates $HOME/Pictures $HOME/Videos $HOME/Public 
 xdg-user-dirs-update
 status_ok
+
+echo "Setting up dictionaries..."
+bash "$SCRIPT_DIR/post-install-scripts/setup-dictionary.sh"
