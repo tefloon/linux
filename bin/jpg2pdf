@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# jpg2pdf [DIR] [OUTPUT.pdf]
+# Combine all JPG/PNG files in DIR (default: current dir), in alphabetical
+# order, into a single PDF. Default output: <dirname>.pdf inside DIR.
+set -euo pipefail
+
+dir="${1:-.}"
+[[ -d $dir ]] || { echo "jpg2pdf: not a directory: $dir" >&2; exit 1; }
+
+out="${2:-$dir/$(basename "$(realpath "$dir")").pdf}"
+
+# Collect images, alphabetically (LC_ALL=C for stable sort)
+mapfile -t imgs < <(find "$dir" -maxdepth 1 -type f \
+  \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) | LC_ALL=C sort)
+
+[[ ${#imgs[@]} -gt 0 ]] || { echo "jpg2pdf: no images found in $dir" >&2; exit 1; }
+
+if [[ -e $out ]]; then
+  read -rp "jpg2pdf: $out exists, overwrite? [y/N] " ans
+  [[ $ans == [yY]* ]] || exit 1
+fi
+
+if command -v img2pdf >/dev/null; then
+  # Lossless: embeds JPEGs as-is, no re-encoding
+  img2pdf --output "$out" -- "${imgs[@]}"
+else
+  echo "jpg2pdf: img2pdf not found, falling back to ImageMagick (re-encodes)" >&2
+  magick "${imgs[@]}" -quality 90 "$out"
+fi
+
+echo "Wrote $out (${#imgs[@]} pages)"

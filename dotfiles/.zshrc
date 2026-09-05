@@ -156,8 +156,8 @@ alias hx='helix'
 alias matrix='tmatrix -c default -s 20'
 alias hx.='hx .'
 alias urban='urban -m 3'
-alias ten='dict-pl en'
-alias tpl='dict-pl pl'
+alias en='dict-pl en'
+alias pl='dict-pl pl'
 alias cat='bat -pp'
 alias dust='dust -i -B -r'
 
@@ -169,6 +169,13 @@ c() {
   local prev="$PWD"
   cd ~/claude && claude "$@"
   cd "$prev"
+}
+
+lyr() {
+  curl -s -A 'lyr/0.1' --get 'https://lrclib.net/api/search' \
+    --data-urlencode "q=$*" \
+  | jq -r '.[0] | if .instrumental then "(instrumental)" else .plainLyrics end' \
+  | ${PAGER:-less}
 }
 
 # displays the number of characters each filename in the folder has
