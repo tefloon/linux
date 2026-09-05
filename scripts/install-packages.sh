@@ -40,7 +40,7 @@ sudo pacman -Rns --noconfirm tldr >> /tmp/pacman.log 2>&1 || true # EndeavourOS 
 
 # --- CORE UTILITIES ---
 install_pkg "curl"                        # HTTP client (for Oh-My-Zsh download)
-install_pkg "git"                         # Version control (for yay, Powerlevel10k)
+install_pkg "git"                         # Version control (for yay)
 install_pkg "desktop-file-utils"          # For update-desktop-database
 install_pkg "pacman-contrib"              # paccache (for cache cleanup at the end)
 install_pkg "sddm"                        # Login manager/launcher
@@ -77,7 +77,6 @@ install_pkg "papirus-icon-theme"          # GTK icon theme
 install_pkg "alacritty"                   # GPU-accelerated terminal emulator
 install_pkg "foot"                        # Modern, super-fast CPU-only terminal
 install_pkg "starship"                    # Modern, fast terminal prompt
-install_pkg "nushell"                     # A data-oriented shell
 install_pkg "zsh-syntax-highlighting"     # Syntax highlighting for zsh
 install_pkg "zsh-autosuggestions"         # Auto-suggestions for zsh
 
@@ -98,13 +97,13 @@ install_pkg "duf"                         # Lists disk usage and free space
 install_pkg "procs"                       # Processes monitor
 install_pkg "fd"                          # Find files
 install_pkg "ugrep"                       # Search files for strings
-install_pkg "translate-shell"             # Terminal translator
-install_aur_pkg "urban-cli-bin"           # Urban dictionary CLI
 install_pkg "aria2"                       # CLI Torrent downloader
+install_pkg "nmap"                        # Network mapper
 
 # --- PYTHON PACKAGES ---
 install_pkg "python-astral"               # Needed for the moon phase script
 install_pkg "python-tiktoken"             # Needed for token counting script
+install_pkg "python-weasyprint"           # Needed for pdf manipulation
 install_aur_pkg "python-youtube-transcript-api" # Needed for transcripts
 
 # --- FILE MANAGEMENT & NAVIGATION ---
@@ -140,6 +139,8 @@ install_pkg "debugedit"                   # Debug information editor
 install_pkg "helix"                       # NeoVim-like text editor
 install_pkg "micro"                       # Simple but sane text editor
 install_pkg "lazygit"                     # Git management tool
+install_pkg "glow"                        # Command-line markdown renderer
+install_pkg "ncdu"                        # Disk usafge analyzer
 
 # --- FONTS ---
 install_pkg "ttf-jetbrains-mono-nerd"     # JetBrains Mono with Nerd Font icons
@@ -147,15 +148,14 @@ install_pkg "ttf-fira-code"               # Fira Code programming font
 
 # --- MULTIMEDIA & VIEWERS ---
 install_pkg "mpv"                         # Video player
-install_pkg "kodi"                        # Media center application
 install_pkg "helvum"                      # PipeWire patchbay/mixer
 install_pkg "yt-dlp"                      # YouTube/video downloader
 install_pkg "zathura"                     # Lightweight PDF viewer
 install_pkg "zathura-pdf-mupdf"           # PDF backend for Zathura
-install_pkg "imv"                         # Image viewer
 install_pkg "loupe"                       # GNOME Image viewer
 install_pkg "sox"                         # Audio processing toolkit
 install_pkg "ffmpeg"                      # Audio/video conversion toolkit
+install_pkg "img2pdf"                     # Losslessly convert images to PDF
 
 # --- NETWORKING & CONNECTIVITY ---
 install_pkg "qbittorrent"                 # BitTorrent client
@@ -168,6 +168,7 @@ install_pkg "spotifyd"                    # Spotify daemon
 
 # --- PRODUCTIVITY APPLICATIONS ---
 install_pkg "libreoffice-fresh"           # Office suite
+install_pkg "thunderbird"                 # E-mail client
 install_aur_pkg "obsidian"                # Note-taking application
 install_pkg "calibre"                     # E-book management
 install_pkg "libqalculate"                # Calculator library
@@ -193,13 +194,10 @@ install_pkg "iptables-nft"                # Network packet filtering
 install_pkg "corectrl"                    # AMD GPU control panel
 
 # --- AUR PACKAGES (Third-party/Community) ---
-install_aur_pkg "code"                    # Visual Studio Code
 install_aur_pkg "tmatrix"                 # Matrix-like screensaver
 install_aur_pkg "dragon-drop"             # Creates a widget to drag files from
-install_aur_pkg "ferdium-nightly-bin"     # Multi-platform messaging app
+install_aur_pkg "ferdium-bin"             # Multi-platform messaging app
 install_aur_pkg "spotify"                 # Music streaming
-install_aur_pkg "spotify-player"          # Terminal Spotify client
-install_aur_pkg "sublime-text-4"          # GUI text editor
 install_aur_pkg "helium-browser-bin"      # Fast, minimal, private, Chrome-based browser
 install_aur_pkg "adw-gtk-theme-git"       # Adwaita GTK theme (development version)
 install_aur_pkg "hyprpicker"              # Wayland color picker utility
