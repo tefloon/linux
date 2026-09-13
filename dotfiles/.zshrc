@@ -47,9 +47,14 @@ bindkey "^[[3~" delete-char
 bindkey "^[3;5~" delete-char
 
 # --- Completion System (OPTIMIZED for speed) ---
-# Only regenerate compdump once per day
+# Full compinit (rebuilds the dump) only if it's older than 24h; otherwise -C
+# skips the security scan and reuses the existing dump.
 autoload -Uz compinit
-compinit -C -u -d ~/.zsh/.zcompdump
+if [[ -n ~/.zsh/.zcompdump(#qN.mh+24) ]]; then
+  compinit -u -d ~/.zsh/.zcompdump
+else
+  compinit -C -u -d ~/.zsh/.zcompdump
+fi
 
 source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh
 
@@ -111,7 +116,7 @@ if [ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; th
   source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
   ZSH_AUTOSUGGEST_STRATEGY=(history completion)
   ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
-  ZSH_AUTOSUGGEST_MANUAL_REBIND=1  # Faster rebinding
+  ZSH_AUTOSUGGEST_MANUAL_REBIND=1  # Faster rebinding; re-bound once at the end
 fi
 
 if [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
@@ -135,7 +140,9 @@ if [ -f /usr/share/fzf/key-bindings.zsh ]; then
   [ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh &!
   
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-  export FZF_ALT_C_COMMAND='ls -1d */'
+  # fd, not ls: the eza alias would inject color codes and icons into the
+  # directory names that Alt-C then tries to cd into.
+  export FZF_ALT_C_COMMAND='fd --type d --max-depth 1'
   export FZF_DEFAULT_COMMAND='fd --type f'
   export FZF_CTRL_T_COMMAND='fd --type f --max-depth 2 --exclude .config --exclude Chmury --exclude Backups --no-follow'
 fi
@@ -158,11 +165,41 @@ alias hx.='hx .'
 alias urban='urban -m 3'
 alias en='dict-pl en'
 alias pl='dict-pl pl'
-alias cat='bat -pp'
 alias dust='dust -i -B -r'
 
-
 # --- Functions ---
+# bat for everything, glow for markdown.
+# Name is quoted so a stray `alias cat=...` can't hijack the definition.
+'cat'() {
+  # no args → reading stdin; -pp = plain style, no paging
+  if (( $# == 0 )); then
+    command bat -pp
+    return
+  fi
+
+  # not a terminal → emit raw bytes so redirects and pipes stay clean
+  if [[ ! -t 1 ]]; then
+    command cat "$@"
+    return
+  fi
+
+  # any flags present? don't try to be clever, hand it all to bat
+  local arg
+  for arg in "$@"; do
+    [[ "$arg" == -* ]] && { command bat "$@"; return }
+  done
+
+  for arg in "$@"; do
+    case "${arg:l}" in
+      # -s dark: glow falls back to the style-less "notty" theme when its
+      # stdout isn't a terminal, which drops the margin and the colors.
+      # Piping to less directly sidesteps PAGER=bat; LESS=-RFX handles the rest.
+      *.md|*.markdown|*.mdown|*.mkd) glow -s dark "$arg" | command less ;;
+      *)                             command bat "$arg" ;;
+    esac
+  done
+}
+
 # Launch a throwaway instance of claude in ~/claude
 # Used for conversations, just in the terminal
 c() {
@@ -206,14 +243,14 @@ pacman() {
 
 # Create a directory/directory chain and enter them
 mkcd() {
-  mkdir -p $1
-  cd $1
+  mkdir -p "$1" && cd "$1"
 }
 
 # Styling of the git log
 git() {
   if [[ $1 == "log" ]]; then
-    command git log "${@:2}" | bat --style=plain --paging=always
+    # color.ui=always because git strips color once it sees a pipe
+    command git -c color.ui=always log "${@:2}" | bat --style=plain --paging=always
   else
     command git "$@"
   fi
@@ -256,6 +293,10 @@ precmd_functions+=(add_newline_before_prompt)
 
 # --- Starship Prompt (must be at the end) ---
 (( $+commands[starship] )) && eval "$(starship init zsh)"
+
+# With MANUAL_REBIND the plugin only wraps widgets that existed when it loaded.
+# One rebind here picks up fzf's widgets and fzf-command-search.
+(( $+functions[_zsh_autosuggest_bind_widgets] )) && _zsh_autosuggest_bind_widgets
 
 # Ensure clean exit status for first prompt
 true
