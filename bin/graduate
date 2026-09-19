@@ -11,9 +11,9 @@
 # Paths can be relative (to your current directory) or absolute, e.g.:
 #
 #   cd ~/.config/waybar
-#   dotfiles-adopt.sh config.jsonc config_L.jsonc scripts/script1.sh
+#   graduate.sh config.jsonc config_L.jsonc scripts/script1.sh
 #
-#   dotfiles-adopt.sh ~/.zshrc ~/.gitconfig
+#   graduate.sh ~/.zshrc ~/.gitconfig
 #
 # This operates strictly on a PER-FILE basis - it never walks directories
 # and never symlinks a directory, only individual files you name

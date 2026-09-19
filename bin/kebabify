@@ -4,6 +4,8 @@
 - lowercases, transliterates Polish diacritics (ż→z, ł→l, …)
 - strips apostrophes so "it's" → "its", turns everything else non-alphanumeric
   into single hyphens
+- drops filler words ("the", "a", "of", …) and bracketed release-info groups
+  like "(1080p WEB-DL x265 GROUP)"
 - truncates the name whole-word-wise once it exceeds a length limit
 - preserves the file extension (including double extensions like .tar.gz)
 - given a folder, recurses fully and renames the folder itself too
@@ -31,6 +33,25 @@ APOSTROPHES = str.maketrans({"'": "", "’": "", "‘": "", "`": ""})
 # Multi-part extensions to keep intact (checked longest-match first, lowercased).
 DOUBLE_EXTS = (".tar.gz", ".tar.bz2", ".tar.xz", ".tar.zst")
 
+# What a real (single) extension looks like: short, letters/digits only.
+EXT_RE = re.compile(r"[A-Za-z0-9]{1,10}")
+
+# Filler words dropped from names entirely (English + Polish).
+STOPWORDS = {
+    "a", "an", "the", "of", "and", "or", "in", "on", "at", "to", "for",
+    "i", "w", "z", "na", "do", "o", "od", "po", "za", "ze",
+}
+
+# A bracketed group "(...)" / "[...]" containing any of these is release info
+# (quality, codec, source, audio) and is dropped wholesale.
+RELEASE_TAG_RE = re.compile(
+    r"\b(?:2160p|1080p|720p|480p|4k|uhd|hdr|x26[45]|h\.?26[45]|hevc|avc|"
+    r"web-?dl|web-?rip|blu-?ray|bd-?rip|br-?rip|dvd-?rip|hdtv|remux|"
+    r"aac|ac3|dts|ddp|10bit|8bit|amzn|proper|repack)\b",
+    re.IGNORECASE,
+)
+BRACKET_GROUP_RE = re.compile(r"[(\[][^()\[\]]*[)\]]")
+
 # Filenames left untouched wherever they appear (matched case-insensitively).
 IGNORE_NAMES = {"claude.md", "readme.md", "handoff.md"}
 
@@ -43,8 +64,18 @@ def transliterate(s: str) -> str:
     return s
 
 
+def strip_release_tags(stem: str) -> str:
+    """Remove bracketed groups that carry release info, e.g. "(1080p x265 GRP)".
+
+    Groups without such tokens, like "(2019)", are left alone.
+    """
+    return BRACKET_GROUP_RE.sub(
+        lambda m: "" if RELEASE_TAG_RE.search(m.group()) else m.group(), stem)
+
+
 def slugify(stem: str) -> str:
     """Normalize a name stem to kebab-case (no truncation)."""
+    stem = strip_release_tags(stem)
     stem = stem.lower()
     stem = stem.translate(APOSTROPHES)
     stem = transliterate(stem)
@@ -55,6 +86,8 @@ def slugify(stem: str) -> str:
 def truncate_words(slug: str, limit: int) -> str:
     """Keep whole words, stopping after the first word that exceeds `limit`."""
     words = [w for w in slug.split("-") if w]
+    # Drop filler words, unless that would leave nothing (e.g. "The.txt").
+    words = [w for w in words if w not in STOPWORDS] or words
     if not words:
         return ""
     out = words[0]
@@ -75,26 +108,35 @@ def split_ext(name: str):
         if lower.endswith(ext) and len(name) > len(ext):
             return name[: -len(ext)], ext
     root, dot, suffix = name.rpartition(".")
-    if dot and root:  # has a real extension (not a leading-dot name)
+    # Only a short alphanumeric tail counts as an extension. Otherwise names
+    # like "Foo (AAC 5.1 GROUP)" would keep " 1 group)" verbatim as an "ext".
+    if dot and root and EXT_RE.fullmatch(suffix):
         return root, "." + suffix.lower()
     return name, ""
 
 
-def target_name(name: str, limit: int) -> str | None:
-    """Compute the kebab-cased basename, or None if it should be skipped."""
-    stem, ext = split_ext(name)
+def target_name(name: str, limit: int, is_dir: bool = False) -> str | None:
+    """Compute the kebab-cased basename, or None if it should be skipped.
+
+    Folders have no extension, so the whole name is slugified.
+    """
+    stem, ext = (name, "") if is_dir else split_ext(name)
     slug = truncate_words(slugify(stem), limit)
     if not slug:
         return None
     return slug + ext
 
 
-def unique_path(directory: str, name: str) -> str:
-    """Return a path in `directory` for `name`, suffixing -2, -3, … on collision."""
+def unique_path(directory: str, name: str, source: str) -> str:
+    """Return a path in `directory` for `name`, suffixing -2, -3, … on collision.
+
+    `source` is the entry being renamed; it is excluded from the collision set
+    so a case-only rename (MyFile.TXT -> myfile.txt) does not collide with itself.
+    """
     stem, ext = split_ext(name)
     candidate = name
     n = 2
-    existing = {e.lower() for e in os.listdir(directory)}
+    existing = {e.lower() for e in os.listdir(directory) if e != source}
     while candidate.lower() in existing:
         candidate = f"{stem}-{n}{ext}"
         n += 1
@@ -112,17 +154,15 @@ def rename_one(path: str, limit: int, dry_run: bool) -> None:
     if name.lower() in IGNORE_NAMES:
         return  # leave well-known project files alone
 
-    new_name = target_name(name, limit)
+    new_name = target_name(name, limit, is_dir=os.path.isdir(path))
     if new_name is None:
         print(f"skip (empty after normalize): {path}", file=sys.stderr)
         return
     if new_name == name:
         return  # already clean
 
-    dest = unique_path(directory, new_name)
-    rel_old = os.path.join(directory, name) if directory != "." else name
-    rel_new = dest if directory != "." else os.path.basename(dest)
-    print(f"{rel_old} -> {rel_new}")
+    dest = unique_path(directory, new_name, name)
+    print(f"{os.path.relpath(path)} -> {os.path.relpath(dest)}")
     if not dry_run:
         os.rename(path, dest)
 
@@ -156,7 +196,7 @@ def main() -> int:
     parser.add_argument("paths", nargs="+", help="files or folders to rename")
     parser.add_argument(
         "-l", "--limit", type=int, default=20,
-        help="truncate the name once a word pushes it past this length (default: 40)",
+        help="truncate the name once a word pushes it past this length (default: %(default)s)",
     )
     parser.add_argument(
         "-n", "--dry-run", action="store_true",

@@ -1,0 +1,411 @@
+#!/usr/bin/env bash
+#
+# vault-backup.sh: mirror the personal Vaultwarden vault into a Bitwarden
+# cloud account.
+#
+# Dumb mirror, not a diff-sync: snapshot the item IDs currently in the cloud
+# vault, import a fresh export from Vaultwarden, then delete the snapshotted
+# items. The cloud vault is never empty during a run, so a failed run cannot
+# destroy the existing backup. Re-running after a failure is safe: the next
+# snapshot contains both the old and the half-new generation, and both get
+# replaced.
+#
+# One master password (the two vaults share it) is the only secret the script
+# handles. It is read from the OS keyring when one is stored there, otherwise
+# from an interactive prompt. Store it once with:
+#
+#   secret-tool store --label='vault-backup master password' \
+#       service vault-backup type master-password
+#
+# A fresh login (first run, or after the server rejects the stored token)
+# needs email, password and a TOTP code, so it only works interactively.
+# Unattended runs fail loudly in that case; run once by hand to fix.
+#
+# Usage: vault-backup.sh [--dry-run]
+
+set -euo pipefail
+umask 077
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+VW_URL="https://vault.craftit.work"
+VW_EMAIL="antoni.gawlikowski@proton.me"
+CLOUD_URL="https://vault.bitwarden.com"
+CLOUD_EMAIL="tefloon@gmail.com"
+CLOUD_PROFILE="$HOME/.config/bw-cloud"
+EXPORT="/dev/shm/vw-export-$$.json"
+KEYRING_ATTRS=(service vault-backup type master-password)
+
+DRY_RUN=0
+for arg in "$@"; do
+    case "$arg" in
+        --dry-run) DRY_RUN=1 ;;
+        -h|--help)
+            sed -n '3,/^$/{/^#/s/^# \{0,1\}//p}' "$0"
+            exit 0
+            ;;
+        *)
+            echo "Unknown argument: $arg (try --help)" >&2
+            exit 2
+            ;;
+    esac
+done
+
+# Interactive means bw may prompt (email, 2FA code). Without a terminal the
+# only password source is the keyring and a fresh login is impossible.
+INTERACTIVE=1
+[[ -t 0 ]] || INTERACTIVE=0
+
+# ---------------------------------------------------------------------------
+# Output helpers
+# ---------------------------------------------------------------------------
+STATUS_COL=60
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+CURRENT_STEP=""
+STEP_OPEN=0
+
+_badge() {
+    local padlen=$(( STATUS_COL - ${#CURRENT_STEP} - 4 ))
+    (( padlen < 1 )) && padlen=1
+    printf "\r%s... %*s[%b%s%b]\n" "$CURRENT_STEP" "$padlen" "" "$1" "$2" "$NC"
+    STEP_OPEN=0
+}
+
+step() {
+    CURRENT_STEP="$1"
+    STEP_OPEN=1
+    printf "%s... " "$CURRENT_STEP"
+}
+
+ok() { _badge "$GREEN" "  OK   "; }
+
+skip() {
+    _badge "$YELLOW" "SKIPPED"
+    echo -e "${YELLOW}Skipped: ${1:-No reason provided}${NC}" >&2
+}
+
+fail() {
+    (( STEP_OPEN )) && _badge "$RED" " ERROR "
+    echo -e "${RED}Error: ${1:-Unknown error}${NC}" >&2
+    exit 1
+}
+
+# ---------------------------------------------------------------------------
+# Profile wrappers. BITWARDENCLI_APPDATA_DIR is never exported globally, so a
+# plain `bw` always means Vaultwarden and `bwc` always means the cloud.
+# ---------------------------------------------------------------------------
+bwv() { bw "$@"; }
+bwc() { BITWARDENCLI_APPDATA_DIR="$CLOUD_PROFILE" bw "$@"; }
+
+# ---------------------------------------------------------------------------
+# Cleanup on every exit: shred the plaintext export, lock both vaults, drop
+# the password from the environment.
+# ---------------------------------------------------------------------------
+SERVE_PID=""
+cleanup() {
+    if [[ -e "$EXPORT" ]]; then
+        shred -u "$EXPORT" 2>/dev/null || rm -f "$EXPORT"
+    fi
+    if [[ -n "$SERVE_PID" ]]; then
+        curl -s -X POST "$API/lock" >/dev/null 2>&1 || true
+        kill "$SERVE_PID" 2>/dev/null || true
+        wait "$SERVE_PID" 2>/dev/null || true
+    fi
+    echo "Locking vaults..."
+    bwv lock >/dev/null 2>&1 || true
+    bwc lock >/dev/null 2>&1 || true
+    unset BW_PASSWORD
+}
+trap cleanup EXIT
+
+# ---------------------------------------------------------------------------
+# 1. Pre-flight checks
+# ---------------------------------------------------------------------------
+TOOLS=(bw jq curl tailscale shred)
+for tool in "${TOOLS[@]}"; do
+    step "Checking for $tool"
+    command -v "$tool" >/dev/null || fail "$tool not found"
+    ok
+done
+
+step "Checking Tailscale connection"
+tailscale status >/dev/null 2>&1 \
+    || fail "Tailscale is not running. Start it with: sudo systemctl start tailscaled"
+ok
+
+step "Checking Vaultwarden connectivity"
+curl -s --max-time 5 "$VW_URL/alive" >/dev/null 2>&1 \
+    || fail "Cannot reach Vaultwarden at $VW_URL. Is Tailscale connected?"
+ok
+
+mkdir -p "$CLOUD_PROFILE"
+chmod 700 "$CLOUD_PROFILE"
+
+# ---------------------------------------------------------------------------
+# 2. Master password. Keyring first, prompt as the fallback. This is the seam
+#    between interactive and unattended use: everything below only ever reads
+#    BW_PASSWORD via --passwordenv.
+# ---------------------------------------------------------------------------
+step "Reading master password from keyring"
+BW_PASSWORD=""
+if ! command -v secret-tool >/dev/null; then
+    skip "secret-tool not installed"
+elif ! BW_PASSWORD=$(secret-tool lookup "${KEYRING_ATTRS[@]}") || [[ -z "$BW_PASSWORD" ]]; then
+    skip "No password in the keyring. Store it with:
+  secret-tool store --label='vault-backup master password' ${KEYRING_ATTRS[*]}"
+else
+    ok
+fi
+
+if [[ -z "$BW_PASSWORD" ]]; then
+    (( INTERACTIVE )) || fail "No terminal to prompt for the master password"
+    echo
+    read -rs -p "Master password: " BW_PASSWORD
+    echo
+    [[ -n "$BW_PASSWORD" ]] || fail "Empty password"
+fi
+export BW_PASSWORD
+
+# ---------------------------------------------------------------------------
+# 3. Vaultwarden session
+# ---------------------------------------------------------------------------
+vw_login() {
+    (( INTERACTIVE )) || fail "Vaultwarden needs a fresh login (2FA prompt); run once by hand"
+    echo "Logging in to Vaultwarden as $VW_EMAIL (2FA prompt is bw's own)..."
+    bwv logout >/dev/null 2>&1 || true
+    bwv config server "$VW_URL" >/dev/null
+    # --raw returns a session key directly, so no separate unlock is needed.
+    VW_SESSION=$(bwv login "$VW_EMAIL" --passwordenv BW_PASSWORD --raw) \
+        || fail "Vaultwarden login failed (wrong password?)"
+}
+
+step "Checking Vaultwarden login status"
+VW_STATUS=$(bwv status | jq -r .status)
+ok
+
+case "$VW_STATUS" in
+    unauthenticated)
+        vw_login
+        ;;
+    locked|unlocked)
+        step "Unlocking Vaultwarden"
+        # Unlock is purely local. After a master password change the cached
+        # user key is still wrapped with the old password, so only a fresh
+        # login can open it. Fall back to that before blaming the password.
+        if VW_SESSION=$(bwv unlock --passwordenv BW_PASSWORD --raw 2>/dev/null); then
+            ok
+        else
+            skip "Unlock failed; the stored login may predate a password change"
+            vw_login
+        fi
+        ;;
+    *)
+        fail "Unknown Vaultwarden status: $VW_STATUS"
+        ;;
+esac
+
+# Sync is the first call that really talks to the server. It refreshes the
+# local cache and catches a stored login the server no longer accepts
+# (invalid_grant), which a purely local unlock cannot detect.
+step "Syncing Vaultwarden"
+if bwv sync --session "$VW_SESSION" >/dev/null 2>&1; then
+    ok
+else
+    skip "Server rejected the stored login, logging in again"
+    vw_login
+    step "Syncing Vaultwarden (after fresh login)"
+    bwv sync --session "$VW_SESSION" >/dev/null 2>&1 \
+        || fail "Sync failed even after a fresh login"
+    ok
+fi
+
+step "Checking for Vaultwarden organizations"
+VW_ORGS=$(bwv list organizations --session "$VW_SESSION" | jq -r '.[].name')
+if [[ -n "$VW_ORGS" ]]; then
+    skip "Organization items are NOT part of a personal export: $(printf '%s' "$VW_ORGS" | paste -sd,)"
+else
+    ok
+fi
+
+# ---------------------------------------------------------------------------
+# 4. Export Vaultwarden to tmpfs
+# ---------------------------------------------------------------------------
+step "Exporting Vaultwarden vault"
+bwv export --format json --output "$EXPORT" --session "$VW_SESSION" >/dev/null \
+    || fail "Export failed"
+[[ -s "$EXPORT" ]] || fail "Export file is empty"
+EXPORT_COUNT=$(jq '.items | length' "$EXPORT")
+EXPORT_FOLDERS=$(jq '.folders | length' "$EXPORT")
+(( EXPORT_COUNT > 0 )) || fail "Export has 0 items, refusing to touch the backup"
+ok
+echo "  Export: $EXPORT_COUNT items, $EXPORT_FOLDERS folders"
+
+# ---------------------------------------------------------------------------
+# 5. Cloud session
+# ---------------------------------------------------------------------------
+cloud_login() {
+    (( INTERACTIVE )) || fail "Cloud needs a fresh login (2FA prompt); run once by hand"
+    echo "Logging in to Bitwarden cloud as $CLOUD_EMAIL (2FA prompt is bw's own)..."
+    # `bw config server` is only allowed while logged out.
+    bwc logout >/dev/null 2>&1 || true
+    bwc config server "$CLOUD_URL" >/dev/null
+    # --method 0 = authenticator app; bw prompts for the code.
+    CLOUD_SESSION=$(bwc login "$CLOUD_EMAIL" --passwordenv BW_PASSWORD --method 0 --raw) \
+        || fail "Cloud login failed (wrong password, or is the cloud password not the same?)"
+}
+
+step "Checking cloud login status"
+CLOUD_STATUS=$(bwc status | jq -r .status)
+ok
+
+if [[ "$CLOUD_STATUS" == "unauthenticated" ]]; then
+    cloud_login
+else
+    step "Unlocking cloud vault"
+    if CLOUD_SESSION=$(bwc unlock --passwordenv BW_PASSWORD --raw 2>/dev/null); then
+        ok
+    else
+        skip "Unlock failed; the stored login may predate a password change"
+        cloud_login
+    fi
+fi
+
+step "Syncing cloud vault"
+if bwc sync --session "$CLOUD_SESSION" >/dev/null 2>&1; then
+    ok
+else
+    skip "Server rejected the stored login, logging in again"
+    cloud_login
+    step "Syncing cloud vault (after fresh login)"
+    bwc sync --session "$CLOUD_SESSION" >/dev/null 2>&1 \
+        || fail "Cloud sync failed even after a fresh login"
+    ok
+fi
+
+# ---------------------------------------------------------------------------
+# 6. Snapshot the current cloud generation
+# ---------------------------------------------------------------------------
+step "Snapshotting cloud vault"
+OLD_IDS=$(bwc list items --session "$CLOUD_SESSION" \
+    | jq -r '.[] | select(.organizationId == null) | .id')
+OLD_COUNT=$(printf '%s' "$OLD_IDS" | grep -c . || true)
+OLD_FOLDERS=$(bwc list folders --session "$CLOUD_SESSION" \
+    | jq '[.[] | select(.id != null)] | length')
+ok
+echo "  Cloud:  $OLD_COUNT items, $OLD_FOLDERS folders"
+
+if (( DRY_RUN )); then
+    echo
+    echo "Dry run: would import $EXPORT_COUNT items and $EXPORT_FOLDERS folders," \
+         "then permanently delete the $OLD_COUNT existing cloud items."
+    exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# 7. Import the new generation. Nothing is deleted unless this succeeds.
+# ---------------------------------------------------------------------------
+step "Importing into cloud vault"
+IMPORT_OUT=$(bwc import bitwardenjson "$EXPORT" --session "$CLOUD_SESSION" 2>&1) \
+    || fail "Import failed, cloud vault left untouched: $IMPORT_OUT"
+ok
+
+# ---------------------------------------------------------------------------
+# 8. Start `bw serve` for the bulk work. Every `bw` call starts Node and
+#    re-derives the vault keys (about a second); the server does that once
+#    and then answers over HTTP on localhost. It is started only after the
+#    CLI is done with the cloud profile, so the two never race on data.json.
+# ---------------------------------------------------------------------------
+step "Starting bw serve"
+SERVE_PORT=8087
+while (exec 3<>"/dev/tcp/127.0.0.1/$SERVE_PORT") 2>/dev/null; do
+    SERVE_PORT=$((SERVE_PORT + 1))
+    (( SERVE_PORT < 8100 )) || fail "No free port between 8087 and 8099"
+done
+API="http://127.0.0.1:$SERVE_PORT"
+# The session goes into this one process's environment, not the script's.
+BW_SESSION="$CLOUD_SESSION" BITWARDENCLI_APPDATA_DIR="$CLOUD_PROFILE" \
+    bw serve --hostname 127.0.0.1 --port "$SERVE_PORT" >/dev/null 2>&1 &
+SERVE_PID=$!
+for _ in $(seq 1 50); do
+    curl -s "$API/status" >/dev/null 2>&1 && break
+    kill -0 "$SERVE_PID" 2>/dev/null || fail "bw serve exited early"
+    sleep 0.2
+done
+curl -s "$API/status" >/dev/null 2>&1 || fail "bw serve did not come up"
+
+# api METHOD PATH: prints the JSON response, fails unless success == true
+api() {
+    local out
+    out=$(curl -s -X "$1" -H 'Content-Type: application/json' "$API$2") || return 1
+    printf '%s' "$out" | jq -e '.success == true' >/dev/null 2>&1 \
+        || { printf '%s\n' "$out" >&2; return 1; }
+    printf '%s' "$out"
+}
+
+if [[ $(api GET /status | jq -r '.data.template.status') != "unlocked" ]]; then
+    # The server ignored the session; unlock it with the password instead.
+    jq -n --arg p "$BW_PASSWORD" '{password: $p}' \
+        | curl -s -X POST -H 'Content-Type: application/json' --data-binary @- "$API/unlock" \
+        | jq -e '.success == true' >/dev/null || fail "Could not unlock bw serve"
+fi
+api POST /sync >/dev/null || fail "Sync after import failed"
+ok
+
+# ---------------------------------------------------------------------------
+# 9. Delete the old generation
+# ---------------------------------------------------------------------------
+if (( OLD_COUNT > 0 )); then
+    CURRENT_STEP="Deleting old cloud items"
+    n=0
+    while IFS= read -r id; do
+        [[ -n "$id" ]] || continue
+        n=$((n + 1))
+        printf "\r%s... %d/%d" "$CURRENT_STEP" "$n" "$OLD_COUNT"
+        api DELETE "/object/item/$id?permanent=true" >/dev/null \
+            || { STEP_OPEN=1; fail "Deleting item $id failed. The cloud vault now holds duplicates; re-run to fix."; }
+    done < <(printf '%s\n' "$OLD_IDS")
+    STEP_OPEN=1
+    ok
+else
+    step "Deleting old cloud items"
+    skip "Cloud vault was empty"
+fi
+
+# ---------------------------------------------------------------------------
+# 10. Prune folders that are now empty (the import created fresh ones)
+# ---------------------------------------------------------------------------
+step "Pruning empty cloud folders"
+api POST /sync >/dev/null || fail "Sync failed"
+USED_FOLDERS=$(api GET /list/object/items \
+    | jq -c '[.data.data[].folderId | select(. != null)] | unique')
+EMPTY_FOLDERS=$(api GET /list/object/folders \
+    | jq -r --argjson used "$USED_FOLDERS" \
+        '.data.data[] | select(.id != null) | select(.id as $f | $used | index($f) | not) | .id')
+PRUNED=0
+while IFS= read -r fid; do
+    [[ -n "$fid" ]] || continue
+    api DELETE "/object/folder/$fid" >/dev/null || fail "Deleting folder $fid failed"
+    PRUNED=$((PRUNED + 1))
+done < <(printf '%s\n' "$EMPTY_FOLDERS")
+ok
+
+# ---------------------------------------------------------------------------
+# 11. Verify
+# ---------------------------------------------------------------------------
+step "Verifying cloud item count"
+api POST /sync >/dev/null || fail "Sync failed"
+CLOUD_COUNT=$(api GET /list/object/items \
+    | jq '[.data.data[] | select(.organizationId == null)] | length')
+CLOUD_FOLDERS=$(api GET /list/object/folders \
+    | jq '[.data.data[] | select(.id != null)] | length')
+(( CLOUD_COUNT == EXPORT_COUNT )) \
+    || fail "Count mismatch: exported $EXPORT_COUNT, cloud has $CLOUD_COUNT"
+ok
+
+echo
+echo "Backup complete: $CLOUD_COUNT items, $CLOUD_FOLDERS folders in the cloud" \
+     "($OLD_COUNT old items and $PRUNED empty folders removed)."

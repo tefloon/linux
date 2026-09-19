@@ -135,6 +135,7 @@ install_pkg "tailscale"                   # Zero-trust VPN
 
 # --- DEVELOPMENT TOOLS ---
 install_pkg "jq"                          # JSON manipulation
+install_pkg "bun"                         # Fast JS Runtime
 install_pkg "debugedit"                   # Debug information editor
 install_pkg "helix"                       # NeoVim-like text editor
 install_pkg "micro"                       # Simple but sane text editor

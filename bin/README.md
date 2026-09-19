@@ -62,13 +62,6 @@ For each directory given (default: the current one), `create-playlist`:
    create-playlist ~/rips/*/       # every album folder in a rip session
 ```
 
-## deck - Netrunner Deck Parser
-Parse Netrunner deck lists and output as JSON:
-
-```bash
-   deck decklist.txt  # Output JSON array of cards
-```
-
 ## get-transcript - YouTube Transcript Fetcher
 Fetch a YouTube video's transcript and save it as a kebab-case `.txt` file:
 

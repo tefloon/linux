@@ -1,0 +1,10 @@
+/* rodzic ramki — to on daje kolor tła */
+.message-content {
+  background-color: #191A21;
+  isolation: isolate;
+}
+
+[data-testid="message-content:body"] {
+  filter: invert(0.97) hue-rotate(180deg);
+  mix-blend-mode: screen;
+}
