@@ -9,6 +9,7 @@
 	pager = bat --style plain --pager never
 
 [pager]
+	log = bat --style=plain
 	diff = delta
 	show = delta
 

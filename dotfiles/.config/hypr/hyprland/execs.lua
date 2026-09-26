@@ -46,7 +46,7 @@ hl.on("hyprland.start", function()
     -- Workspace-assigned launches (was `[workspace N silent] app`).
     -- NOTE: if these rules aren't honored, wrap as
     --       hl.dispatch(hl.dsp.exec_cmd(cmd, { workspace = "..." }))
-    hl.exec_cmd("ferdium --ozone-platform=x11 %U", { workspace = "2 silent" })
+    hl.exec_cmd("ferdium --ozone-platform=wayland", { workspace = "2 silent" })
     hl.exec_cmd(vars.terminal, { workspace = "6 silent" })
     hl.exec_cmd("obsidian", { workspace = "special:magic silent" })
 end)
