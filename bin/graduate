@@ -6,14 +6,14 @@
 # one into the mirrored location under the repo and symlinking it back.
 #
 # Usage:
-#   dotfiles-adopt.sh <file1> [file2] [file3] ...
+#   graduate <file1> [file2] [file3] ...
 #
 # Paths can be relative (to your current directory) or absolute, e.g.:
 #
 #   cd ~/.config/waybar
-#   graduate.sh config.jsonc config_L.jsonc scripts/script1.sh
+#   graduate config.jsonc config_L.jsonc scripts/script1.sh
 #
-#   graduate.sh ~/.zshrc ~/.gitconfig
+#   graduate ~/.zshrc ~/.gitconfig
 #
 # This operates strictly on a PER-FILE basis - it never walks directories
 # and never symlinks a directory, only individual files you name
@@ -28,7 +28,7 @@
 set -euo pipefail
 
 # --- Configuration -----------------------------------------------------
-DOTFILES_REPO="/home/antek/linux/dotfiles"
+DOTFILES_REPO="/home/antek/linux"
 # The subfolder inside the repo that mirrors $HOME itself (contains
 # .config, .zshrc, .gitconfig, etc.)
 DOTFILES_HOME_MIRROR="$DOTFILES_REPO/dotfiles"
@@ -45,16 +45,19 @@ declare -a is_directory=()
 declare -a already_symlink=()
 declare -a already_exists=()
 declare -a to_process=()   # each entry: "abs_src|abs_dest"
+declare -A seen=()         # abs_src paths already queued, to drop duplicates
 
 for arg in "$@"; do
-    # Resolve to an absolute path without requiring the file to already
-    # exist in a canonicalized form (so we can give a clean "not found"
-    # error instead of a realpath failure).
-    if [[ "$arg" = /* ]]; then
-        abs_src="$arg"
-    else
-        abs_src="$PWD/$arg"
-    fi
+    # Normalize to an absolute path, collapsing "." and ".." so a path like
+    # ~/.config/../../x can't slip past the $HOME check below. -s keeps
+    # symlinks unresolved (so we can report them), -m tolerates missing files
+    # (so we can give a clean "not found" error).
+    abs_src="$(realpath -ms -- "$arg")"
+
+    # The same file named twice would pass validation, then fail on the
+    # second mv halfway through phase 2.
+    [[ -n "${seen[$abs_src]:-}" ]] && continue
+    seen[$abs_src]=1
 
     if [[ ! -e "$abs_src" && ! -L "$abs_src" ]]; then
         not_found+=("$arg")

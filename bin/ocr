@@ -3,8 +3,11 @@ set -e
 set -o pipefail
 # OCR text selection script for Wayland/Hyprland
 
+# Pick the region first so a cancelled slurp exits before wl-copy runs
+geom=$(slurp)
+
 # Take screenshot of selected area and pipe to tesseract
-grim -g "$(slurp)" - | tesseract stdin stdout -l pol+eng | wl-copy
+grim -g "$geom" - | tesseract stdin stdout -l pol+eng | wl-copy
 
 # Optional: Show notification of captured text
 if command -v notify-send &> /dev/null; then

@@ -1,10 +1,13 @@
 #!/bin/bash
 set -e
-# Screenshot text selection script for Wayland/Hyprland
+# Screenshot a selected region to the clipboard for Wayland/Hyprland
 
-grim -g "$(slurp)" - | wl-copy
+# Pick the region first: if slurp is cancelled (Esc), set -e exits here,
+# before wl-copy can clobber the clipboard or the notification can lie.
+geom=$(slurp)
+grim -g "$geom" - | wl-copy
 
 # Optional: Show notification of captured text
 if command -v notify-send &> /dev/null; then
-    notify-send "Screenshiot" "Image copied to clipboard"
+    notify-send "Screenshot" "Image copied to clipboard"
 fi

@@ -21,6 +21,13 @@ hl.window_rule({ match = { title = "" },             opaque = true, no_blur = tr
 hl.window_rule({ match = { class = "" },             opaque = true, no_blur = true })
 hl.window_rule({ match = { class = "virt-manager" }, opaque = true, no_blur = false })
 
+hl.window_rule({
+    name  = "zoom-float",
+    match = { class = "^(zoom)$" },
+    float  = true,
+    center = true,
+})
+
 -- Match common menu window types
 hl.window_rule({ match = { class = ".*(menu).*" }, opaque = true, no_blur = true })
 hl.window_rule({ match = { title = ".*(menu).*" }, opaque = true, no_blur = true })
@@ -134,6 +141,10 @@ hl.window_rule({ match = { title = ".*" },                   opacity = opacity }
 -- needs in order to request blur over ext-background-effect-v1. Leave it at 1
 -- here so the catch-all rule above does not dim it a second time.
 hl.window_rule({ match = { class = "^foot(client)?$" },      opacity = "1" })
+
+-- TUIs (claude, helix, ...) blank foot's title on exit, which would otherwise
+-- match the generic `title = ""` popup rule above and kill blur. Last match wins.
+hl.window_rule({ match = { class = "^foot(client)?$" },      no_blur = false, opaque = false })
 
 hl.window_rule({ match = { class = "obsidian" }, immediate = true })
 hl.window_rule({ match = { class = "obsidian" }, workspace = "special:magic" })

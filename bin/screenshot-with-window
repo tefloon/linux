@@ -2,5 +2,6 @@
 set -e
 # Screenshot script with satty for Wayland/Hyprland
 
-# Take screenshot
-grim -g "$(slurp)" -t ppm - | satty --filename - -d --copy-command wl-copy
+# Take screenshot (region picked first so a cancelled slurp exits here)
+geom=$(slurp)
+grim -g "$geom" -t ppm - | satty --filename - -d --copy-command wl-copy

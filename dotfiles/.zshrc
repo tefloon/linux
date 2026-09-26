@@ -93,7 +93,7 @@ if (( $+commands[eza] )); then
   alias la='eza -lah --sort=size --color=always --group-directories-first --icons'
   alias ll='eza -lah --color=always --group-directories-first --icons'
   alias lt='eza -T --color=always --group-directories-first --icons --level=2 --git-ignore -I "node_modules|.npm|__pycache__"'
-  alias l.='eza -lah --color=always --group-directories-first --icons | grep "^\."'
+  alias l.='eza -lad --color=always --group-directories-first --icons .*'
   alias lg='eza -lah --git --color=always --group-directories-first --icons'
   alias lm='eza -lah --sort=modified --color=always --group-directories-first --icons'
 

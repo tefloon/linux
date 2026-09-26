@@ -4,7 +4,6 @@ Located in `bin/` and automatically symlinked to `~/.local/bin`:
 
 - [`cb`](#cb---clipboard-copy-tool) — print to stdout and copy to the clipboard in one pipe
 - [`create-playlist`](#create-playlist) — build an M3U playlist for an album folder (Jellyfin-friendly)
-- [`deck`](#deck---netrunner-deck-parser) — parse Netrunner deck lists to JSON
 - [`get-transcript`](#get-transcript---youtube-transcript-fetcher) — fetch a YouTube transcript to a file
 - [`graduate`](#graduate---symlink-helper) — move a config file to dotfiles repo and symlink it back
 - [`kebabify`](#kebabify) — rename files and folders to kebab-case
@@ -19,7 +18,7 @@ Located in `bin/` and automatically symlinked to `~/.local/bin`:
 - [`tokens`](#tokens---token-counter) — count tokens in text or files
 
 ## `cb` - Clipboard Copy Tool
-Prints to stdout AND copies to Wayland clipboard simultaneously. Perfect for piping command output:
+Prints to stdout AND copies to the clipboard (Wayland or X11) simultaneously. Perfect for piping command output:
 
 ```bash
    echo "Hello World" | cb
@@ -74,17 +73,17 @@ Adopt one or more individual files into your dotfiles repo, moving each
 one into the mirrored location under the repo and symlinking it back.
 
 ```bash
-  dotfiles-adopt.sh <file1> [file2] [file3] ...
+  graduate <file1> [file2] [file3] ...
 ```
 
 Paths can be relative (to your current directory) or absolute, e.g.:
 ```bash
    cd ~/.config/waybar
-   dotfiles-adopt.sh config.jsonc config_L.jsonc scripts/script1.sh
+   graduate config.jsonc config_L.jsonc scripts/script1.sh
 ```
 or
 ```
-   dotfiles-adopt.sh ~/.zshrc ~/.gitconfig
+   graduate ~/.zshrc ~/.gitconfig
 ```
 This operates strictly on a PER-FILE basis - it never walks directories
 and never symlinks a directory, only individual files you name
@@ -107,7 +106,7 @@ For each name, `kebabify`:
 3. **Strips apostrophes** so `it's → its` (letters join instead of getting a hyphen).
 4. Turns every other **non-alphanumeric run into a single hyphen**, trimming
    leading/trailing hyphens.
-5. **Truncates by whole words** once the name passes a length limit (default `40`),
+5. **Truncates by whole words** once the name passes a length limit (default `20`),
    never cutting mid-word.
 6. **Preserves the extension**, including double extensions like `.tar.gz`,
    `.tar.bz2`, `.tar.xz`, `.tar.zst`.
@@ -132,7 +131,7 @@ For each name, `kebabify`:
 | Flag | Effect |
 |------|--------|
 | `PATH ...` | one or more files/folders to rename (required) |
-| `-l, --limit N` | word-truncation length threshold (default: `40`) |
+| `-l, --limit N` | word-truncation length threshold (default: `20`) |
 | `-n, --dry-run` | print planned renames without changing anything |
 | `-R, --no-recurse` | for a folder, rename only the folder, not its contents |
 
@@ -159,7 +158,7 @@ Spin up a throwaway Arch LXC container, drop into a shell, and automatically des
 ```
 
 ## `mdv` - Markdown to PDF
-Create a temporary PDF file in `/tmp` using `pandoc` and `weasyprint`. Display in Zathura then tear all the temp files down after the window is colsed
+Create a temporary PDF file in `/tmp` using `pandoc` and `weasyprint`. Display in Zathura then tear all the temp files down after the window is closed.
 
 ## `mdd` - Markdown Directory Formatter
 Recursively converts directory contents to markdown format with syntax highlighting. Prints to `stdout` and copies to clipboard.

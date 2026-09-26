@@ -12,6 +12,6 @@ else
         encoded_term=$(echo "$search_term" | sed 's/ /+/g' | sed 's/&/%26/g')
         
         # Open thorium browser with DuckDuckGo search
-        thorium-browser "https://duckduckgo.com/?t=h_&q=$encoded_term&ia=web"
+        "$BROWSER" "https://duckduckgo.com/?t=h_&q=$encoded_term&ia=web"
     fi
 fi

@@ -79,7 +79,7 @@ def main():
 
     print("\nFetching transcript...")
     try:
-        fetched = YouTubeTranscriptApi().fetch(video_id)
+        fetched = YouTubeTranscriptApi().fetch(video_id, languages=['en', 'pl'])
         full_text = " ".join(snippet.text for snippet in fetched.snippets)
 
         with open(filename, 'w', encoding='utf-8') as f:
