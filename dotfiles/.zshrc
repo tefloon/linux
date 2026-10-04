@@ -23,6 +23,7 @@ alias zln='zmv -L'
 alias zcp='zmv -C'
 unsetopt FLOW_CONTROL             # Free up Ctrl+S/Ctrl+Q in the line editor
 setopt INTERACTIVE_COMMENTS       # Allow # comments in typed/pasted commands
+setopt NO_CASE_GLOB
 
 # Treat / as a word boundary, so Ctrl+W and word jumps stop at path components
 WORDCHARS=${WORDCHARS//[\/]}
@@ -69,8 +70,8 @@ autoload -Uz compinit
 
 [ -f /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh ] && source /usr/share/zsh/plugins/fzf-tab-git/fzf-tab.plugin.zsh
 
-# Case-insensitive completion
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+# Case-insensitive completion, then case-insensitive substring match as a fallback
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'm:{a-z}={A-Za-z} l:|=* r:|=*'
 
 # fzf-tab replaces the completion menu
 zstyle ':completion:*' menu no
