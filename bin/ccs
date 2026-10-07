@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""ccs - Claude Code sessions across all projects.
+
+  ccs              fzf picker: pick a session, cd to its folder, resume it
+  ccs -l [N]       list the N most recent sessions (default 30)
+  ccs -p PROJECT   list sessions whose folder contains PROJECT
+  ccs --show ID    print the user prompts of one session (used by preview)
+  ccs --rename ID NAME   set a session's name (shown instead of its ai-title)
+
+ID can be any unique prefix of the session id, e.g. the first 8 characters.
+"""
+import glob, json, os, subprocess, sys
+from datetime import datetime
+
+BASE = os.path.expanduser("~/.claude/projects")
+HOME = os.path.expanduser("~")
+
+
+def user_texts(path, meta=None):
+    """Yield (timestamp, cwd, text) for each real user prompt in a transcript.
+    If `meta` is a dict, fill it with the session's ai-title / agent-name and
+    the timestamp of its last message ("last")."""
+    with open(path, errors="replace") as f:
+        for line in f:
+            try:
+                j = json.loads(line)
+            except ValueError:
+                continue
+            if meta is not None:
+                if j.get("type") in ("ai-title", "agent-name"):
+                    meta[j["type"]] = j.get("aiTitle") or j.get("agentName")
+                elif j.get("timestamp"):
+                    meta["last"] = j["timestamp"]
+            if j.get("type") != "user" or j.get("isMeta") or j.get("isSidechain"):
+                continue
+            c = j.get("message", {}).get("content")
+            if isinstance(c, list):
+                c = " ".join(p.get("text", "") for p in c if isinstance(p, dict) and p.get("type") == "text")
+            if not isinstance(c, str):
+                continue
+            c = c.strip()
+            if not c or c.startswith("<") or c.startswith("[Request interrupted"):
+                continue
+            yield j.get("timestamp", ""), j.get("cwd"), c
+
+
+def sessions():
+    out = []
+    for f in glob.glob(f"{BASE}/*/*.jsonl"):
+        cwd, first, n, meta = None, None, 0, {}
+        for _, c, text in user_texts(f, meta):
+            cwd = cwd or c
+            first = first or text
+            n += 1
+        if not n:
+            continue
+        out.append({
+            "id": os.path.basename(f)[:-6],
+            "file": f,
+            "cwd": cwd or "?",
+            # last message time, not file mtime: title rewrites touch the file
+            "mtime": datetime.fromisoformat(meta["last"].replace("Z", "+00:00")).timestamp()
+                     if "last" in meta else os.path.getmtime(f),
+            "prompts": n,
+            "first": meta.get("agent-name") or meta.get("ai-title") or " ".join(first.split()),
+        })
+    return sorted(out, key=lambda s: s["mtime"], reverse=True)
+
+
+def fmt(s, width=80):
+    when = datetime.fromtimestamp(s["mtime"]).strftime("%Y-%m-%d %H:%M")
+    where = s["cwd"].replace(HOME, "~").replace("/mnt/chmury/projects/", "@/")
+    return f"{when}  {where:<34.34}  {s['first'][:width]}"
+
+
+def find(sid):
+    """Return the transcript path for a full or unique-prefix session id."""
+    fs = glob.glob(f"{BASE}/*/{glob.escape(sid)}*.jsonl")
+    if len(fs) != 1:
+        sys.exit(f"{len(fs)} sessions match {sid!r}")
+    return fs[0]
+
+
+def rename(sid, name):
+    """Append an agent-name record (the record Claude Code keeps for renamed sessions)."""
+    f = find(sid)
+    with open(f, "rb") as fh:
+        fh.seek(-1, os.SEEK_END)
+        nl = b"" if fh.read(1) == b"\n" else b"\n"
+    rec = {"type": "agent-name", "agentName": name,
+           "sessionId": os.path.basename(f)[:-6]}
+    with open(f, "ab") as fh:
+        fh.write(nl + json.dumps(rec, ensure_ascii=False, separators=(",", ":")).encode() + b"\n")
+    print(fmt(next(s for s in sessions() if s["file"] == f)))
+
+
+def show(sid):
+    for f in [find(sid)]:
+        for ts, cwd, text in user_texts(f):
+            print(f"── {ts[:16].replace('T', ' ')}\n{text[:600]}\n")
+
+
+def main(argv):
+    if argv[:1] == ["--show"]:
+        return show(argv[1])
+    if argv[:1] == ["--rename"]:
+        if len(argv) != 3 or not argv[2].strip():
+            sys.exit("usage: ccs --rename ID NAME")
+        return rename(argv[1], argv[2].strip())
+    if argv[:1] in (["-h"], ["--help"]):
+        return print(__doc__)
+    ss = sessions()
+    if argv[:1] == ["-p"]:
+        ss = [s for s in ss if argv[1].lower() in s["cwd"].lower()]
+        argv = []
+    if argv[:1] == ["-l"] or not sys.stdout.isatty():
+        n = int(argv[1]) if len(argv) > 1 else 30
+        for s in ss[:n]:
+            print(fmt(s))
+        return
+    lines = "\n".join(f"{s['id']}\t{s['cwd']}\t{fmt(s)}" for s in ss)
+    r = subprocess.run(
+        ["fzf", "--delimiter=\t", "--with-nth=3", "--no-sort", "--layout=reverse",
+         "--preview", f"{sys.argv[0]} --show {{1}}", "--preview-window=down,50%,wrap"],
+        input=lines, text=True, stdout=subprocess.PIPE)
+    if r.returncode or not r.stdout.strip():
+        return
+    sid, cwd = r.stdout.split("\t")[:2]
+    if not os.path.isdir(cwd):
+        sys.exit(f"folder gone: {cwd}")
+    os.chdir(cwd)
+    os.execvp("claude", ["claude", "--resume", sid])
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

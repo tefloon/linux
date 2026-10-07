@@ -204,11 +204,16 @@ alias dust='dust -i -B -r'
   done
 }
 
-# Launch a throwaway instance of claude in ~/claude
+# Launch a throwaway instance of claude in ~/claude/chat (plain chat, no hub)
 # Used for conversations, just in the terminal
 # Subshell, so the cd doesn't touch OLDPWD or zoxide
 c() {
-  (cd ~/claude && claude "$@")
+  (cd ~/claude/chat && claude "$@")
+}
+
+# Claude project hub: INDEX + recent sessions across all projects
+ch() {
+  (cd ~/claude/hub && claude "$@")
 }
 
 lyr() {
