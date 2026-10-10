@@ -24,6 +24,14 @@ alias zcp='zmv -C'
 unsetopt FLOW_CONTROL             # Free up Ctrl+S/Ctrl+Q in the line editor
 setopt INTERACTIVE_COMMENTS       # Allow # comments in typed/pasted commands
 setopt NO_CASE_GLOB
+setopt AUTO_CD                    # Type a directory name alone to cd into it
+setopt AUTO_PUSHD                 # cd pushes onto the dir stack: `cd -<TAB>` lists recent dirs
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
+
+# Named directories: `cd ~p/topschool`, and the prompt shows ~p instead of the full path
+hash -d p=/mnt/chmury/projects
+hash -d cl=~/claude
 
 # Treat / as a word boundary, so Ctrl+W and word jumps stop at path components
 WORDCHARS=${WORDCHARS//[\/]}
@@ -54,6 +62,20 @@ bindkey "^[[4~" end-of-line
 bindkey "^[[3~" delete-char
 bindkey "^[[3;5~" kill-word
 
+# Up/Down search history by the prefix already typed (both cursor-key modes)
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search
+bindkey "^[OA" up-line-or-beginning-search
+bindkey "^[[B" down-line-or-beginning-search
+bindkey "^[OB" down-line-or-beginning-search
+
+# Ctrl+X Ctrl+E: edit the command line in $EDITOR; it comes back to the prompt, not run
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
+
 # --- Completion System (OPTIMIZED for speed) ---
 # Full compinit (rebuilds the dump) only if it's older than 24h; otherwise -C
 # skips the security scan and reuses the existing dump.
@@ -75,6 +97,9 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'm:{a-z}={A-Za-z} l:|=* r
 
 # fzf-tab replaces the completion menu
 zstyle ':completion:*' menu no
+
+# Preview directory contents while completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always --icons=always $realpath'
 
 # Pick up newly installed commands without a manual rehash
 zstyle ':completion:*' rehash true

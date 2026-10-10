@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""ccs - Claude Code sessions across all projects.
+"""ccs - Claude Code projects and sessions.
 
-  ccs              fzf picker: pick a session, cd to its folder, resume it
+  ccs [QUERY]      project picker (from ~/claude/projects notes): start a fresh
+                   session in the project's folder; a unique QUERY skips the
+                   picker. ctrl-o: browse that project's conversations instead
+  ccs -c           conversation picker: resume a session (ctrl-n: fresh session
+                   in its folder instead)
   ccs -l [N]       list the N most recent sessions (default 30)
-  ccs -p PROJECT   list sessions whose folder contains PROJECT
+  ccs -p PROJECT   conversation picker / list for folders containing PROJECT
   ccs --show ID    print the user prompts of one session (used by preview)
   ccs --rename ID NAME   set a session's name (shown instead of its ai-title)
 
@@ -14,6 +18,8 @@ from datetime import datetime
 
 BASE = os.path.expanduser("~/.claude/projects")
 HOME = os.path.expanduser("~")
+NOTES = os.path.expanduser("~/claude/projects")
+HUB = os.path.expanduser("~/claude/hub")
 
 
 def user_texts(path, meta=None):
@@ -100,6 +106,76 @@ def show(sid):
             print(f"── {ts[:16].replace('T', ' ')}\n{text[:600]}\n")
 
 
+def projects():
+    """One row per (note, path), most recently logged first. Notes without a
+    path get the hub as their folder."""
+    out = []
+    for f in glob.glob(f"{NOTES}/*.md"):
+        if os.path.basename(f) == "INDEX.md":
+            continue
+        meta, title, last = {}, None, ""
+        with open(f) as fh:
+            for line in fh:
+                if title is None and line.startswith(("paths:", "status:")):
+                    k, v = line.split(":", 1)
+                    meta[k] = v.strip()
+                elif title is None and line.startswith("# "):
+                    title = line[2:].strip()
+                elif line.startswith("- 20") and not last:
+                    last = line[2:12]
+        title = title or os.path.basename(f)[:-3]
+        paths = [os.path.expanduser(x.strip()) for x in meta.get("paths", "").split(",")]
+        paths = [x for x in paths if x.startswith("/")] or [None]
+        for path in paths:
+            out.append({"note": f, "title": title, "status": meta.get("status", ""),
+                        "last": last or "—", "path": path})
+    return sorted(out, key=lambda p: p["last"].replace("—", ""), reverse=True)
+
+
+def fmt_project(p):
+    where = (p["path"] or "(hub)").replace(HOME, "~").replace("/mnt/chmury/projects/", "@/")
+    return f"{p['last']:<10}  {p['status']:<7}  {p['title'][:42]:<42}  {where}"
+
+
+def note(path):
+    """fzf preview: the note without its frontmatter."""
+    text = open(path).read()
+    if text.startswith("---"):
+        text = text.split("---", 2)[2]
+    print(text.strip())
+
+
+def launch(p):
+    if p["path"] is None:
+        os.chdir(HUB)
+        os.execvp("claude", ["claude", f"Let's work on the project in {p['note']}."])
+    if not os.path.isdir(p["path"]):
+        sys.exit(f"folder gone: {p['path']}")
+    os.chdir(p["path"])
+    os.execvp("claude", ["claude"])
+
+
+def pick_project(query):
+    ps = projects()
+    if not sys.stdout.isatty():
+        for p in ps:
+            print(fmt_project(p))
+        return
+    lines = "\n".join(f"{i}\t{p['path'] or HUB}\t{fmt_project(p)}" for i, p in enumerate(ps))
+    r = subprocess.run(
+        ["fzf", "--delimiter=\t", "--with-nth=3", "--no-sort", "--layout=reverse",
+         "--query", query, "--select-1", "--exit-0",
+         "--header", "enter: new session · ctrl-o: past conversations",
+         "--bind", f"ctrl-o:become({sys.argv[0]} -p {{2}})",
+         "--preview", f"{sys.argv[0]} --note {{1}}", "--preview-window=right,50%,wrap"],
+        input=lines, text=True, stdout=subprocess.PIPE)
+    if r.returncode == 1 and query:
+        sys.exit(f"no project matches {query!r}")
+    if r.returncode or not r.stdout.strip():
+        return
+    launch(ps[int(r.stdout.split("\t")[0])])
+
+
 def main(argv):
     if argv[:1] == ["--show"]:
         return show(argv[1])
@@ -109,6 +185,12 @@ def main(argv):
         return rename(argv[1], argv[2].strip())
     if argv[:1] in (["-h"], ["--help"]):
         return print(__doc__)
+    if argv[:1] == ["--note"]:
+        return note(projects()[int(argv[1])]["note"])
+    if argv[:1] not in (["-c"], ["-l"], ["-p"]):
+        return pick_project(" ".join(argv))
+    if argv[:1] == ["-c"]:
+        argv = []
     ss = sessions()
     if argv[:1] == ["-p"]:
         ss = [s for s in ss if argv[1].lower() in s["cwd"].lower()]
@@ -121,15 +203,17 @@ def main(argv):
     lines = "\n".join(f"{s['id']}\t{s['cwd']}\t{fmt(s)}" for s in ss)
     r = subprocess.run(
         ["fzf", "--delimiter=\t", "--with-nth=3", "--no-sort", "--layout=reverse",
+         "--expect=ctrl-n", "--header", "enter: resume · ctrl-n: new session in its folder",
          "--preview", f"{sys.argv[0]} --show {{1}}", "--preview-window=down,50%,wrap"],
         input=lines, text=True, stdout=subprocess.PIPE)
     if r.returncode or not r.stdout.strip():
         return
-    sid, cwd = r.stdout.split("\t")[:2]
+    key, row = r.stdout.split("\n", 1)
+    sid, cwd = row.split("\t")[:2]
     if not os.path.isdir(cwd):
         sys.exit(f"folder gone: {cwd}")
     os.chdir(cwd)
-    os.execvp("claude", ["claude", "--resume", sid])
+    os.execvp("claude", ["claude"] if key == "ctrl-n" else ["claude", "--resume", sid])
 
 
 if __name__ == "__main__":
