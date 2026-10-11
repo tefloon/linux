@@ -1,0 +1,8 @@
+[Unit]
+Description=Back up the Syncthing config whenever it changes
+
+[Path]
+PathChanged=%h/.local/state/syncthing/config.xml
+
+[Install]
+WantedBy=default.target

@@ -57,6 +57,9 @@ bash "$SCRIPT_DIR/scripts/setup-assets.sh"
 echo "=== Setting up system configurations ==="
 bash "$SCRIPT_DIR/scripts/setup-system.sh"
 
+echo "=== Setting up storage ==="
+bash "$SCRIPT_DIR/scripts/setup-storage.sh"
+
 echo "=== Running post-install configuration ==="
 bash "$SCRIPT_DIR/scripts/post-install.sh"
 
@@ -71,4 +74,5 @@ echo "Next steps:"
 echo " -> reboot"
 echo " -> sudo tailscale up"
 echo " -> run retrieve-secrets.sh"
+echo " -> run scripts/setup-syncthing.sh"
 echo "============================"

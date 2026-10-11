@@ -42,7 +42,7 @@ enable_service "sddm.service"          # Launcher service
 # Optional services (uncomment if needed)
 # enable_service "ufw"                 # Firewall
 enable_service "avahi-daemon"          # Local network discovery
-enable_user_service "syncthing.service"     # File syncing
+# syncthing.service is enabled by setup-syncthing.sh, after the identity is restored
 
 # Add user to groups
 add_to_group() {

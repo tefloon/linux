@@ -1,0 +1,8 @@
+[Unit]
+Description=Copy the Syncthing config and .stignore files to the backups folder
+
+[Service]
+Type=oneshot
+# status.sh logs to /tmp by default; the journal has the output already
+Environment=LOG_FILE=/dev/null
+ExecStart=%h/linux/scripts/setup-syncthing.sh --backup
