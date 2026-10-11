@@ -18,11 +18,24 @@ else
     status_skip
 fi
 
-CURRENT_STEP_MESSAGE="Applying the XDG home folders"
+# The XDG folders themselves are set by the user-dirs.dirs dotfile; the
+# symlinked ones come from setup-storage.sh, ~/claude from setup-syncthing.sh
+CURRENT_STEP_MESSAGE="Setting up home folders"
 status_msg
-rmdir $HOME/Desktop $HOME/Downloads $HOME/Documents $HOME/Templates $HOME/Pictures $HOME/Videos $HOME/Public 
-xdg-user-dirs-update
-status_ok
+# Defaults made by xdg-user-dirs at the first login; rmdir only removes empty ones
+rmdir "$HOME"/{Desktop,Downloads,Documents,Music,Pictures,Videos,Templates,Public,Projects} 2>/dev/null
+mkdir -p "$HOME/games" "$HOME/mnt"
+expected=" claude documents downloads games linux mnt music photos projects videos "
+unexpected=()
+for entry in "$HOME"/*; do
+    name="${entry##*/}"
+    [[ "$expected" == *" $name "* ]] || unexpected+=("$name")
+done
+if (( ${#unexpected[@]} )); then
+    status_skip "Unexpected in ~ (left alone): ${unexpected[*]}"
+else
+    status_ok
+fi
 
 echo "Setting up dictionaries..."
 bash "$SCRIPT_DIR/post-install-scripts/setup-dictionary.sh"
