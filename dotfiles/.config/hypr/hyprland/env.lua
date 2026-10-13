@@ -34,24 +34,6 @@ hl.env("XCURSOR_SIZE", "24")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 
--- go and PATH
--- NOTE: Lua's hl.env does NOT expand $PATH (hyprlang did). We must expand it
--- ourselves, otherwise PATH becomes the literal string "$PATH:..." and no
--- spawned program (kitty, subl, etc.) can be found.
-hl.env("GOPATH", "/usr/local/go")
-local go_bin   = "/usr/local/go/bin"
-local cur_path = os.getenv("PATH") or ""
--- Self-heal: if a previous (broken) load left the literal "$PATH" in place, or
--- PATH is empty, fall back to sane defaults so a plain `hyprctl reload` recovers.
-if cur_path == "" or cur_path:find("$PATH", 1, true) then
-    cur_path = "/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:"
-        .. (os.getenv("HOME") or "") .. "/.local/bin"
-end
-if not cur_path:find(go_bin, 1, true) then -- avoid duplicate on reload
-    cur_path = cur_path .. ":" .. go_bin
-end
-hl.env("PATH", cur_path)
-
 hl.env("BROWSER", "helium-browser")
 
 -- ######## Wayland #########

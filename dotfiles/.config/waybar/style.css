@@ -1,6 +1,6 @@
 /* Waybar styling - minimal and clean */
 * {
-  font-family: "JetBrains Mono";
+  font-family: "Noto Sans Mono", "JetBrainsMono Nerd Font";
   font-size: 14px;
   min-height: 0;
 }
