@@ -15,6 +15,7 @@
   ],
   "modules-right": [
     "tray",
+    "custom/classaudio",
     "custom/gamemode",
     "custom/moviemode",
     "custom/moon",
@@ -76,6 +77,16 @@
     "return-type": "json",
     "interval": "once",
     "signal": 12
+  },
+
+  "custom/classaudio": {
+    "format": "󰝚",
+    "tooltip": false,
+    "on-click": "$HOME/.config/waybar/scripts/classaudio-toggle.sh",
+    "exec": "$HOME/.config/waybar/scripts/classaudio-toggle.sh status",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 14
   },
 
   "custom/moviemode": {

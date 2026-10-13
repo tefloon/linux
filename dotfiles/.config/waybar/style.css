@@ -35,6 +35,7 @@ window#waybar {
 #custom-weather:hover,
 #custom-moon:hover,
 #custom-gamemode:hover,
+#custom-classaudio:hover,
 #custom-internet:hover,
 #custom-moviemode:hover,
 #custom-power:hover {
@@ -61,6 +62,7 @@ window#waybar {
 #custom-moon,
 #custom-moviemode,
 #custom-internet,
+#custom-classaudio,
 #custom-gamemode {
   border-radius: 4px;
   margin: 6px 3px;
@@ -155,6 +157,16 @@ window#waybar {
 }
 
 #custom-gamemode.inactive {
+  color: #bed1e2;
+}
+
+/* Class audio active/inactive states */
+#custom-classaudio.active {
+  color: #a6e3a1;
+  background-color: rgba(166, 227, 161, 0.1);
+}
+
+#custom-classaudio.inactive {
   color: #bed1e2;
 }
 
