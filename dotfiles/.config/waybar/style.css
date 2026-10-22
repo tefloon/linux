@@ -182,7 +182,11 @@ window#waybar {
 }
 
 #custom-internet.disconnected {
-  color: red;  
+  color: #f38ba8;
+}
+
+#custom-internet.no-tailscale {
+  color: #f9e2af;
 }
 
 #custom-moviemode.active {

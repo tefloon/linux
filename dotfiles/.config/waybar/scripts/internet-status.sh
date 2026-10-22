@@ -41,8 +41,15 @@ fi
 
 duration=$(convert_date $start $now)
 
-if [[ "$current_status" == "up" ]]; then
-  echo '{"text": "󰍹", "tooltip": "Up for: '"$duration"'", "class": "connected"}'
+# Tailscale: local socket query, no network traffic. "Running" + Online = connected to the tailnet.
+ts=$(tailscale status --json --peers=false 2>/dev/null \
+  | jq -r 'if .BackendState == "Running" and .Self.Online then "up" elif .BackendState == "Running" then "offline" else (.BackendState // "unknown") end' 2>/dev/null)
+[[ -z "$ts" ]] && ts="not running"
+
+if [[ "$current_status" == "up" && "$ts" == "up" ]]; then
+  echo '{"text": "󰍹", "tooltip": "Up for: '"$duration"'\nTailscale: up", "class": "connected"}'
+elif [[ "$current_status" == "up" ]]; then
+  echo '{"text": "󰍹", "tooltip": "Up for: '"$duration"'\nTailscale: '"$ts"'", "class": "no-tailscale"}'
 else
   echo '{"text": "󰶐", "tooltip": "Down for: '"$duration"'", "class": "disconnected"}'
 fi
