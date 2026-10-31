@@ -9,9 +9,17 @@ hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(vars.fileManager))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(vars.editor))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(vars.browser .. " --ozone-platform=wayland"))
 
--- --- Dictation ---
-hl.bind("MOD3 + Z", hl.dsp.exec_cmd("~/.local/bin/dictate en"))
-hl.bind("MOD3 + X", hl.dsp.exec_cmd("~/.local/bin/dictate pl"))
+-- --- Dictation (push-to-talk: hold Win to record, release to transcribe + type) ---
+-- Win is Hyper (MOD3) via altwin:hyper_win. Win = Polish, Shift then Win = English.
+-- non_consuming: the key still works as the Hyper modifier (e.g. MOD3 + I); taps
+-- under 0.4 s are discarded by the script. Release is bound for every modmask it
+-- can arrive with (MOD3 and/or SHIFT still held, or not); the script locks, so a
+-- double stop is harmless.
+hl.bind("Hyper_L",         hl.dsp.exec_cmd("~/.local/bin/dictate start pl"), { non_consuming = true })
+hl.bind("SHIFT + Hyper_L", hl.dsp.exec_cmd("~/.local/bin/dictate start en"), { non_consuming = true })
+for _, mods in ipairs({ "", "MOD3 + ", "SHIFT + ", "SHIFT + MOD3 + " }) do
+    hl.bind(mods .. "Hyper_L", hl.dsp.exec_cmd("~/.local/bin/dictate stop"), { release = true, non_consuming = true })
+end
 
 -- --- Window Management ---
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())

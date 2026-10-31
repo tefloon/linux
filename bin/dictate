@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# dictate - toggle voice dictation: first call records, second call transcribes and types.
+#
+#   dictate [LANG]          toggle: start recording, or stop + transcribe if recording
+#   dictate start [LANG]    start recording (no-op if already recording)
+#   dictate stop            stop + transcribe (no-op if not recording)
+#   LANG = pl | en | auto (default: pl)
+#
+# Push-to-talk: bind "start" to a key press and "stop" to its release.
+# Toggle: bind e.g. MOD3+X -> "dictate pl". Press once, speak, press again:
+# the audio goes through whisper.cpp (GPU via ggml-vulkan) and the text is typed
+# into the focused window with wtype, and copied to the clipboard as a fallback.
+# The language is the one given when recording started.
+#
+# Needs: pipewire (pw-record), whisper-cpp + ggml-vulkan, wtype, wl-clipboard, notify-send
+# Models (override with env vars):
+#   DICTATE_MODEL      default ~/.local/share/whisper/ggml-large-v3-turbo-q5_0.bin
+#   DICTATE_VAD_MODEL  default ~/.local/share/whisper/ggml-silero-v5.1.2.bin
+# The VAD (voice activity detection) model matters: without it Whisper invents text
+# for silence ("Dziękuję za uwagę.", "Thanks for watching!").
+
+set -euo pipefail
+
+mode=toggle
+case "${1:-}" in start|stop) mode=$1; shift ;; esac
+lang="${1:-pl}"
+models="${XDG_DATA_HOME:-$HOME/.local/share}/whisper"
+model="${DICTATE_MODEL:-$models/ggml-large-v3-turbo-q5_0.bin}"
+vad_model="${DICTATE_VAD_MODEL:-$models/ggml-silero-v5.1.2.bin}"
+
+state="${XDG_RUNTIME_DIR:-/tmp}/dictate"
+mkdir -p "$state"
+wav="$state/rec.wav"
+
+notify() { # notify TEXT [TIMEOUT_MS]; reuses one notification bubble
+    local id; id=$(cat "$state/notify-id" 2>/dev/null || echo 0)
+    notify-send -a dictate -p -r "$id" -t "${2:-0}" "Dictation" "$1" >"$state/notify-id" || true
+}
+
+# One instance at a time: a key event arriving while another call (e.g. a
+# transcription) is running is ignored, so text can't be typed twice.
+exec 9>"$state/lock"
+flock -n 9 || exit 0
+
+recording=false
+[[ -e "$state/pid" ]] && kill -0 "$(cat "$state/pid")" 2>/dev/null && recording=true
+[[ $mode == start && $recording == true ]] && exit 0
+[[ $mode == stop && $recording == false ]] && exit 0
+
+if $recording; then
+    # --- stop and transcribe ---
+    pid=$(cat "$state/pid"); lang=$(cat "$state/lang")
+    trap 'rm -f "$state/pid"' EXIT
+    kill -INT "$pid"                      # pw-record finalizes the WAV header on SIGINT
+    for _ in {1..50}; do kill -0 "$pid" 2>/dev/null || break; sleep 0.05; done
+
+    # A short tap (or the key used as a modifier for another bind) is not dictation.
+    held_ms=$(( ($(date +%s%N) - $(cat "$state/start")) / 1000000 ))
+    if (( held_ms < ${DICTATE_MIN_MS:-400} )); then
+        notify "Cancelled." 600
+        exit 0
+    fi
+    notify "Transcribing ($lang)…"
+
+    text=$(whisper-cli -m "$model" --vad --vad-model "$vad_model" \
+               -l "$lang" -nt -np -f "$wav" 2>/dev/null \
+           | tr '\n' ' ' | sed -E 's/\[[A-Z_ ]+\]//g; s/ +/ /g; s/^ //; s/ $//')
+
+    if [[ -z "$text" ]]; then
+        notify "Nothing heard." 2000
+        exit 0
+    fi
+    # wl-copy stays in the background to serve the clipboard: it must not
+    # inherit the lock fd, or every later key press is ignored.
+    printf '%s' "$text" | wl-copy 9>&-
+    wtype -- "$text" 9>&-
+    notify "$text" 3000
+else
+    # --- start recording ---
+    rm -f "$wav"
+    echo "$lang" >"$state/lang"
+    date +%s%N >"$state/start"
+    pw-record --rate 16000 --channels 1 --format s16 "$wav" 9>&- &   # don't inherit the lock
+    echo $! >"$state/pid"
+    disown
+    notify "🎙 Recording ($lang)… press again to stop"
+fi
