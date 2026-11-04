@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# gpu-check — sanity check for AMD GPUs after a swap (no root needed).
+# Shows: detected cards + driver, PCIe link chain to the CPU, VRAM and
+# Resizable BAR, sensors, Vulkan / VA-API drivers, amdgpu kernel errors.
+
+bold=$'\e[1m'; dim=$'\e[2m'; red=$'\e[31m'; grn=$'\e[32m'; yel=$'\e[33m'; off=$'\e[0m'
+hdr()  { printf '\n%s== %s ==%s\n' "$bold" "$1" "$off"; }
+ok()   { printf '  %s✔%s %s\n' "$grn" "$off" "$1"; }
+warn() { printf '  %s!%s %s\n' "$yel" "$off" "$1"; }
+bad()  { printf '  %s✘%s %s\n' "$red" "$off" "$1"; }
+mib()  { echo $(( $1 / 1024 / 1024 )); }
+
+cards=()
+for c in /sys/class/drm/card[0-9]; do
+  [[ $(basename "$(readlink -f "$c/device/driver")") == amdgpu ]] && cards+=("$c")
+done
+((${#cards[@]})) || { bad "no card is using the amdgpu driver"; exit 1; }
+
+for c in "${cards[@]}"; do
+  dev=$(readlink -f "$c/device"); slot=$(basename "$dev")
+  hdr "$(basename "$c"): $(lspci -s "$slot" | cut -d' ' -f2- | sed 's/^[^:]*: //')"
+
+  # dGPU or iGPU, and which outputs have a monitor
+  [[ $(cat "$dev/boot_vga" 2>/dev/null) == 1 ]] && echo "  ${dim}boot VGA (primary)${off}"
+  outs=$(for o in "$c"-*; do [[ $(cat "$o/status" 2>/dev/null) == connected ]] && echo -n "${o##*/card?-} "; done)
+  echo "  monitors: ${outs:-none}"
+
+  hdr "PCIe link (CPU → card)"
+  # Walk every PCI hop in the sysfs path. Modern Radeons sit behind their
+  # own internal switch, so the hop that matters is the first one below the
+  # root port; the internal hops always read full speed.
+  path=${dev#/sys/devices/}; first=1
+  IFS=/ read -ra hops <<< "$path"
+  for h in "${hops[@]}"; do
+    [[ $h =~ ^[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.[0-9]$ ]] || continue
+    d=/sys/bus/pci/devices/$h
+    cs=$(cat "$d/current_link_speed" 2>/dev/null); cw=$(cat "$d/current_link_width" 2>/dev/null)
+    ms=$(cat "$d/max_link_speed" 2>/dev/null);     mw=$(cat "$d/max_link_width" 2>/dev/null)
+    mark=""; ((first)) && mark=" ${dim}← slot (root port)${off}"; first=0
+    printf '  %s  %-12s x%-3s (max %s x%s)  %s%s\n' "$h" "${cs% PCIe}" "$cw" "${ms% PCIe}" "$mw" \
+      "$(lspci -s "$h" | cut -d' ' -f2- | sed 's/^[^:]*: //' | cut -c1-40)" "$mark"
+  done
+  echo "  ${dim}8.0 GT/s = Gen3, 16 = Gen4, 32 = Gen5. amdgpu drops the link speed at idle,"
+  echo "  so a low reading here is normal; the levels the card can use:${off}"
+  sed 's/^/    /' "$dev/pp_dpm_pcie" 2>/dev/null || echo "    (pp_dpm_pcie not available)"
+
+  hdr "VRAM and Resizable BAR"
+  vt=$(cat "$dev/mem_info_vram_total" 2>/dev/null); vv=$(cat "$dev/mem_info_vis_vram_total" 2>/dev/null)
+  vu=$(cat "$dev/mem_info_vram_used" 2>/dev/null)
+  if [[ -n $vt ]]; then
+    echo "  VRAM: $(mib "$vt") MiB total, $(mib "$vu") MiB used"
+    # Without ReBAR the CPU only sees a 256 MiB window into VRAM.
+    if [[ -n $vv && $vv -ge $vt ]]; then ok "Resizable BAR on (CPU sees all $(mib "$vv") MiB)"
+    else warn "Resizable BAR off (CPU sees $(mib "${vv:-0}") MiB) — enable Above 4G Decoding + Re-Size BAR in the BIOS"; fi
+  fi
+
+  hdr "Sensors"
+  for hw in "$dev"/hwmon/hwmon*; do
+    for t in "$hw"/temp*_input; do
+      [[ -e $t ]] || continue
+      printf '  %-9s %3d °C\n' "$(cat "${t%_input}_label" 2>/dev/null || echo temp)" $(( $(cat "$t") / 1000 ))
+    done
+    for p in "$hw"/power1_average "$hw"/power1_input; do
+      [[ -e $p ]] && { printf '  power     %3d W (cap %d W)\n' $(( $(cat "$p") / 1000000 )) $(( $(cat "$hw/power1_cap" 2>/dev/null || echo 0) / 1000000 )); break; }
+    done
+    [[ -e $hw/fan1_input ]] && printf '  fan       %s RPM\n' "$(cat "$hw/fan1_input")"
+  done
+done
+
+hdr "Vulkan"
+pacman -Q vulkan-radeon amdvlk 2>/dev/null | sed 's/^/  /'
+pacman -Q amdvlk &>/dev/null && warn "amdvlk is installed: games may pick it over RADV (AMD discontinued it)"
+if command -v vulkaninfo >/dev/null; then
+  vulkaninfo --summary 2>/dev/null | grep -E '^\s*(deviceName|driverName|apiVersion|deviceType)' | sed 's/^\s*/  /'
+else warn "vulkaninfo missing (package: vulkan-tools)"; fi
+
+hdr "Video decode/encode (VA-API)"
+if command -v vainfo >/dev/null; then
+  va=$(vainfo 2>/dev/null)
+  for codec in H264 HEVC VP9 AV1; do
+    dec=$(grep -cE "VAProfile${codec}.*VAEntrypointVLD" <<< "$va")
+    enc=$(grep -cE "VAProfile${codec}.*VAEntrypointEnc" <<< "$va")
+    printf '  %-5s decode %-3s encode %s\n' "$codec" "$( ((dec)) && echo yes || echo no)" "$( ((enc)) && echo yes || echo no)"
+  done
+else warn "vainfo missing (package: libva-utils)"; fi
+
+hdr "amdgpu kernel errors this boot"
+errs=$(journalctl -k -b -p err --no-pager -q 2>/dev/null | grep -i amdgpu)
+[[ -z $errs ]] && ok "none" || { tail -n 15 <<< "$errs" | sed 's/^/  /'; }
