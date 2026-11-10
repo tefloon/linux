@@ -15,10 +15,13 @@ hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(vars.browser .. " --ozone-platform=wa
 -- under 0.4 s are discarded by the script. Release is bound for every modmask it
 -- can arrive with (MOD3 and/or SHIFT still held, or not); the script locks, so a
 -- double stop is harmless.
+-- transparent: any other key event while Win is held (e.g. letting go of Shift)
+-- makes Hyprland "shadow" binds whose key is still held, which silently drops the
+-- release; transparent binds are exempt from shadowing.
 hl.bind("Hyper_L",         hl.dsp.exec_cmd("~/.local/bin/dictate start pl"), { non_consuming = true })
 hl.bind("SHIFT + Hyper_L", hl.dsp.exec_cmd("~/.local/bin/dictate start en"), { non_consuming = true })
 for _, mods in ipairs({ "", "MOD3 + ", "SHIFT + ", "SHIFT + MOD3 + " }) do
-    hl.bind(mods .. "Hyper_L", hl.dsp.exec_cmd("~/.local/bin/dictate stop"), { release = true, non_consuming = true })
+    hl.bind(mods .. "Hyper_L", hl.dsp.exec_cmd("~/.local/bin/dictate stop"), { release = true, non_consuming = true, transparent = true })
 end
 
 -- --- Window Management ---

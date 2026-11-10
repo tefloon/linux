@@ -83,5 +83,9 @@ else
     pw-record --rate 16000 --channels 1 --format s16 "$wav" 9>&- &   # don't inherit the lock
     echo $! >"$state/pid"
     disown
-    notify "🎙 Recording ($lang)… press again to stop"
+    if [[ $mode == start ]]; then
+        notify "🎙 Recording ($lang)… release to stop"
+    else
+        notify "🎙 Recording ($lang)… press again to stop"
+    fi
 fi
