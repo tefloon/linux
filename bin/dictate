@@ -66,6 +66,13 @@ if $recording; then
                -l "$lang" -nt -np -f "$wav" 2>/dev/null \
            | tr '\n' ' ' | sed -E 's/\[[A-Z_ ]+\]//g; s/ +/ /g; s/^ //; s/ $//')
 
+    # Spoken emoticons: "buźka"/"smiley" -> :)   "języczek"/"tongue out" -> :P
+    # Eats the comma before and the punctuation after (Whisper punctuates them).
+    text=$(printf '%s' "$text" | perl -CSD -Mutf8 -0777 -pe '
+        s/[,.]?\s*(?<!\w)(?:buźka|smiley)(?!\w)[.,!?]?/ :)/gi;
+        s/[,.]?\s*(?<!\w)(?:języczek|tongue\s+out)(?!\w)[.,!?]?/ :P/gi;
+        s/^\s+|\s+$//g')
+
     if [[ -z "$text" ]]; then
         notify "Nothing heard." 2000
         exit 0
