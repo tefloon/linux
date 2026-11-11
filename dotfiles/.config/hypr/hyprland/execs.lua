@@ -40,6 +40,8 @@ hl.on("hyprland.start", function()
     -- hl.exec_cmd("waybar -c $HOME/.config/waybar/config_R.jsonc")
 
     -- ========== MY EXECS =========
+    -- Preload the dictation cleanup model (S1-mini) into VRAM; see ~/linux/bin/dictate
+    hl.exec_cmd("~/.local/bin/dictate warm")
     -- hl.exec_cmd("kdeconnectd")
     -- hl.exec_cmd("kdeconnect-indicator")
 

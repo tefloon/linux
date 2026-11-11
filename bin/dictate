@@ -4,7 +4,9 @@
 #   dictate [LANG]          toggle: start recording, or stop + transcribe if recording
 #   dictate start [LANG]    start recording (no-op if already recording)
 #   dictate stop            stop + transcribe (no-op if not recording)
-#   LANG = pl | en | auto (default: pl)
+#   dictate warm            load the cleanup model into VRAM and keep it there (run at login;
+#                           waits for ollama to come up). Free it with `ollama stop <model>`.
+#   LANG = en | pl | auto (default: en)
 #
 # Push-to-talk: bind "start" to a key press and "stop" to its release.
 # Toggle: bind e.g. MOD3+X -> "dictate pl". Press once, speak, press again:
@@ -12,21 +14,36 @@
 # into the focused window with wtype, and copied to the clipboard as a fallback.
 # The language is the one given when recording started.
 #
-# Needs: pipewire (pw-record), whisper-cpp + ggml-vulkan, wtype, wl-clipboard, notify-send
+# English text is cleaned up before typing by S1-mini (Superwhisper's 0.6B ASR
+# normalizer, run by ollama): fillers, false starts and self-corrections
+# ("Tuesday, no wait, Wednesday" -> "Wednesday") are removed, numbers/dates
+# written out. If ollama is down or slow, the raw Whisper text is used instead.
+# The last raw/cleaned pair is kept in $XDG_RUNTIME_DIR/dictate/last-{raw,clean}.txt.
+#
+# Needs: pipewire (pw-record), whisper-cpp + ggml-vulkan, wtype, wl-clipboard, notify-send,
+#        curl + jq + ollama (for cleanup only)
 # Models (override with env vars):
 #   DICTATE_MODEL      default ~/.local/share/whisper/ggml-large-v3-turbo-q5_0.bin
 #   DICTATE_VAD_MODEL  default ~/.local/share/whisper/ggml-silero-v5.1.2.bin
 # The VAD (voice activity detection) model matters: without it Whisper invents text
 # for silence ("Dziękuję za uwagę.", "Thanks for watching!").
+# Cleanup (English only):
+#   DICTATE_CLEAN        1 = on (default), 0 = off
+#   DICTATE_CLEAN_MODEL  default hf.co/superwhisper/s1-mini-GGUF:F16
+#   DICTATE_CLEAN_STYLE  casual | semi-casual | semi-formal (default) | formal
+#   DICTATE_OLLAMA       default http://localhost:11434
 
 set -euo pipefail
 
 mode=toggle
-case "${1:-}" in start|stop) mode=$1; shift ;; esac
-lang="${1:-pl}"
+case "${1:-}" in start|stop|warm) mode=$1; shift ;; esac
+lang="${1:-en}"
 models="${XDG_DATA_HOME:-$HOME/.local/share}/whisper"
 model="${DICTATE_MODEL:-$models/ggml-large-v3-turbo-q5_0.bin}"
 vad_model="${DICTATE_VAD_MODEL:-$models/ggml-silero-v5.1.2.bin}"
+clean_model="${DICTATE_CLEAN_MODEL:-hf.co/superwhisper/s1-mini-GGUF:F16}"
+clean_style="${DICTATE_CLEAN_STYLE:-semi-formal}"
+ollama="${DICTATE_OLLAMA:-http://localhost:11434}"
 
 state="${XDG_RUNTIME_DIR:-/tmp}/dictate"
 mkdir -p "$state"
@@ -36,6 +53,34 @@ notify() { # notify TEXT [TIMEOUT_MS]; reuses one notification bubble
     local id; id=$(cat "$state/notify-id" 2>/dev/null || echo 0)
     notify-send -a dictate -p -r "$id" -t "${2:-0}" "Dictation" "$1" >"$state/notify-id" || true
 }
+
+clean() { # clean TEXT -> cleaned text on stdout (empty on any failure)
+    # S1-mini needs this exact system prompt + control line, and an assistant turn
+    # that starts with an empty think block (Qwen3 template, thinking off), so the
+    # prompt is built by hand and sent raw, bypassing ollama's chat template.
+    # printf -v, not $(...): command substitution would strip the trailing newlines.
+    local sys ctl prompt
+    sys="You are a text normalizer for speech-to-text transcripts. The input begins with a control line specifying the styling, structure, and context settings; clean the transcript to match those settings and output only the cleaned text."
+    ctl="[Styling: $clean_style] [Structure: prose] [Context: general]"
+    printf -v prompt '<|im_start|>system\n%s<|im_end|>\n<|im_start|>user\n%s\n%s<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n' \
+        "$sys" "$ctl" "$1"
+    # keep_alive -1: stay loaded until `ollama stop` (1.7 GB of VRAM; see `dictate warm`).
+    jq -n --arg m "$clean_model" --arg p "$prompt" \
+        '{model: $m, prompt: $p, raw: true, stream: false, keep_alive: -1,
+          options: {temperature: 0, num_predict: 1024}}' \
+    | curl -sf --max-time 8 "$ollama/api/generate" -d @- \
+    | jq -r '.response // empty' \
+    | perl -0777 -pe 's/^\s+|\s+$//g'
+}
+
+if [[ $mode == warm ]]; then
+    # A request without a prompt only loads the model. At login ollama may not be
+    # listening yet: retry on "connection refused" for up to 2 minutes.
+    jq -n --arg m "$clean_model" '{model: $m, keep_alive: -1}' \
+    | curl -sf -o /dev/null --retry 40 --retry-delay 3 --retry-connrefused --retry-max-time 120 \
+           "$ollama/api/generate" -d @-
+    exit
+fi
 
 # One instance at a time: a key event arriving while another call (e.g. a
 # transcription) is running is ignored, so text can't be typed twice.
@@ -65,6 +110,16 @@ if $recording; then
     text=$(whisper-cli -m "$model" --vad --vad-model "$vad_model" \
                -l "$lang" -nt -np -f "$wav" 2>/dev/null \
            | tr '\n' ' ' | sed -E 's/\[[A-Z_ ]+\]//g; s/ +/ /g; s/^ //; s/ $//')
+
+    # Cleanup, before the emoticons: S1-mini drops ":)" but keeps the word "smiley".
+    # An empty result means failure (or pure filler): fall back to the raw text.
+    printf '%s' "$text" >"$state/last-raw.txt"
+    if [[ -n "$text" && $lang == en && ${DICTATE_CLEAN:-1} == 1 ]]; then
+        notify "Cleaning up…"
+        cleaned=$(clean "$text") || cleaned=""
+        [[ -n "$cleaned" ]] && text=$cleaned
+    fi
+    printf '%s' "$text" >"$state/last-clean.txt"
 
     # Spoken emoticons: "buźka"/"smiley" -> :)   "języczek"/"tongue out" -> :P
     # Eats the comma before and the punctuation after (Whisper punctuates them).
