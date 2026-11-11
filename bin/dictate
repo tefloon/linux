@@ -27,6 +27,10 @@
 #   DICTATE_VAD_MODEL  default ~/.local/share/whisper/ggml-silero-v5.1.2.bin
 # The VAD (voice activity detection) model matters: without it Whisper invents text
 # for silence ("Dziękuję za uwagę.", "Thanks for watching!").
+# Whisper server: if whisper-server is listening (whisper-server.service), the clip
+# is sent there; it keeps the model in VRAM (~0.85 GB), so ~0.2 s instead of ~0.6 s.
+# Otherwise whisper-cli runs one-shot. The server has its own model/VAD flags.
+#   DICTATE_WHISPER_SERVER  default http://127.0.0.1:8178 (empty = always whisper-cli)
 # Cleanup (English only):
 #   DICTATE_CLEAN        1 = on (default), 0 = off
 #   DICTATE_CLEAN_MODEL  default hf.co/superwhisper/s1-mini-GGUF:F16
@@ -44,6 +48,7 @@ vad_model="${DICTATE_VAD_MODEL:-$models/ggml-silero-v5.1.2.bin}"
 clean_model="${DICTATE_CLEAN_MODEL:-hf.co/superwhisper/s1-mini-GGUF:F16}"
 clean_style="${DICTATE_CLEAN_STYLE:-semi-formal}"
 ollama="${DICTATE_OLLAMA:-http://localhost:11434}"
+whisper_server="${DICTATE_WHISPER_SERVER-http://127.0.0.1:8178}"
 
 state="${XDG_RUNTIME_DIR:-/tmp}/dictate"
 mkdir -p "$state"
@@ -59,6 +64,17 @@ notify() { # notify TEXT [TIMEOUT_MS]; reuses one notification bubble
     new=$(notify-send -a dictate -p -r "$id" -t "${2:-0}" -- "Dictation" "$1") \
         && printf '%s\n' "$new" >"$state/notify-id"
     return 0
+}
+
+transcribe() { # transcribe -> raw Whisper text of $wav in $lang on stdout
+    # Server first; connection refused fails instantly. Empty output is a valid
+    # answer (silence), so only a failed request falls back to whisper-cli.
+    if [[ -n $whisper_server ]] && curl -sf --max-time 60 "$whisper_server/inference" \
+           -F file=@"$wav" -F language="$lang" -F response_format=text; then
+        return 0
+    fi
+    whisper-cli -m "$model" --vad --vad-model "$vad_model" \
+        -l "$lang" -nt -np -f "$wav" 2>/dev/null
 }
 
 clean() { # clean TEXT -> cleaned text on stdout (empty on any failure)
@@ -114,8 +130,7 @@ if $recording; then
     fi
     notify "Transcribing ($lang)…"
 
-    text=$(whisper-cli -m "$model" --vad --vad-model "$vad_model" \
-               -l "$lang" -nt -np -f "$wav" 2>/dev/null \
+    text=$(transcribe \
            | tr '\n' ' ' | sed -E 's/\[[A-Z_ ]+\]//g; s/ +/ /g; s/^ //; s/ $//')
 
     # Cleanup, before the emoticons: S1-mini drops ":)" but keeps the word "smiley".
