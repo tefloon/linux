@@ -50,8 +50,15 @@ mkdir -p "$state"
 wav="$state/rec.wav"
 
 notify() { # notify TEXT [TIMEOUT_MS]; reuses one notification bubble
-    local id; id=$(cat "$state/notify-id" 2>/dev/null || echo 0)
-    notify-send -a dictate -p -r "$id" -t "${2:-0}" "Dictation" "$1" >"$state/notify-id" || true
+    # Only overwrite the saved id on success: `>file` truncated it before notify-send
+    # ran, so one failure left it empty, and `-r ""` then failed every time after.
+    # `--`: dictated text starting with "-" would otherwise be parsed as an option.
+    local id new
+    id=$(cat "$state/notify-id" 2>/dev/null) || true
+    [[ $id =~ ^[0-9]+$ ]] || id=0
+    new=$(notify-send -a dictate -p -r "$id" -t "${2:-0}" -- "Dictation" "$1") \
+        && printf '%s\n' "$new" >"$state/notify-id"
+    return 0
 }
 
 clean() { # clean TEXT -> cleaned text on stdout (empty on any failure)
