@@ -439,6 +439,8 @@ hyprctl monitors
 
 Personal use. Fork and adapt as you like!
 
+Wallpaper `assets/wallpapers/twin-jet.jpg` (Twin Jet Nebula): ESA/Hubble & NASA, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
 **System Specs Tested On:**
 - Arch Linux (latest)
 - EndeavourOS 2024+
