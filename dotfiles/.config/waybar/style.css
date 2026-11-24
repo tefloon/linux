@@ -25,6 +25,7 @@ window#waybar {
 #memory:hover,
 #disk:hover,
 #cpu:hover,
+#custom-gpu:hover,
 #custom-power:hover,
 #battery:hover,
 #backlight:hover,
@@ -50,6 +51,7 @@ window#waybar {
 #memory,
 #disk,
 #cpu,
+#custom-gpu,
 #custom-power,
 #battery,
 #backlight,
@@ -77,7 +79,8 @@ window#waybar {
 /* Module-specific styling */
 #memory,
 #disk,
-#cpu {
+#cpu,
+#custom-gpu {
   color: #bed1e2;
   /* White/light gray to match default */
 }
@@ -102,6 +105,19 @@ window#waybar {
 #memory.critical {
   color: #f38ba8;
   /* Red for critical */
+  background-color: rgba(243, 139, 168, 0.1);
+  animation: blink 1s linear infinite alternate;
+}
+
+#custom-gpu.warning {
+  color: #f9e2af;
+  /* Yellow for warning (VRAM >= 80%) */
+  background-color: rgba(249, 226, 175, 0.1);
+}
+
+#custom-gpu.critical {
+  color: #f38ba8;
+  /* Red for critical (VRAM >= 90%) */
   background-color: rgba(243, 139, 168, 0.1);
   animation: blink 1s linear infinite alternate;
 }

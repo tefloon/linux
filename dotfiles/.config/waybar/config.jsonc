@@ -14,6 +14,7 @@
     "clock"
   ],
   "modules-right": [
+    "custom/gpu",
     "cpu",
     "memory",
     "disk",
@@ -80,6 +81,16 @@
     "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G ({percentage}%)\nSwap: {swapUsed:0.1f}G / {swapTotal:0.1f}G",
     "warning": 80,
     "critical": 90
+  },
+
+  // GPU utilisation (text) / VRAM (click to toggle); warning colours follow VRAM, not load.
+  // Card = the amdgpu device with the most VRAM, so no hardcoded PCI address (it moved once already).
+  "custom/gpu": {
+    "exec": "d=$(for c in /sys/class/drm/card[0-9]*/device; do [ -r $c/mem_info_vram_total ] && echo $(cat $c/mem_info_vram_total) $c; done | sort -n | tail -1 | cut -d' ' -f2); b=$(cat $d/gpu_busy_percent); u=$(( $(cat $d/mem_info_vram_used) * 10 / 1073741824 )); t=$(( $(cat $d/mem_info_vram_total) * 10 / 1073741824 )); p=$(( $(cat $d/mem_info_vram_used) * 100 / $(cat $d/mem_info_vram_total) )); c=; [ $p -ge 80 ] && c=warning; [ $p -ge 90 ] && c=critical; printf '{\"text\":\"%s%%\",\"alt\":\"%s.%sG / %s.%sG\",\"tooltip\":\"GPU: %s%%\\\\nVRAM: %s.%sG / %s.%sG (%s%%)\",\"class\":\"%s\",\"percentage\":%s}\\n' $b $((u/10)) $((u%10)) $((t/10)) $((t%10)) $b $((u/10)) $((u%10)) $((t/10)) $((t%10)) $p \"$c\" $b",
+    "return-type": "json",
+    "interval": 2,
+    "format": "󰢮  {text}",
+    "format-alt": "󰢮  {alt}"
   },
 
   "disk": {
